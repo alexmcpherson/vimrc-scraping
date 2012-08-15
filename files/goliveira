@@ -1,0 +1,172 @@
+" ~/.vimrc
+
+
+" Displaying text
+"""""""""""""""""
+
+" Minimal number of screen lines to keep above and below the cursor.
+set scrolloff=3
+
+
+" Multiple windows
+""""""""""""""""""
+
+" Always show the status line.
+set laststatus=2
+
+" Customized status line.
+set statusline=%<%n\ %f\ %h%m%r%=%-14.(%y%)\ %-14.(%l,%c%V%)\ %P\ 
+
+" Allow hiding a modified buffer without saving.
+set hidden
+
+
+" Editing text
+""""""""""""""
+
+" Do not insert two spaces after a '.', '?' and '!' with a join command.
+set nojoinspaces
+
+
+" Tabs and indenting
+""""""""""""""""""""
+
+" Number of spaces that a <Tab> in the file counts for.
+set tabstop=4
+
+" Number of spaces to use for each step of (auto)indent.
+set shiftwidth=4
+
+" When on a <Tab> in front of a line inserts blanks according to 'shiftwidth'.
+set smarttab
+
+" In Insert mode, use the appropriate number of spaces to insert a <Tab>.
+set expandtab
+
+" Copy indent from current line when starting a new line (typing <CR> in
+" Insert mode or when using the "o" or "O" command).
+set autoindent
+
+
+" Messages and info
+"""""""""""""""""""
+
+" Show (partial) command in the command bar.
+set showcmd
+
+" If in Insert, Replace or Visual mode put a message on the command line.
+set showmode
+
+" Show the line and column number of the cursor position in the status line.
+set ruler
+
+
+" Editing text
+""""""""""""""
+
+" Allow backspacing over indent,eol,start.
+set backspace=indent,eol,start
+
+
+" Command line editing
+""""""""""""""""""""""
+
+" Files with these suffixes get a lower priority when completing.
+set suffixes+=.ps,.pdf
+
+" Command-line completion shows a list of matches.
+set wildmenu
+
+
+" GUI specific options
+""""""""""""""""""""""
+
+if has("gui_running")
+    " Font size and style.
+    set guifont=Inconsolata\ 15
+
+    " Disable toolbar, right-hand scrollbar and menubar
+    set guioptions-=T
+    set guioptions-=r
+    set guioptions-=m
+
+    " Use console dialog.
+    set guioptions+=c
+
+    " Disable the mouse.
+    set mouse=
+
+    " Disable blink and set block cursor in Normal mode.
+    set guicursor+=n:blinkon0-block
+
+    " Highlighting colors customization.
+    autocmd GUIEnter * highlight Normal guibg=LightYellow
+    autocmd GUIEnter * highlight Statement gui=NONE
+    autocmd GUIEnter * highlight Type gui=NONE
+    autocmd GUIEnter * highlight Constant guifg=#CC0000
+    autocmd GUIEnter * highlight Special guifg=#A800A8
+    autocmd GUIEnter * highlight PreProc guifg=#A800A8
+    autocmd GUIEnter * highlight Underlined guifg=#A800A8
+    autocmd GUIEnter * highlight Conceal guifg=DarkGrey guibg=NONE
+endif
+
+
+" Plugin settings
+"""""""""""""""""
+
+" Enable unbundle plugin (to load plugins from ~/.vim/bundle/).
+runtime bundle/vim-unbundle/unbundle.vim
+
+
+" File type plugin and syntax highlighting
+""""""""""""""""""""""""""""""""""""""""""
+
+" Enable file type detection.
+filetype on
+
+" Enable loading the plugin files for specific file types.
+filetype plugin on
+
+" Enable loading the indent file for specific file types.
+filetype indent on
+
+" Enable syntax highlighting.
+syntax enable
+
+
+" Compiling and jumping to errors
+"""""""""""""""""""""""""""""""""
+
+" Set grep to always generate a file name.
+set grepprg=grep\ -nH\ $*
+
+
+" Vimwiki
+"""""""""
+
+let g:vimwiki_list = [{}, {'path': '~/new_wiki', 'path_html': '/tmp/html'}]
+
+
+" Mappings
+""""""""""
+
+" Help
+nmap <silent> <Leader>hq :h quickref<CR>
+
+" Spell check
+nmap <silent> <Leader>se :set spell spelllang=en<CR>
+nmap <silent> <Leader>sp :set spell spelllang=pt<CR>
+nmap <silent> <Leader>so :set nospell<CR>
+
+" Buffer switching
+nmap <silent> <Leader>\ :b#<CR>
+nmap <silent> <Leader>] :bn<CR>
+nmap <silent> <Leader>[ :bp<CR>
+nmap <silent> <Leader><BS> :bd<CR>
+
+" LaTeX
+nmap <silent> <Leader>ll :w<CR>:!latex -src-specials -output-directory=%:p:h %:p<CR>
+nmap <silent> <Leader>lL :w<CR>:!pdflatex -output-directory=%:p:h %:p<CR>
+nmap <silent> <Leader>lb :lcd %:p:h<CR>:!bibtex %:r<CR>
+nmap <silent> <Leader>ld :execute '!xdvi -sourceposition '. line(".") . expand("%:p:r") ' ' . expand("%:p:r")<CR><CR>
+nmap <silent> <Leader>lp :!xpdf %:p:r'.pdf' &<CR><CR>

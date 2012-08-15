@@ -1,0 +1,48 @@
+set nocompatible
+syntax enable
+set encoding=utf-8
+set number                      " line numbers
+nnoremap <F3> :set nonumber!<CR>" and toggle them with F3
+set showcmd                     " display incomplete commands
+filetype plugin indent on       " load file type plugins + indentation
+
+set t_Co=256
+let g:solarized_termcolors=256
+set background=light
+colorscheme solarized
+set guifont=Menlo:h16           " yes, I'm getting old
+
+"" Whitespace
+set nowrap                      " don't wrap lines
+set tabstop=2 shiftwidth=2      " a tab is two spaces
+set expandtab                   " use spaces, not tabs
+set backspace=indent,eol,start  " backspace through everything in insert mode
+
+"" Searching
+set hlsearch                    " highlight matches
+set incsearch                   " incremental searching
+set ignorecase                  " searches are case insensitive...
+set smartcase                   " ... unless they contain at least one capital letter
+
+"" No auto-commentation of lines
+autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+
+"" Bind paste mode toggle to key with feedback
+nnoremap <F2> :set invpaste paste?<CR>
+set pastetoggle=<F2>
+set showmode
+
+inoremap <expr> <C-Space> pumvisible() \|\| &omnifunc == '' ?
+\ "\<lt>C-n>" :
+\ "\<lt>C-x>\<lt>C-o><c-r>=pumvisible() ?" .
+\ "\"\\<lt>c-n>\\<lt>c-p>\\<lt>c-n>\" :" .
+\ "\" \\<lt>bs>\\<lt>C-n>\"\<CR>"
+imap <C-@> <C-Space>
+
+"" Python specific
+autocmd BufRead *.py set tabstop=4 shiftwidth=4
+autocmd BufRead *.py set smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
+
+"" Go specific
+au BufRead,BufNewFile *.go set filetype=go noexpandtab tabstop=8 shiftwidth=8
+

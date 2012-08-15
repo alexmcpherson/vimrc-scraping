@@ -1,0 +1,108 @@
+filetype on
+filetype off
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+
+set nocompatible
+filetype plugin indent on
+
+syntax on
+set t_Co=256
+colors xoria256
+
+set autoindent smartindent
+set list listchars=tab:\ \ ,trail:␣
+
+set ignorecase smartcase
+set incsearch nohlsearch
+set gdefault
+
+set ruler
+set visualbell
+
+set wildmenu
+set wildmode=list:longest
+set wildignore=.git,public/images,tmp,vendor,*.gif,*.jpeg,*.jpg,*.png
+
+set cursorline
+
+set hidden
+
+set tabstop=2 shiftwidth=2 softtabstop=2 expandtab
+
+set formatoptions=croqwanl
+set textwidth=80
+
+set autoread
+
+set backupdir=$HOME/.vimbackup,.
+set directory=$HOME/.vimswap,.
+
+if v:version > 702
+  set relativenumber
+  set undodir=$HOME/.vimundo,.
+  set undofile
+endif
+
+" autocommands
+
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+
+au InsertLeave * :silent! !~/bin/keyboard_leds -c0 > /dev/null
+au InsertEnter * :silent! !~/bin/keyboard_leds -c1 > /dev/null
+
+augroup php_settings
+  au!
+  au BufNew,BufRead *.{php,phtml} set tabstop=4 shiftwidth=4 softtabstop=4 noexpandtab
+augroup end
+
+" mapping stuff
+
+let mapleader = ","
+let maplocalleader = ","
+
+cmap w!! %!sudo tee > /dev/null %
+cnoremap %% <C-R>=expand('%:h').'/'<CR>
+
+imap dbg require "rubygems"; require "ruby-debug"; Debugger.start; debugger; 1
+
+map <Leader><Leader> <C-^>
+
+" tab mappings
+map <Leader>tn :tabnew<CR>
+map <Leader>tl :tabn<CR>
+map <Leader>th :tabp<CR>
+map <Leader>t1 :tabn 1<CR>
+map <Leader>t2 :tabn 2<CR>
+map <Leader>t3 :tabn 3<CR>
+map <Leader>t4 :tabn 4<CR>
+map <Leader>t5 :tabn 5<CR>
+map <Leader>t6 :tabn 6<CR>
+map <Leader>t7 :tabn 7<CR>
+map <Leader>t8 :tabn 8<CR>
+map <Leader>t9 :tabn 9<CR>
+map <Leader>t0 :tabl<CR>
+map <Leader>t^ :tabr<CR>
+map <Leader>t$ :tabl<CR>
+map <Leader>tc :tabc<CR>
+
+" fugitive
+map <Leader>gb :Gblame<CR>
+map <Leader>gc :Gcommit<CR>
+map <Leader>gd :Gdiff HEAD<CR>
+map <Leader>gs :Gstatus<CR>
+map <Leader>gw :Gwrite<CR>
+
+" miscellaneous
+map <Leader>n :NERDTreeToggle<CR><C-W>=
+map <Leader>o :CommandT<CR>
+map <Leader>u :GundoToggle<CR>
+
+" plugin settings
+
+let g:LustyJugglerSuppressRubyWarning = 1
+
+" Powerline
+set guifont=Menlo\ for\ Powerline
+set laststatus=2
+let g:Powerline_symbols = 'fancy'

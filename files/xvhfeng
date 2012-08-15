@@ -1,0 +1,201 @@
+set encoding=utf-8
+set termencoding=utf-8
+set fencs=ucs-bom,utf-8,gb18030,gbk,gb2312,big5,euc-jp,euc-kr,latin1,cp936
+set fenc=utf-8
+set langmenu=zh_CN.UTF-8
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
+
+"关闭与vi兼容
+:set nocompatible
+
+"设置退格键为删除键
+:set backspace=indent,eol,start
+
+"后行根据前一行缩进
+:set autoindent
+
+"开启行号显示
+:set number
+
+"开始显示敲入命令
+:set showcmd
+
+"设置移动命令在行首或者行尾时依然有效
+:set whichwrap=b,s,<,>,[,]
+
+"设置历史命令保存数
+:set history=100
+
+"当终端支持颜色显示时打开彩色显示
+if &t_Co > 1
+	syntax enable
+endif
+
+"背景变暗dark，亮设置为light
+:set background=dark
+
+"高亮显示
+if &t_Co > 2 || has("gui_running")
+	syntax on
+	set hlsearch
+endif
+
+if has("gui_running")
+	colo torte
+	set guioptions-=T
+else
+	"        colo ron
+endif
+
+"识别文件类型
+filetype plugin indent on
+
+"关闭智能补全预览窗口
+set completeopt=longest,menu
+
+"设置鼠标可以选择文本
+:set selectmode+=mouse
+
+"设置自动读取外面对于文件的变更
+:set autoread 
+
+"设置命令行高度为2
+set cmdheight=1
+
+"设置右下角当前行，列数
+set ruler
+
+set nobackup
+set nowb
+set noswapfile
+
+"设置自动补全
+":autocmd BufEnter * call DoWordComplete()
+
+"与windows共享剪贴板 
+set clipboard+=unnamed
+
+set foldmethod=marker
+
+"带有如下符号的单词不要被换行分割 
+set iskeyword+=_,$,@,%,#,- 
+
+"增强模式中的命令行自动完成操作 
+set wildmenu 
+
+"开启鼠标
+set mouse=a
+
+" 启动的时候不显示那个援助索马里儿童的提示 
+set shortmess=atI 
+
+" 不让vim发出讨厌的滴滴声 
+set noerrorbells 
+
+" 高亮显示匹配的括号 
+set showmatch 
+
+" 在搜索时，输入的词句的逐字符高亮（类似firefox的搜索） 
+set incsearch 
+
+"自动切换当前目录为当前文件所在目录
+set autochdir
+
+"在单词中间断行
+set linebreak
+
+set tabpagemax=9
+
+" 允许在有未保存的修改时切换缓冲区，此时的修改由 vim 负责保存
+set hidden 
+" 状态行颜色
+
+highlight StatusLine guifg=SlateBlue guibg=Yellow
+highlight StatusLineNC guifg=Gray guibg=White
+
+"切换到当前tab打开文件的路径下
+autocmd BufEnter * cd %:p:h
+
+"当前行下有横线显示
+:set cursorline
+
+"set the tab use 4 space
+set tabstop=4
+set cindent shiftwidth=4
+set autoindent shiftwidth=4
+
+"set the cursor color
+let &t_SI = "\<Esc>]12;Green\x7"
+
+"自动启用vimrc配置
+autocmd! bufwritepost .vimrc source ~/.vimrc
+
+set hlsearch
+set incsearch
+set ignorecase
+
+"如果帮助无法显示中文,增加这句试试:
+set helplang=cn
+
+" 用空格键来开关折叠 
+ nnoremap <space> @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR> 
+
+"设置搜索插件的快捷键为F2
+:nmap <C-g> :Grep<CR>
+
+"设置c语言的header和c文件转换快捷键为F3
+:nmap <C-x>i :A!<CR>
+
+"格式化c语言
+:map <C-o> <ESC>gg=G<CR>
+:imap <C-o> <ESC>gg=G<CR>"i
+:nmap <C-o> <ESC>gg=G<cr>
+
+"关闭当前buffer
+:map <C-x>c <ESC>:w<ESC>:bw!<CR>
+:imap <C-x>c <ESC>:w<ESC>:bw!<CR>
+:nmap <C-x>c <ESC>:w<ESC>:bw!<cr>
+
+"设置前后切换多buffer
+:imap <C-x>h <ESC>:w<ESC>:bn!<CR>
+:imap <C-x>l <ESC>:w<ESC>:bp!<CR>
+:nmap <C-x>h <ESC>:w<ESC>:bn!<CR>
+:nmap <C-x>l <ESC>:w<ESC>:bp!<CR>
+
+"set the commnet
+:imap <C-k> <ESC>\xi
+:nmap <C-k> <ESC>\x
+
+"fast shell
+:map <C-x>s <ESC>:shell<CR>
+":imap <C-x>s <ESC>:w<ESC>:shell<CR>
+
+"设置复制使用window粘贴板
+:nmap <C-w> "+p<CR>
+:vmap <C-y> "+y<CR>
+
+"tab 缩进
+:nmap <tab>  V>
+:nmap <s-tab> V<
+:vmap <tab> >gv
+:vmap <s-tab> <gv
+
+"emacs style
+:set winaltkeys=no
+:imap <C-e> <END>
+:imap <C-a> <HOME>
+:imap <C-b> <Left>
+:imap <C-n> <Down>
+:imap <C-p> <Up>
+:imap <C-f> <Right>
+:imap <C-v> <PageDown>
+:imap <C-u> <PageUp>
+:imap <C-d> <Delete>
+:imap <C-s> <ESC>:w<ESC>i
+:imap <C-r> <BackSpace>
+:map <C-t> :Calendar<cr>
+:imap <C-t> <ESC>:Calendar<cr>
+
+"导入系统函数tags
+"set tags+=~/.vim/systags

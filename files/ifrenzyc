@@ -1,0 +1,566 @@
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"
+"          ifrenzyc's vimrc file
+"
+"     Maintained: ifrenzyc <ifrenzyc@gmail.com>
+"        Website: http://ifrenzyc.iteye.com
+"          Since: 2012/02/01
+"  Last Modified: 2012/06/14 23:28:49
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set nocompatible
+
+" IMPORTANT: Plugins manager, auto load all plugins in .vim/bundle or vimfiles/bundle
+" pathogen - http://www.vim.org/scripts/script.php?script_id=2332
+call pathogen#infect()
+
+" Enable detection, plugins and indenting
+filetype plugin indent on
+
+" Change the mapleader from '\' to ','
+let mapleader=','
+let g:mapleader=','
+
+" @see https://github.com/hotoo/vimrc
+if has("win32") || has("win32unix")
+	let g:OS#name="win"
+	let g:OS#win=1
+	let g:OS#mac=0
+	let g:OS#unix=0
+elseif has("mac")
+	let g:OS#name="mac"
+	let g:OS#mac=1
+	let g:OS#win=0
+	let g:OS#unix=0
+elseif has("unix")
+	let g:OS#name="unix"
+	let g:OS#unix=1
+	let g:OS#win=0
+	let g:OS#mac=0
+endif
+
+if has("gui_running")
+	let g:OS#gui=1
+else
+	let g:OS#gui=0
+endif
+
+" Make it easy to update and reload _vimrc/.vimrc file
+if g:OS#win
+	" Fast editing of _vimrc
+	nmap <leader>v :e $VIM/_vimrc<cr>
+
+	" When _vimrc is edited, reload it
+	autocmd! bufwritepost _vimrc source $VIM/_vimrc
+elseif g:OS#unix || g:OS#mac
+	nmap <leader>v :e ~/.vimrc<cr>
+	autocmd! bufwritepost .vimrc source ~/.vimrc
+endif
+
+
+"---------------------------------------------------------------------------
+"=> General
+"---------------------------------------------------------------------------
+set history=100
+
+" Use mouse in all modes
+set mouse=a
+set mousehide  "hide mouse when typing
+
+" Set to auto read when a file is changed from the outside
+set autoread
+
+
+"---------------------------------------------------------------------------
+"=> Vim user interface
+"---------------------------------------------------------------------------
+" Quick startup mode
+set shortmess=atI
+
+" Show line numbers
+set number
+
+set cc=120
+hi colorcolumn guibg=red
+set shellslash
+
+" Highlight cursor line
+"set cursorline
+
+" Don't redraw while executing macros
+set nolazyredraw
+
+" Disable sound on errors
+set noerrorbells
+set novisualbell
+set t_vb=".
+set tm=500
+
+set ambiwidth=double
+
+autocmd BufEnter * let &titlestring=expand("%:t")
+
+
+"---------------------------------------------------------------------------
+"=> Text, tab and indent
+"---------------------------------------------------------------------------
+" Indent {{{
+set autoindent  "indent at the same level of the previous line
+set smartindent
+" }}}
+
+" TAB setting {{{
+set smarttab
+set softtabstop=4
+set tabstop=4      "show tab indent word space
+set shiftwidth=4   "tab length
+set noexpandtab    "do not replace tab to whitespace
+" }}}
+
+" C/C++ specific settings
+autocmd FileType c,cpp set cindent
+
+
+"---------------------------------------------------------------------------
+"=> Colors and Fonts
+"---------------------------------------------------------------------------
+syntax enable
+
+" GUI {{{
+if OS#gui
+	" Using vim warning style in gvim
+	" @see http://stackoverflow.com/questions/4193654/using-vim-warning-style-in-gvim
+	set guioptions+=c
+
+	set guioptions-=m
+	set guioptions-=T
+	set guioptions-=l
+	set guioptions-=L
+	set guioptions-=r
+	set guioptions-=R
+	set guioptions-=b
+
+	set t_Co=256
+	set background=dark
+	colo github
+
+	" Maximized GVIM in Windows
+	" @see http://vimdoc.sourceforge.net/htmldoc/gui_w32.html
+	if g:OS#win
+		au GUIEnter * simalt ~x
+	endif
+
+	" <M-Space> is System menu, only work in GUI
+	" @see http://nootn.com/blog/Tool/21/
+	nmap <M-Space> :simalt ~<cr>
+	imap <M-Space> <Esc>:simalt ~<cr>
+	cmap <M-Space> <Esc>:simalt ~<cr>
+else
+	set background=light
+	colo ir_black
+endif
+" }}}
+
+" Font
+if g:OS#gui
+	if g:OS#win
+		set gfn=Consolas:h10:cANSI
+		set guifontwide=YaHei_Consolas_Hybrid:h9
+	elseif g:OS#unix || g:OS#mac
+		set gfn=Monaco:h12
+	endif
+endif
+
+
+"---------------------------------------------------------------------------
+"=> Encodings
+"---------------------------------------------------------------------------
+" Encoding
+set encoding=utf-8
+set termencoding=utf-8
+set fileencoding=utf-8
+set fileencodings=usc-bom,utf-8,gb18030,gbk,gb2312,cp936,big5,euc-jp,euc-kr,latin1
+set langmenu=zh_CN.utf-8
+language messages zh_CN.utf-8
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
+
+" 文件格式
+set fileformat=unix
+set fileformats=unix,dos,mac
+if g:OS#win
+	set fileencoding=cp936
+	set fileformat=dos
+elseif g:OS#unix || g:OS#mac
+	set fileformat=unix
+endif
+
+
+"---------------------------------------------------------------------------
+"=> Files, backups and undo
+"---------------------------------------------------------------------------
+" Disabling swap files creation
+set noswapfile
+
+" No backup files
+set nobackup
+set nowb
+
+
+"---------------------------------------------------------------------------
+"=> Statusline
+"---------------------------------------------------------------------------
+" Statusline {{{
+set laststatus=2
+
+set statusline=
+set statusline+=\ %<%f
+set statusline+=%w%m%r%h
+set statusline+=\ \ [%{strlen(&ft)?&ft:'none'}/%{&fileformat}][%{(&fenc==\"\"?&enc:&fenc).(&bomb?\",BOM\":\"\")}]
+set statusline+=\ \ [%b:0x%B]
+set statusline+=%=
+set statusline+=[%l/%L,%c][%p%%]
+" }}}
+
+" Make the splitters between windows be blank
+set fillchars=vert:\ ,stl:\ ,stlnc:\
+
+
+"---------------------------------------------------------------------------
+"=> Moving around, tabs and buffer
+"---------------------------------------------------------------------------
+set backspace=indent,eol,start
+set whichwrap+=b,s,<,>,[,]
+
+set wrap
+
+set linebreak  "break full word
+set showbreak=>>
+
+set showmatch          "display matching bracets when text indicator is over them
+
+set matchtime=1        "how many tenths of a second to blink
+set matchpairs+=<:>    "show matching <> (html mainly) as well
+
+set hidden
+
+
+"---------------------------------------------------------------------------
+"=> Search and substitute
+"---------------------------------------------------------------------------
+" Search option {{{
+set hlsearch                "show search matches highlighted
+set incsearch               "show search matches while typing
+set ignorecase smartcase    "ignore case when search, except when capital letters used
+set magic                   "for regular expressions
+set nowrapscan              "do not wrap around file when looking for a string
+
+" Set invhlsearch
+map <leader>hl :set invhlsearch<cr>
+
+" Searching forward/backward the selected string
+" @see https://bitbucket.org/gaowhen/vim/src/67c443f1718e/vimrc
+vmap <leader>f y/<C-r>=escape(@", '\\/.*$^~[]')<cr><cr>
+vmap <leader>F y?<C-r>=escape(@", '\\/.*$^~[]')<cr><cr>
+" }}}
+
+
+"---------------------------------------------------------------------------
+"=> Command line
+"---------------------------------------------------------------------------
+set cmdheight=1
+
+set wildmenu  "autocompletion with tabbed search on command line
+set wildmode=longest:full,full
+set wildignore=*.swp,*.bak,*.pyc,*.class,*.svn,*.exe
+set guicursor=a:blinkon0 " remove blinking cursor
+
+" Bash like keys for the command line
+cnoremap <C-a>      <Home>
+cnoremap <C-e>      <End>
+cnoremap <C-k>      <C-u>
+
+if has('cmdline_info')
+	set ruler                  	" show the ruler
+	set rulerformat=%30(%=\:b%n%y%m%r%w\ %l,%c%V\ %P%) " a ruler on steroids
+	set showcmd                	" show partial commands in status line and
+endif
+
+
+"---------------------------------------------------------------------------
+"=> Plugins
+"---------------------------------------------------------------------------
+" a.vim {{{
+"  http://www.vim.org/scripts/script.php?script_id=31
+" }}}
+
+" auto_mkdir {{{
+" http://www.vim.org/scripts/script.php?script_id=3352
+" }}}
+
+" EasyMotion {{{
+" http://www.vim.org/scripts/script.php?script_id=3526
+" }}}
+
+" NERDTree {{{
+" http://www.vim.org/scripts/script.php?script_id=1658
+let NERDTreeIgnore=['\.pyc$','\.svn$','\.tmp$','\.bak','\~$','\.swp$','\Thumbs\.db','\.exe$','\.dsw$','\.dsp$','\.sdf$','\.sln$','\.suo$','\.vcxproj$','\.vcxproj.filters$','\.vcxproj.user$','^tags$','^cscope.files$','^cscope.out$','\.opt$','\.plg$','\.ncb$','\.positions$','^.viminfo$','^.session.vim$','^.Trash$','^.dropbox$','^.bash_history']
+let NERDChristmasTree=0
+let NERDTreeHighlightCursorline=1
+let NERDTreeMouseMode=1
+let NERDTreeShowBookmarks=1
+let NERDTreeShowFiles=1
+let NERDTreeShowHidden=1
+let NERDTreeShowLineNumbers=0
+let NERDTreeWinPos='left'
+let NERDTreeWinSize=35
+
+" Close vim if the only window left open is a NERDTree
+autocmd bufenter * if (winnr("$") == 0 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+
+" Open a NERDTree automatically when vim starts up
+" autocmd vimenter * NERDTree
+
+nmap <silent> <leader>nt :NERDTreeToggle<cr>
+" }}}
+
+" bufExplorer {{{
+" http://www.vim.org/scripts/script.php?script_id=42
+let g:bufExplorerSortBy='mru'
+let g:bufExplorerSplitOutPathName=1
+let g:bufExplorerSplitBelow=1
+let g:bufExplorerSplitVertical=1
+let g:bufExplorerSplitVertSize=30
+let g:bufExplorerUseCurrentWindow=1
+
+autocmd BufWinEnter \[Buf\ List\] setl nonu
+" }}}
+
+" The NERD Commenter {{{
+" http://www.vim.org/scripts/script.php?script_id=1218
+" }}}
+
+" taglist {{{
+" http://www.vim.org/scripts/script.php?script_id=273
+"let Tlist_Ctags_Cmd='ctags'
+"let Tlist_Exist_OnlyWindow=1
+
+"set tags+=tags
+"let Tlist_Show_One_File=1
+"let Tlist_File_Fold_Auto_Close=0
+"let Tlist_Exit_OnlyWindow=1
+"let Tlist_Use_Right_Window=1
+"let Tlist_Show_Menu=1
+"let Tlist_WinWidth=40
+"let Tlist_Sort_Type="name"
+
+"nmap <silent> <leader>tl :TlistToggle<cr>
+" }}}
+
+" Tagbar {{{
+let g:tagbar_ctags_bin='ctags'
+let g:tagbar_width=35
+let g:tagbar_autofocus=1               "move the cursor to Tagbar window when it is opened
+let g:tagbar_iconchars=['+', '-']      "use Windows icons
+" }}}
+
+" ZenCoding {{{
+" http://www.vim.org/scripts/script.php?script_id=2981
+let g:use_zen_complete_tag=1
+let g:user_zen_expandabbr_key='<C-e>'
+" }}}
+
+" scratch {{{
+" http://www.vim.org/scripts/script.php?script_id=664
+" }}}
+
+" SuperTab {{{
+" http://www.vim.org/scripts/script.php?script_id=182
+" }}}
+
+" Markdown {{{
+" http://www.vim.org/scripts/script.php?script_id=2882
+" }}}
+
+" vimwiki {{{
+" http://www.vim.org/scripts/script.php?script_id=2226
+if g:OS#unix || g:OS#mac
+	let g:vimwiki_list=[{
+				\ 'path' : '~/Dropbox/vimwiki/',
+				\ 'path_html' : '~/Dropbox/vimwiki/_pub/',
+				\ 'template_path' : '~/Dropbox/vimwiki/templates/defalut/',
+				\ 'template_default' : 'tpl',
+				\ 'template_ext' : '.html'}]
+elseif g:OS#win
+	let g:vimwiki_list=[{
+				\ 'path' : 'D:/Dropbox/vimwiki/',
+				\ 'path_html' : 'D:/Dropbox/vimwiki/_pub/',
+				\ 'template_path' : 'D:/Dropbox/vimwiki/templates/defalut/',
+				\ 'template_default' : 'tpl',
+				\ 'template_ext' : '.html'}]
+endif
+let g:vimwiki_camel_case=0         "不使用驼峰英文做Wiki词条
+let g:vimwiki_menu=''              "不需要vimwiki菜单项
+let g:vimwiki_hl_cb_checked=1      "标记为完成的Checklist条目有特别的颜色
+let g:vimwiki_CJK_length=1         "计算字串长度时用考虑中文字符
+
+" @see http://stackoverflow.com/questions/158968/changing-vim-indentation-behavior-by-file-type
+au FileType vimwiki setl et sw=2 ts=2 sts=2 fileencoding=utf-8
+" }}}
+
+"---------------------------------------------------------------------------
+"=> Key mappings
+"---------------------------------------------------------------------------
+" Fast saving
+" @see http://amix.dk/vim/vimrc.html
+nmap <leader>w :w!<cr>
+nmap <leader>q :close<cr>
+
+" @see http://www.commandlinefu.com/commands/view/1204/save-a-file-you-edited-in-vim-without-the-needed-permissions
+if g:OS#unix
+	cmap w!! %!sudo tee > /dev/null %
+endif
+
+noremap <C-j> <C-w>j
+noremap <C-k> <C-w>k
+noremap <C-h> <C-w>h
+noremap <C-l> <C-w>l
+
+nmap <leader>bd :bd<cr>
+nmap <leader>ba :1,300 bd!<cr>
+
+" Make Ctrl+Backspace delete previous word in Insert Mode and command-line mode
+imap <C-BS> <C-w>
+cmap <C-BS> <C-w>
+
+vmap <C-x> "+x
+vmap <C-c> "+y
+
+map <F2> :call RemoveTrailingWhitespace()<cr>
+fu! RemoveTrailingWhitespace()
+	if &ft != "diff"
+		let b:curcol=col(".")
+		let b:curline=line(".")
+		silent! %s/\s\+$//
+		silent! %s/\s*$//g<cr>:noh<cr>''
+		silent! %s/\r\(\n\)/\1/g
+		silent! %s/\(\s*\n\)\+\%$//
+		call cursor(b:curline, b:curcol)
+	endif
+endfu
+
+nmap <leader>cd :call Cwd()<cr>
+fu! Cwd()
+	let _dir=expand("%:p:h")
+	exec "cd " . _dir
+	unlet _dir
+endfu
+
+"Restore cursor to file position in previous editing session
+set viminfo='10,\"100,:20,%,n~/.viminfo
+au BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
+set sessionoptions=buffers,sesdir,help,tabpages,winsize
+au VimLeave * mks! ~/.session.vim
+" nmap <F5> :so ~/.session.vim<cr>
+
+" @see http://vim.wikia.com/wiki/Find_in_files_within_Vim
+command! GREP :execute 'vimgrep /' . expand('<cword>') . '/gj **/*.{cpp,c,h,umk,ini,xml,java}' | copen
+" command! GREP :execute 'vimgrep /'.expand('<cword>').'/gj '.expand('%') | copen
+
+" Emacs like cursor move
+imap <C-f> <Right>
+imap <C-b> <Left>
+
+" 插入模式按 F4 插入当前时间
+imap <f4> <C-r>=GetTimeStamp()<cr>
+" 返回当前时期
+fu! GetTimeStamp()
+	return strftime('20%y/%m/%d %H:%M:%S')
+endfu
+
+" map <leader>cw :cw<cr>
+" map <leader>cn :cn<cr>
+" map <leader>cp :cp<cr>
+
+" nmap <F9> :call CopyFile()<cr>
+"fu! CopyFile()
+	"exec '!python D:/work/python/filecopy.py' | execute ':silent !'
+"endfu
+
+
+"---------------------------------------------------------------------------
+"=> Ctags & Cscope
+"---------------------------------------------------------------------------
+fu! GenTags()
+	let _dir = getcwd()
+	if filereadable("tags")
+		if g:OS#win
+			let _tagsDeleted=delete(_dir."\\"."tags")
+		else
+			let _tagsDeleted=delete("./"."tags")
+		endif
+
+		if (_tagsDeleted!=0)
+			echohl WarningMsg | echo "Fail to do tags!" | echohl None
+			return
+		endif
+	endif
+
+	if has("cscope")
+		silent! execute "cs kill -1"
+	endif
+	if filereadable("cscope.files")
+		if g:OS#win
+			let _csFilesDeleted=delete(_dir."\\"."cscope.files")
+		else
+			let _csFilesDeleted=delete("./"."cscope.files")
+		endif
+		if (_csFilesDeleted!=0)
+			echohl WarningMsg | echo "Fail to do cscope.files!" | echohl None
+			return
+		endif
+	endif
+	if filereadable("cscope.out")
+		if g:OS#win
+			let _csOutDeleted=delete(_dir."\\"."cscope.out")
+		else
+			let _csOutDeleted=delete("./"."cscope.out")
+		endif
+		if (_csOutDeleted!=0)
+			echohl WarningMsg | echo "Fail to do cscope.out!" | echohl None
+			return
+		endif
+	endif
+
+	if (executable('ctags'))
+		silent! execute "!ctags -R --c++-kinds=+p --fields=+ialS --extra=+q ."
+	endif
+
+	if (executable('cscope') && has("cscope"))
+		if g:OS#unix
+			silent! execute "!find . -name '*.h' -o -name '*.c' -o -name '*.cpp' -o -name '*.java' > cscope.files"
+		elseif g:OS#win
+			silent! execute "!dir /s/b *.c,*.cpp,*.h,*.java >> cscope.files"
+		endif
+		silent! execute "!cscope -b"
+		execute "normal :"
+		if filereadable("cscope.out")
+			execute "cs add cscope.out"
+		endif
+	endif
+endfu
+nmap <F12> :call GenTags()<cr>
+
+if has("cscope")
+	set cscopequickfix=s-,c-,d-,i-,t-,e-
+	set csto=0
+	set cst csverb
+endif
+
+nmap <C-_>s :cs find s <C-r>=expand("<cword>")<cr><cr>
+nmap <C-_>g :cs find g <C-r>=expand("<cword>")<cr><cr>
+nmap <C-_>c :cs find c <C-r>=expand("<cword>")<cr><cr>
+nmap <C-_>t :cs find t <C-r>=expand("<cword>")<cr><cr>
+nmap <C-_>e :cs find e <C-r>=expand("<cword>")<cr><cr>
+nmap <C-_>f :cs find f <C-r>=expand("<cfile>")<cr><cr>
+nmap <C-_>i :cs find i ^<C-r>=expand("<cfile>")<cr>$<cr>
+nmap <C-_>d :cs find d <C-r>=expand("<cword>")<cr><cr>

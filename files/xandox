@@ -1,0 +1,409 @@
+set nocompatible
+
+" Configure vundle
+filetype off
+let bundledir='$HOME/.vimbundle/'
+set rtp+=$HOME/.vimbundle/vundle
+call vundle#rc(bundledir)
+
+Bundle 'gmarik/vundle'
+Bundle 'git://github.com/kien/ctrlp.vim.git'
+Bundle 'git://github.com/altercation/vim-colors-solarized.git'
+Bundle 'git://github.com/scrooloose/nerdtree.git'
+Bundle 'git://github.com/ervandew/supertab.git'
+Bundle 'git://github.com/tpope/vim-fugitive.git'
+Bundle 'git://github.com/tpope/vim-surround.git'
+Bundle 'git://github.com/bkad/CamelCaseMotion.git'
+Bundle 'OmniCppComplete'
+"Bundle 'git://github.com/wincent/Command-T.git'
+"Bundle 'git://github.com/vim-scripts/taglist.vim.git'
+" depends: http://ctags.sourceforge.net/
+"Bundle 'git://github.com/int3/vim-taglist-plus.git'
+Bundle 'git://github.com/vim-scripts/IndexedSearch.git'
+"Bundle 'git://github.com/rphillips/vim-zoomwin.git'
+"Bundle 'git://github.com/mattn/zencoding-vim.git'
+Bundle 'git://github.com/vim-scripts/UltiSnips.git'
+"Bundle 'git://github.com/msanders/snipmate.vim.git'
+"Bundle 'git://github.com/miripiruni/vimi-snippets.git'
+Bundle 'git://github.com/mileszs/ack.vim.git'
+Bundle 'git://github.com/scrooloose/nerdcommenter.git'
+"Bundle 'git://github.com/tpope/vim-surround.git'
+"Bundle 'git://github.com/tpope/vim-fugitive.git'
+"Bundle 'git://github.com/tsaleh/vim-align.git'
+"Bundle 'git://github.com/vim-scripts/bufexplorer.zip.git'
+"Bundle 'git://github.com/vim-scripts/delimitMate.vim.git'
+"Bundle 'git://github.com/sjl/gundo.vim.git'
+"Bundle 'git://github.com/edsono/vim-matchit.git'
+Bundle 'git://github.com/sjl/splice.vim.git'
+"Bundle 'git://github.com/chrismetcalf/vim-yankring.git'
+"Bundle 'git://github.com/slack/vim-fuzzyfinder.git'
+Bundle 'git://github.com/vim-scripts/vimwiki.git'
+Bundle 'git://github.com/scrooloose/syntastic.git'
+" Lua
+"Bundle 'git://github.com/vim-scripts/lua.vim.git'
+"Bundle 'git://github.com/rkowal/Lua-Omni-Vim-Completion.git'
+"Bundle 'git://github.com/xolox/vim-lua-ftplugin.git'
+"Bundle 'git://github.com/xolox/vim-lua-inspect.git'
+" HTML/HAML
+Bundle 'git://github.com/othree/html5.vim.git'
+Bundle 'git://github.com/hokaccha/vim-html5validator.git'
+"Bundle 'git://github.com/tyru/operator-html-escape.vim.git'
+" Bundle 'git://github.com/tpope/vim-haml.git'
+Bundle 'git://github.com/gregsexton/MatchTag.git'
+" CSS/LESS
+Bundle 'git://github.com/hail2u/vim-css3-syntax.git'
+Bundle 'git://github.com/ap/vim-css-color.git'
+" Bundle 'git://github.com/groenewege/vim-less.git'
+Bundle 'git://github.com/miripiruni/vim-better-css-indent.git'
+Bundle 'git://github.com/miripiruni/CSScomb-for-Vim.git'
+" JavaScript
+Bundle 'git://github.com/pangloss/vim-javascript.git'
+Bundle 'git://github.com/itspriddle/vim-jquery.git'
+Bundle 'git://github.com/kchmck/vim-coffee-script.git'
+" JSON
+Bundle 'git://github.com/leshill/vim-json.git'
+" PHP
+" Bundle 'git://github.com/vim-scripts/php.vim--Garvin.git'
+" Bundle 'git://github.com/2072/PHP-Indenting-for-VIm.git'
+" Python/Django
+Bundle 'git://github.com/fs111/pydoc.vim.git'
+Bundle 'git://github.com/klen/python-mode.git'
+" Perl
+Bundle 'git://github.com/petdance/vim-perl.git'
+" Erlang
+Bundle 'git://github.com/jimenezrick/vimerl.git'
+" Ruby/Rails
+"Bundle 'git://github.com/vim-ruby/vim-ruby.git'
+"Bundle 'git://github.com/tpope/vim-rails.git'
+"Bundle 'git://github.com/tpope/vim-endwise.git'
+" Jade
+" Bundle 'git://github.com/digitaltoad/vim-jade.git'
+" Stylus
+" Bundle 'git://github.com/wavded/vim-stylus.git'
+
+
+" End configure vundle
+filetype plugin indent on
+
+" Personal settings
+
+syntax on
+
+inoremap <Left> <NOP>
+inoremap <Right> <NOP>
+inoremap <Up> <NOP>
+inoremap <Down> <NOP>
+noremap <Left> <NOP>
+noremap <Right> <NOP>
+noremap <Up> <NOP>
+noremap <Down> <NOP>
+
+"set nonumber " Не показваем номера строк
+set number
+
+set encoding=utf-8
+set fileencodings=utf-8,windows-1251
+
+set wildmode=list:longest,full
+set wildmenu
+
+set wildignore+=.hg,.git,.svn
+set wildignore+=*.pyc
+
+set showcmd
+
+set scrolloff=999
+set showtabline=1
+
+set list " Показваем не печатные символы
+set wrap " Включем переносы строк
+
+" Подсветка 80 столбца
+"if version >= 703
+"   set colorcolumn=80
+"end
+
+set formatoptions-=o " не добавляем коментарии после o/O
+set linebreak " Перенос не разрывая слов
+
+set autoindent
+set smartindent
+
+set expandtab
+set shiftwidth=4
+set tabstop=4
+set softtabstop=4
+
+set linespace=1
+
+set cursorline
+
+set guioptions=
+
+set t_Co=256
+
+set guicursor=
+
+set splitbelow
+set splitright
+
+set shortmess+=I
+
+set mouseshape=s:udsizing,m:no
+set mousehide
+
+set hidden
+
+set visualbell
+set t_vb=
+
+if has('multi_byte')
+    if version >= 700
+        set listchars=tab:▸\ ,trail:·,extends:❯,precedes:❮,nbsp:×
+    else
+        set listchars=tab:»\ ,trail:·,extends:>,precedes:<,nbsp:_
+    endif
+endif
+
+if has('linebreak')
+    let &sbr = nr2char(8618).' '
+endif
+
+function! FileSize()
+    let bytes = getfsize(expand("%:p"))
+    if bytes <= 0
+        return ""
+    endif
+    if bytes < 1024
+        return bytes . "B"
+    else
+        return (bytes / 1024) . "K"
+    endif
+endfunction
+
+function! CurDir()
+    return expand('%:p:~')
+endfunction
+
+function! IsPaste()
+    if &paste
+        return " [paste]"
+    else
+        return ""
+    endif
+endfunction
+
+" Status line
+set laststatus=2
+set statusline=
+set statusline+=\ %n:
+set statusline+=%t
+set statusline+=%m
+set statusline+=%{IsPaste()}
+set statusline+=\ %{&fileencoding}
+set statusline+=\ %Y
+set statusline+=\ %3.3(%c%)
+set statusline+=\ \ %3.9(%l/%L%)
+set statusline+=\ \ %{FileSize()}
+set statusline+=%<
+set statusline+=\ \ CurDir:%{CurDir()}
+set statusline+=\ \%{fugitive#statusline()}
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+if version >= 700
+    set spell spelllang=en
+    set nospell " No spell check by default
+endif
+
+set incsearch
+set hlsearch
+set ignorecase
+set smartcase
+
+" Убираем всавку средней кнопкой мыши
+map <MiddleMouse> <Nop>
+imap <MiddleMouse> <Nop>
+
+" Environment
+set history=1000
+
+" Save file with root permissions
+command! W exec 'w !sudo tee % > /dev/null' | e!
+
+set backspace=indent,eol,start
+
+set backupdir=~/.vimi/bac//,/tmp
+set directory=~/.vimi/swp//,/tmp
+
+" Загрузка предыдущей сессии
+set viminfo='10,\"100,:20,%,n~/.viminfo
+" Устанавливаем курсор в файле на место, где он был при закрытии этого файла
+
+function! SetCurrsorToOnClosePos()
+    if line("'\"") > 0
+        if line("'\"") <= line("$")
+            exec("norm '\"")
+        else
+            exec("norm $")
+        endif
+    endif
+endfunction
+
+
+au BufReadPost * call SetCurrsorToOnClosePos()
+au BufWritePre * :%s/\s\+$//e
+
+autocmd! bufwritepost .vimrc source $MYVIMRC
+autocmd! bufwritepost vimrc source $MYVIMRC
+
+:nnoremap <Leader>s :%s/\<<C-r><C-w>\>//g<Left><Left>
+
+
+
+" Solarized
+syntax enable
+let g:solarized_termcolors=256
+set background=dark
+try
+    colorscheme solarized
+catch /^Vim\%((\a\+)\)\=:E185/
+    echo "Solarized theme not found. Run :BundleInstall"
+endtry
+
+try
+    call togglebg#map("<Leader>b")
+catch /^Vim\%((\a\+)\)\=:E117/
+    " :(
+endtry
+
+" NERDTree
+nmap <Bs> :NERDTreeToggle<CR>
+let NERDTreeShowBookmarks=1
+let NERDTreeChDirMode=2
+let NERDTreeQuitOnOpen=1
+let NERDTreeShowHidden=1
+let NERDTreeKeepTreeInNewTab=0
+let NERDTreeMinimalUI=1 " Disables display of the 'Bookmarks' label and 'Press ? for help' text.
+let NERDTreeDirArrows=1 " Tells the NERD tree to use arrows instead of + ~ chars when displaying directories.
+let NERDTreeBookmarksFile= $HOME . '/.NERDTreeBookmarks'
+
+map <Leader>p :NERDTreeToggle<CR>
+
+" UltiSnips
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+
+" VimWiki
+let g:vimwiki_list = [{'path': '~/vimwiki/'}]
+
+" Syntastic
+let g:syntatic_enable_signs=1
+
+" erlvim
+let g:erlang_show_errors=1
+
+" erlang settings
+autocmd BufNewFile,BufRead *.erl,*.hrl set ts=4 sw=4 sts=4 noet
+
+"Ack
+let g:ackprg="ack-grep -H --nocolor --nogroup --column --ignore-dir=.eunit"
+
+" CtrolP
+set wildignore+=*/.eunit/*;*.beam
+
+
+" Syntastic
+" CPP
+let g:syntastic_cpp_auto_refresh_includes = 1
+"let g:syntastic_cpp_remove_include_errors = 0
+let g:syntastic_cpp_compiler_options = ' -std=c++0x -Wall'
+let g:syntastic_cpp_include_dirs = []
+
+function! UniqueAppendToList(list, value)
+    if index(a:list, a:value) < 0
+        return a:list+[a:value]
+    endif
+    return a:list
+endfunction
+
+function! AddCppIncludeDir(IncludeDir)
+    let g:syntastic_cpp_include_dirs = UniqueAppendToList(g:syntastic_cpp_include_dirs, a:IncludeDir)
+endfunction
+
+
+function! FindProjectRoot(curDir)
+    if isdirectory(a:curDir . "/.git")
+        return a:curDir
+    else
+        let parentDir = glob("`dirname " . a:curDir . "`")
+        if parentDir == "/"
+            return "not_found"
+        else
+            return FindProjectRoot(parentDir)
+        endif
+    endif
+endfunction
+
+function! RefreshProjectIncludes()
+    let cur_dir = expand("%:p:h")
+    let project_root = FindProjectRoot(cur_dir)
+    if project_root == "not_found"
+        return
+    endif
+    let includes = split(globpath(project_root, "**/include"))
+    for include_dir in includes
+        call AddCppIncludeDir(include_dir)
+    endfor
+endfunction
+
+function! UpdateProjectCtags()
+    let cur_dir = expand("%:p:h")
+    let project_root = FindProjectRoot(cur_dir)
+    if project_root == "not_found"
+        return
+    endif
+    let cmd="ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q ".project_root."tags"." ".project_root
+    call system(cmd)
+    let new_tag_file = project_root."tags"
+    call UpdateTagsOption([new_tag_file])
+endfunction
+
+function! UpdateTagsOption(new_tags)
+    let old_tags_value = &tags
+    let tags_list = []
+    let tags_list = split(old_tags_value, ",")
+    unlet old_tags_value
+    for new_tag in a:new_tags
+        let tags_list = UniqueAppendToList(tags_list, new_tag)
+    endfor
+    let new_tags_value = join(tags_list, ",")
+    let &tags=new_tags_value
+    unlet new_tags_value
+    unlet tags_list
+endfunction
+
+autocmd BufNewFile,BufRead,BufEnter *.cpp call RefreshProjectIncludes()
+autocmd BufNewFile,BufRead,BufEnter,BufWrite *.cpp,*.hpp call UpdateProjectCtags()
+autocmd BufNewFile,BufRead,BufEnter *.cpp,*.hpp set omnifunc=omni#cpp#complete#Main
+
+
+"OmniCppCompletion
+
+let tag_files=split(system("find ~/.vim/tags/ -type f"), "\n", 0)
+call UpdateTagsOption(filter(tag_files, 'v:val !~ ".git"'))
+
+map <C-F12> :call UpdateProjectCtags()<CR>
+let OmniCpp_NamespaceSearch = 1
+let OmniCpp_GlobalScopeSearch = 1
+let OmniCpp_ShowAccess = 1
+let OmniCpp_ShowPrototypeInAbbr = 1 " show function parameters
+let OmniCpp_MayCompleteDot = 1 " autocomplete after .
+let OmniCpp_MayCompleteArrow = 1 " autocomplete after ->
+let OmniCpp_MayCompleteScope = 1 " autocomplete after ::
+let OmniCpp_DefaultNamespaces = ["std", "_GLIBCXX_STD"]
+" automatically open and close the popup menu / preview window
+au CursorMovedI,InsertLeave * if pumvisible() == 0|silent! pclose|endif
+set completeopt=menuone,menu,longest,preview

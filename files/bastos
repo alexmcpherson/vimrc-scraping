@@ -1,0 +1,127 @@
+"Vundle
+set nocompatible               " be iMproved
+filetype off                   " required!
+syntax on
+
+set rtp+=~/.vim/bundle/vundle/
+" Plugins " {{{
+call vundle#rc()
+
+" let Vundle manage Vundle
+" required!
+Bundle 'gmarik/vundle'
+
+"Vundles
+Bundle "Markdown"
+Bundle "https://github.com/vim-ruby/vim-ruby.git"
+Bundle "Command-T"
+let g:CommandTMatchWindowAtTop=1 " show window at top
+Bundle "jQuery"
+Bundle "rails.vim"
+Bundle "fugitive.vim"
+Bundle "tComment"
+nnoremap // :TComment<CR>
+vnoremap // :TComment<CR>
+Bundle "ack.vim"
+noremap <LocalLeader># "ayiw:Ack <C-r>a<CR>
+vnoremap <LocalLeader># "ay:Ack <C-r>a<CR>
+Bundle "SuperTab"
+Bundle 'unimpaired.vim'
+Bundle 'Solarized'
+" " }}}
+
+"store lots of :cmdline history
+set backupdir=~/.vim/backup
+set directory=~/.vim/backup
+
+set history=1000
+
+set showcmd     "show incomplete cmds down the bottom
+set showmode    "show current mode down the bottom
+
+set incsearch   "find the next match as we type the search
+set hlsearch    "hilight searches by default
+
+" make uses real tabs
+au FileType make set noexpandtab
+
+"Ruby
+au BufRead,BufNewFile {Gemfile,Rakefile,Vagrantfile,Thorfile,config.ru}    set ft=ruby
+
+" md, markdown, and mk are markdown and define buffer-local preview
+au BufRead,BufNewFile *.{md,markdown,mdown,mkd,mkdn} call s:setupMarkup()
+
+" add json syntax highlighting
+au BufNewFile,BufRead *.json set ft=javascript
+
+" make Python follow PEP8 ( http://www.python.org/dev/peps/pep-0008/ )
+au FileType python set softtabstop=4 tabstop=4 shiftwidth=4 textwidth=79
+
+set number      "add line numbers
+set showbreak=...
+set wrap linebreak nolist
+
+set tabstop=4		                " tab stops
+set softtabstop=2
+set shiftwidth=2	                " number of spaces to use for each step of (auto)indent
+set shiftround                      " Round indents to multiples of shiftwidth
+set autoindent
+set smartindent
+set expandtab
+set smarttab
+set backspace=indent,eol,start
+
+" Tab completion
+set wildmode=list:longest,list:full
+set wildignore+=*.o,*.obj,.git,*.rbc,*.class,.svn,vendor/gems/*
+
+filetype plugin indent on
+
+"Font
+set guifont=Monaco:h14
+
+"disable visual bell
+set visualbell t_vb=
+
+"some stuff to get the mouse going in term
+set mouse=a
+set ttymouse=xterm2
+
+"hide buffers when not displayed
+set hidden
+
+"key mapping for window navigation
+map <C-h> <C-w>h
+map <C-j> <C-w>j
+map <C-k> <C-w>k
+map <C-l> <C-w>l
+
+"key mapping for saving file
+nmap <C-s> :w<CR>
+
+"key mapping for tab navigation
+nmap <Tab> gt
+nmap <S-Tab> gT
+
+"Key mapping for textmate-like indentation
+nmap <D-[> <<
+nmap <D-]> >>
+vmap <D-[> <gv
+vmap <D-]> >gv
+
+"Command T
+let g:CommandTAcceptSelectionMap = '<C-t>'
+let g:CommandTAcceptSelectionTabMap = '<CR>'
+
+"Solarized
+syntax enable
+if has('gui_running')
+    set background=light
+else
+    set background=dark
+endif
+colorscheme solarized
+
+if has("gui_running")
+  set guioptions=egmrt
+endif

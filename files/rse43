@@ -1,0 +1,156 @@
+" For pathogen.vim: auto load all plugins in .vim/bundle
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+
+"---------------------------------------------------------------------------
+" ENCODING SETTINGS
+"--------------------------------------------------------------------------- 
+if has("multi_byte")
+    set encoding=utf-8
+    set termencoding=utf-8
+    set fileencodings=ucs-bom,utf-8,default,latin1
+    set fileencoding=utf-8
+    let fencview_auto_patterns='*'
+    let fencview_checklines=25
+
+    set formatoptions+=mM
+    set fencs=utf-8,gbk
+
+    if v:lang =~? '^\(zh\)\|\(ja\)\|\(ko\)'
+        set ambiwidth=double
+    endif
+
+    if has("win32")
+        language messages zh_CN.utf-8
+    endif 
+else
+    echoerr "Sorry, this version of (g)vim was not compiled with +multi_byte"
+endif
+
+if has("autocmd")
+    filetype plugin indent on
+    autocmd BufReadPost * cd %:p:h
+    " auto reload vimrc when editing it
+    autocmd! BufWritePost .vimrc source ~/.vimrc
+    " set aspell to the spell check tool and map F8 to it
+    autocmd FileType mail :nmap <F8> :w<CR>:!aspell -e -c %<CR>:e<CR>
+endif
+
+" Set the confirm option to ask if changes should be saved before exiting
+set confirm
+
+" It allows it to show partial lines wrapped past the bottom of the screen
+set display=lastline
+
+" Do not expand <Tab>s with spaces
+set noexpandtab
+
+" Add commenting marks in new lines
+set formatoptions=tcqro
+
+" Hide buffers when they are abandoned
+set hidden
+
+" keep 50 lines of command line history
+set history=50
+
+" auto read when file is changed from outside
+set autoread 
+
+" syntax highlight
+syntax on
+
+" Search highlighting
+set hlsearch
+
+" ignore case when searching
+set ignorecase
+
+" ignore case if search pattern is all lowercase,case-sensitive otherwise
+set smartcase
+
+" incremental search
+set incsearch
+
+" mouse support
+set mouse=a
+
+" disable auto backup
+set nobackup
+
+" break away from old vi compatibility
+set nocompatible    
+
+" support all three newline formats
+set fileformats=unix,dos,mac   
+
+" Prevent vim from wrapping at words
+set linebreak
+
+" Display line numbers
+set number
+
+" spaces for each step of (auto)indent
+set shiftwidth=4
+
+" This shows what you are typing as a command.
+set showcmd
+
+" set virtual tab stop (compat for 8-wide tabs)
+set softtabstop=4
+
+" for proper display of files with tabs
+set tabstop=4
+
+" auto wrap to previous/next line when hitting those keys
+set whichwrap=b,s,<,>,[,]
+
+" soft wrap long lines
+set wrap
+
+" yank to the system register (*) by default
+set clipboard=unnamed
+
+" Cursor shows matching ) and }
+set showmatch
+
+"Show current mode
+set showmode
+
+" start wild expansion in the command line using <TAB>
+set wildchar=<TAB> 
+
+" wild char completion menu
+set wildmenu 
+
+" ignore these binary files while expanding wild chars
+set wildignore=*.o,*.class,*.pyc,*.out
+
+" auto indentation
+set autoindent
+
+" copy the previous indentation on autoindenting
+set copyindent
+
+" insert tabs on the start of a line according to context
+set smarttab 
+
+
+colorscheme desert
+set backspace=indent,eol,start
+
+if v:version >= 700
+    set completeopt=menu,longest,preview
+endif
+
+" Execute file being edited with <Shift> + e:
+map <buffer> <S-e> :w<CR>:!/usr/bin/env python % <CR>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set cmdheight=1
+
+" always show the status line
+set laststatus=2
+
+set statusline=%F%m%r,%Y,%{&fileformat},%{&fileencoding}\ \ \ ASCII=\%b,HEX=\%B\ \ \ %l,%c%V\ %p%%\ \ \ [\ %L\ lines\ in\ all\ ]

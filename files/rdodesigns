@@ -1,0 +1,600 @@
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Maintainer: ryano
+"             http://www.rdodesigns.com
+"             http://github.com/rdodesigns
+"
+"             Heavily modified from amix.
+"             http://amix.dk/vim/vimrc.html
+"
+"
+" Version: 0.1.1 - 10/01/11 00:42:01
+"
+" Install:
+"   This is designed as a complete git repo.
+"     git clone https://github.com/rdodesigns/vimrc.git ~/.vim_runtime
+"   Then a symbolic link to vimrc should be made.
+"     ln -s ~/.vim_runtime/vimrc .vimrc
+"   Then the submodules need to be initialized
+"     cd .vim_runtime; git submodule update --init
+"
+" Sections:
+"    -> General
+"    -> VIM user interface
+"    -> Colors and Fonts
+"    -> Files and backups
+"    -> Text, tab and indent related
+"    -> Visual mode related
+"    -> Command mode related
+"    -> Moving around, tabs and buffers
+"    -> Statusline
+"    -> Parenthesis/bracket expanding
+"    -> General Abbrevs
+"    -> Editing mappings
+"
+"    -> Cope
+"    -> Omni complete functions
+"    -> Python section
+"    -> JavaScript section
+"
+"    -> MRU plugin
+"    -> Command-T
+"    -> Vim grep
+"    -> TagList
+"    -> Tex-PDF
+"    -> Markdown
+"
+"    -> Miscellaneous additions
+"
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+
+" Returns the system used
+fun! MySys()
+     return "$1"
+endfun
+
+" Use the vim_runtime directory
+set runtimepath=~/.vim_runtime,~/.vim_runtime/after,\$VIMRUNTIME
+helptags ~/.vim_runtime/doc
+
+" Must be here for path settings to work.
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => General
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Sets how many lines of history VIM has to remember
+set history=300
+
+" Enable filetype plugin
+filetype plugin on
+filetype indent on
+
+" Set to auto read when a file is changed from the outside
+set autoread
+
+" With a map leader it's possible to do extra key combinations
+" like <leader>w saves the current file
+let mapleader = ","
+let g:mapleader = ","
+
+" Fast saving
+nmap <leader>w :w!<cr>
+
+" Fast editing of the .vimrc
+map <leader>e :e! ~/.vim_runtime/vimrc<cr>
+
+" When vimrc is edited, reload it
+autocmd! bufwritepost vimrc source ~/.vim_runtime/vimrc
+
+" If using a mac, install ctags from MacPorts
+let Tlist_Ctags_Cmd='/opt/local/bin/ctags'
+let $PATH=$PATH.":/opt/local/bin"
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => VIM user interface
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Set 7 lines to the curors - when moving vertical..
+set so=7
+
+set wildmenu "Turn on WiLd menu
+
+set ruler "Always show current position
+
+set cmdheight=1 "The commandbar height
+
+set hid "Change buffer - without saving
+
+" Set backspace config
+set backspace=eol,start,indent
+set whichwrap+=<,>,h,l
+
+set ignorecase "Ignore case when searching
+set smartcase
+
+set hlsearch "Highlight search things
+
+set incsearch "Make search act like search in modern browsers
+set nolazyredraw "Don't redraw while executing macros
+
+set magic "Set magic on, for regular expressions
+
+set showmatch "Show matching bracets when text indicator is over them
+set mat=2 "How many tenths of a second to blink
+
+" No sound on errors
+set noerrorbells
+set novisualbell
+set t_vb=
+
+set sessionoptions+=resize,winpos
+
+" Set mouse support
+set mouse=a
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Colors and Fonts
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+syntax enable "Enable syntax hl
+
+colorscheme ir_black
+" Set font according to system
+if MySys() == "mac"
+  set guifont=Menlo:h11
+  set shell=/bin/zsh
+elseif MySys() == "windows"
+  set gfn=Bitstream\ Vera\ Sans\ Mono:h10
+elseif MySys() == "linux"
+  set gfn=Monospace\ 10
+  set shell=/bin/bash
+endif
+
+if has("gui_running")
+  set guioptions-=T
+  set guioptions-=r
+  set t_Co=256
+  set background=dark
+  set nu
+else
+  set background=dark
+  set nonu
+endif
+
+set encoding=utf8
+try
+    lang en_US
+catch
+endtry
+
+set ffs=unix,dos,mac "Default file types
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Files and backups
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Even though a lot of files are backed up through a CVS of some sort, it it
+" reasonable to keep backups in case of problems in between commits or for
+" files outside of CVS
+set backupdir=~/.vim_runtime/tmp
+set dir=~/.vim_runtime/tmp
+
+"Persistent undo (Undo changes in a file even after it has been closed and
+"reopened).
+try
+    if MySys() == "windows"
+      set undodir=C:\Windows\Temp
+    else
+      set undodir=~/.vim_runtime/undodir
+    endif
+
+    set undofile
+catch
+endtry
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Text, tab and indent related
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Tab size of 2, and use space characters instead of tab characters
+set expandtab
+set shiftwidth=2
+set tabstop=2
+set smarttab
+
+set lbr " Linebreak
+
+set ai   " Auto indent
+set si   " Smart indet
+set wrap " Wrap lines
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Visual mode related
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" In visual mode when you press * or # to search for the current selection
+vnoremap <silent> * :call VisualSearch('f')<CR>
+vnoremap <silent> # :call VisualSearch('b')<CR>
+
+" When you press gv you vimgrep after the selected text. Find other instances
+" of the same word in the directory (recursive)
+vnoremap <silent> gv :call VisualSearch('gv')<CR>
+map <leader>g :vimgrep // **/*.<left><left><left><left><left><left><left>
+
+" Visually select the text that was last edited/pasted
+nmap gV `[v`]
+
+
+function! CmdLine(str)
+    exe "menu Foo.Bar :" . a:str
+    emenu Foo.Bar
+    unmenu Foo
+endfunction
+
+" From an idea by Michael Naumann
+function! VisualSearch(direction) range
+    let l:saved_reg = @"
+    execute "normal! vgvy"
+
+    let l:pattern = escape(@", '\\/.*$^~[]')
+    let l:pattern = substitute(l:pattern, "\n$", "", "")
+
+    if a:direction == 'b'
+        execute "normal ?" . l:pattern . "^M"
+    elseif a:direction == 'gv'
+        call CmdLine("vimgrep " . '/'. l:pattern . '/' . ' **/*.')
+    elseif a:direction == 'f'
+        execute "normal /" . l:pattern . "^M"
+    endif
+
+    let @/ = l:pattern
+    let @" = l:saved_reg
+endfunction
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Command mode related
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Smart mappings on the command line
+cno >c e <C-\>eCurrentFileDir("e")<cr>
+
+func! CurrentFileDir(cmd)
+  return a:cmd . " " . expand("%:p:h") . "/"
+endfunc
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Moving around, tabs and buffers
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Map space to / (search) and c-space to ? (backgwards search)
+map <space> /
+map <c-space> ?
+" Turn off highlighting from search
+map <silent> <leader><cr> :noh<cr>
+
+" Move between windows using CTRL-hjkl
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+
+" Close the current buffer
+map <leader>bd :Bclose<cr>
+
+" Close all the buffers
+map <leader>ba :1,300 bd!<cr>
+
+" Turn off arrow keys except to switch buffers in normal moe
+inoremap  <Up>     <NOP>
+inoremap  <Down>   <NOP>
+inoremap  <Left>   <NOP>
+inoremap  <Right>  <NOP>
+noremap   <Left>   :bp<cr>
+noremap   <Right>  :bn<cr>
+
+" Move between tabs.
+" This is done because Tab by itself is also mapped to C-i, a movement cmd.
+map <C-Tab> :tabn<cr>
+map <S-Tab> :tabp<cr>
+
+" Tab configuration
+map <leader>tn :tabnew %<cr>
+map <leader>te :tabedit
+map <leader>tc :tabclose<cr>
+map <leader>tm :tabmove
+map <leader>td :Bclose<cr>:tabclose<cr>
+
+" When pressing <leader>cd switch to the directory of the open buffer
+map <leader>cd :cd %:p:h<cr>
+
+
+command! Bclose call <SID>BufcloseCloseIt()
+function! <SID>BufcloseCloseIt()
+   let l:currentBufNum = bufnr("%")
+   let l:alternateBufNum = bufnr("#")
+
+   if buflisted(l:alternateBufNum)
+     buffer #
+   else
+     bnext
+   endif
+
+   if bufnr("%") == l:currentBufNum
+     new
+   endif
+
+   if buflisted(l:currentBufNum)
+     execute("bdelete! ".l:currentBufNum)
+   endif
+endfunction
+
+" Specify the behavior when switching between buffers
+try
+  set switchbuf=usetab
+  set stal=2
+catch
+endtry
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Statusline
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Always hide the statusline
+set laststatus=2
+
+" Format the statusline
+set statusline=\ %{HasPaste()}%t%h\ %=%l/%L:%c
+"set statusline=\ %{HasPaste()}%{CurDir()}%h\ %=%l/%L:%c
+
+
+function! CurDir()
+    let curdir = substitute(getcwd(), '/Users/ryan/', "~/", "g")
+    return curdir
+endfunction
+
+function! HasPaste()
+    if &paste
+        return 'PASTE MODE  '
+    else
+        return ''
+    endif
+endfunction
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => General Abbrevs
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Output the current date (type (in insert) xdate followed by a space.
+iab xdate <c-r>=strftime("%d/%m/%y %H:%M:%S")<cr>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Editing mappings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"Remap VIM 0
+map 0 ^
+
+" Bubble single lines
+nmap <C-Up> [e
+nmap <C-Down> ]e
+" Bubble multiple lines
+vmap <C-Up> [egv
+vmap <C-Down> ]egv
+
+" Change the case of the visually selected to UPPER, lower, or Twiddle Case.
+" Keep pressing ~ while selected to cycle through these modes.
+function! TwiddleCase(str)
+  if a:str ==# toupper(a:str)
+    let result = tolower(a:str)
+  elseif a:str ==# tolower(a:str)
+    let result = substitute(a:str,'\(\<\w\+\>\)', '\u\1', 'g')
+  else
+    let result = toupper(a:str)
+  endif
+  return result
+endfunction
+vnoremap ~ ygv"=TwiddleCase(@")<CR>Pgv
+
+"Delete trailing white space for every file type.
+func! DeleteTrailingWS()
+  exe "normal mz"
+  %s/\s\+$//ge
+  exe "normal `z"
+endfunc
+autocmd BufWrite * :call DeleteTrailingWS()
+
+set guitablabel=%t
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Cope
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Do :help cope if you are unsure what cope is. It's super useful!
+map <leader>cc :botright cope<cr>
+map <leader>n :cn<cr>
+map <leader>p :cp<cr>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Omni complete functions
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+autocmd FileType python set omnifunc=pythoncomplete#Complete
+autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
+autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
+autocmd FileType php set omnifunc=phpcomplete#CompletePHP
+autocmd FileType c set omnifunc=ccomplete#Complete
+"set ofu=syntaxcomplete#Complete
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Spell checking
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"Pressing ,ss will toggle and untoggle spell checking
+map <leader>ss :setlocal spell!<cr>
+
+" Correct the first mispelled word behind the cursor to the first entry in the
+" spell checker.
+map <leader>sc [s1z=
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Python section
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+au FileType python set nocindent
+au FileType python syn keyword pythonBuiltinObj self
+let python_highlight_all = 1
+au FileType python set foldmethod=indent
+au FileType python set foldlevel=99
+
+au BufNewFile,BufRead *.jinja set syntax=htmljinja
+au BufNewFile,BufRead *.mako set ft=mako
+
+
+"" PEP8 https://github.com/cburroughs/pep8.py
+"" git submodule add https://github.com/vim-scripts/pep8.git bundle/pep8
+let g:pep8_map='<leader>8'
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => scons
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+autocmd BufReadPre SConstruct set filetype=python
+autocmd BufReadPre SConscript set filetype=python
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => JavaScript section
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+au FileType javascript call JavaScriptFold()
+au FileType javascript setl fen
+au FileType javascript setl nocindent
+
+
+function! JavaScriptFold()
+    setl foldmethod=syntax
+    setl foldlevelstart=1
+    syn region foldBraces start=/{/ end=/}/ transparent fold keepend extend
+
+    function! FoldText()
+    return substitute(getline(v:foldstart), '{.*', '{...}', '')
+    endfunction
+    setl foldtext=FoldText()
+endfunction
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => MRU plugin
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"let MRU_Max_Entries = 400
+"map <leader>f :MRU<CR>
+let MRU_File = $HOME.'/.vim_runtime/tmp/vim_mru_files'
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Command-T
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:CommandTMaxHeight = 15
+set wildignore+=*.o,*.obj,.git,*.pyc,.svn
+noremap <leader>j :CommandT<cr>
+"noremap <leader>y :CommandTFlush<cr>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Vim grep
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let Grep_Skip_Dirs = 'RCS CVS SCCS .svn .git generated'
+set grepprg=grep\ -nH\ $*
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => YankRing
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nnoremap <silent> <leader>y :YRShow<CR>
+let g:yankring_history_dir = "~/.vim_runtime/tmp"
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => TagList
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nnoremap <silent> <leader>f :Tlist<CR>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => TeX-PDF
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Remove F# key mappings
+let g:tex_pdf_map_func_keys = 0
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Markdown
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Create header bar under current line.
+map <leader>h YpVr=
+map <leader>H YpVr-
+
+augroup mkd
+    autocmd BufRead *.mkd  set ai formatoptions=tcroqn2 comments=n:&gt;
+augroup END
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Gundo
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+nnoremap <F5> :GundoToggle<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => MISC
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Remove the Windows ^M - when the encodings gets messed up
+noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
+
+" Go into paste mode
+map <leader>pp :setlocal paste!<cr>
+
+" Open two lines below the current line, with cursor on the first empty line.
+map <leader>o o<esc>O
+
+" Compile the code using either make or scons, depending on which is inside
+" the current directory
+map <F7> :call Compile()<CR>
+
+function! Compile()
+  let origcurdir = getcwd()
+  let curdir     = origcurdir
+
+  while curdir != "/"
+  if filereadable("Makefile")
+    break
+  elseif filereadable("SConstruct")
+    break
+  endif
+  cd ..
+  let curdir= getcwd()
+  endwhile
+
+  if filereadable('Makefile')
+    set makeprg=make -j3 -k
+  elseif filereadable('SConstruct')
+    set makeprg=scons
+  else
+    set makeprg=make
+  endif
+  echo "building ... wait please!"
+  silent w
+  silent make
+  redraw!
+  cc!
+endfunction
+
+

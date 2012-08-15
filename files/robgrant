@@ -1,0 +1,40 @@
+set nocompatible
+
+runtime bundle/vim-pathogen/autoload/pathogen.vim
+call pathogen#infect()
+filetype plugin indent on
+
+" Searching
+"
+set incsearch
+set ignorecase
+set smartcase
+
+" Indentation
+"
+set shiftwidth=4
+set tabstop=4
+set autoindent
+set expandtab
+set smarttab
+
+" Syntax highlighting
+"
+syntax on
+set background=dark
+colorscheme solarized
+set t_Co=256
+
+" Miscellaneous
+"
+set bs=indent,eol,start
+set showmatch
+set nowrap
+set list
+set listchars=tab:>·,trail:·
+set autowrite
+set ruler
+set laststatus=2
+set scrolloff=6
+set fileformats=unix,dos
+set number

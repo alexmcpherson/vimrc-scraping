@@ -1,0 +1,24 @@
+" ==============================================
+" Load config files
+" ==============================================
+let plugin_path = (g:local_vim_dir) . 'configs/*.vim'
+for f in split(glob(plugin_path), '\n')
+    execute 'source' f
+endfor
+
+" ==============================================
+" Plugin specific setups
+" ==============================================
+" * NERDTree
+"   Load NERDTree at start
+let s:filename = expand("%")
+if (s:filename == "")
+	let s:vimrc = expand("<sfile>")
+	exec 'autocmd VimEnter * NERDTree ' . s:vimrc
+else
+	autocmd VimEnter * NERDTree %
+end
+" * Git specific settings
+"   Display current branch in status line
+set laststatus=2
+set statusline=%{GitBranch()}

@@ -1,0 +1,303 @@
+" Part of AbsoluteVimrc at https://github.com/KristoforMaynard/AbsoluteVimrc
+" ~Kristofor Maynard
+" 
+" Listing of mappings and commands found by using 'help AbsoluteVimrc'
+
+set ruler
+set autoindent
+"set smartindent
+set is noic scs
+filetype plugin indent on
+:syntax enable
+set nohls " do not highlight search items
+set noequalalways
+
+set noerrorbells
+set visualbell
+set vb t_vb=
+
+set autoread
+set makeprg=make\ -j4
+set switchbuf=newtab
+
+set showcmd
+
+" silent for vim on fishercat compute nodes
+silent! set nofoldenable
+silent! set undodir=~/.vimundo
+silent! set undofile
+
+function Imap(mods, trigger, action)
+    exec "map! ".a:mods." ".a:trigger.' <C-\><C-o>'.a:action
+endfunction
+function Amap(mods, trigger, action)
+    exec "map ".a:mods." ".a:trigger." ".a:action
+    exec "map! ".a:mods." ".a:trigger.' <C-\><C-o>'.a:trigger
+endfunction
+function Amap_literal(mods, trigger, action)
+    exec "map ".a:mods." ".a:trigger." ".a:action
+    exec "map! ".a:mods." ".a:trigger." ".a:action
+endfunction
+
+" About using ` as leader ... now no marks can be set with
+" the same letter as a mark mapping, but i don't *think*
+" this should be too bad
+let mapleader='`'
+
+" get <C-a> and <C-e> to work in command mode like in bash
+cmap <C-a>   <Home>
+cmap <C-e>   <End>
+
+"make < > shifts keep selection
+vnoremap < <gv
+vmap <C-d> < 
+vnoremap > >gv
+vmap <C-t> >
+" enable \gv in insert mode to select last selection
+call Amap("", "<leader>gv", "gv")
+
+" jump to errors
+call Amap("", "<leader>[", ":cprev<cr>")
+call Amap("", "<leader>]", ":cnext<cr>")
+call Amap("", "<leader>{", ":cfirst<cr>")
+call Amap("", "<leader>}", ":clast<cr>")
+call Amap("", "<leader>\\", ":cc<cr>")
+
+call Imap("", "<leader>bd", "<Plug>BufKillBd")
+
+" move to a window in insert mode
+call Imap("", "<C-w><left>", "<C-w><left>")
+call Imap("", "<C-w><right>", "<C-w><right>")
+call Imap("", "<C-w><up>", "<C-w><up>")
+call Imap("", "<C-w><down>", "<C-w><down>")
+call Imap("", "<C-w>w", "<C-w>w")
+
+" general funciton key mapping
+set pastetoggle=<F4>
+call Amap("", "<F5>", ":set hls!<cr>")
+call Amap("", "<F6>", ":set spell!<cr>")
+call Amap("", "<S-F6>", ":set autoindent!<cr>")
+
+" set spaces per tab
+com -bar -nargs=1 TS set shiftwidth=<args> softtabstop=<args> et
+com -bar -nargs=1 TSL setlocal shiftwidth=<args> softtabstop=<args> et
+au FileType python TSL 4
+silent! TS 2
+
+" automatic carraige return after 80th column
+com -bar -nargs=1 TW set textwidth=<args>
+silent! TW 0
+
+" for writing as sudo
+cmap W!! !sudo tee > /dev/null %
+cmap WQ!! W!!<cr>:q!<cr>
+
+" for session.vim
+com -bar -bang -nargs=* SS SaveSession<bang> <args>
+com -bar -bang -nargs=* SO OpenSession<bang> <args>
+com -bar -bang -nargs=* SC CloseSession<bang> <args>
+com -bar -bang -nargs=* SD DeleteSession<bang> <args>
+let g:session_directory='~/.sessions'
+let g:session_autosave='no'
+let g:session_autoload='no'
+
+" NERDCommenter
+let g:NERDAlignCommentToggle = 0
+
+" NERDTree shortcuts
+call Amap("", "<F1>", ":NERDTreeToggle<cr>")
+call Amap("", "<S-F1>", ":NERDTree ")
+call Amap("", "<F2>", ":NERDTreeMirror<cr>")
+call Amap("", "<F3>", ":NERDTreeClose<cr>")
+
+let NERDTreeHighlightCursorLine=0
+let NERDTreeDirArrows=1
+let NERDTreeMinimalUI=1
+
+let g:netrw_liststyle=3
+let g:netrw_browse_split = 2
+let g:netrw_altv = 0
+
+" for ConqueTerm
+let g:conquesplitsize=10
+com -bar CD lcd %:p:h
+com -bar Srb exec ":rightbelow ".g:conquesplitsize."sp"
+com -bar Sbr exec ":botright ".g:conquesplitsize."sp"
+function ConqueShellMirror()
+    :set nonumber
+    :exec "b ".conque_term#get_instance()['buffer_name']
+endfunction
+com -bar CSM set wfw wfh |call ConqueShellMirror()
+com -bar -nargs=* ConqueShell set wfh wfw | ConqueTerm <args>
+com -bar -nargs=* CS ConqueShell <args>
+com -bar -nargs=* CT ConqueShell <args>
+com -bar -nargs=* CSb ConqueShell bash -l <args>
+com -bar -nargs=* CSp ConqueShell python <args>
+
+call Amap("", "<F7>", ":CD <bar> Srb <bar> CS ./<C-R>%<cr>")
+call Amap("", "<S-F7>", ":CD <bar> Srb <bar> CS ./<C-R>% ")
+call Amap("", "<F8>", ":Srb <bar> :CSM<cr>")
+call Amap("", "<S-F8>", ":CSM<cr>")
+call Amap("", "<F9>", ':CD <bar> Srb <bar> CSb<cr>clear<cr>')
+call Amap("", "<S-F9>", ":CD <bar> CSb<cr>clear<cr>")
+call Amap("", "<F10>", ":bd<cr>")
+call Amap("", "<S-F10>", ":q!<cr>")
+let g:ConqueTerm_SessionSupport = 0
+let g:ConqueTerm_InsertOnEnter = 1
+let g:ConqueTerm_Color = 2
+let g:ConqueTerm_TERM = 'vt100'
+"let g:ConqueTerm_ReadUnfocused = 1
+let g:ConqueTerm_ToggleKey = '<M-S-F8>'
+let g:ConqueTerm_SendFileKey = '<M-S-F10>'
+let g:ConqueTerm_ExecFileKey = '<M-S-F7>'
+let g:ConqueTerm_CWInsert = 1
+
+function ConqueLeave(term)
+    stopinsert
+endfunction
+function ConqueStartup(term)
+    inoremap <buffer> <C-\><C-o> <C-\><C-o>
+    imap <buffer> <Del> <right><backspace>
+endfunction
+call conque_term#register_function('buffer_leave', 'ConqueLeave')
+call conque_term#register_function('after_startup', 'ConqueStartup')
+
+" for errormarker
+let errormarker_disablemappings = 1
+let &errorformat="%f:%l:%c: %t%*[^:]:%m,%f:%l: %t%*[^:]:%m," . &errorformat 
+let errormarker_erroricon=expand("~/.vim/icons/error.png")
+let errormarker_warningicon=expand("~/.vim/icons/warning.png")
+let errormarker_errorgroup = ""
+let errormarker_warninggroup = ""
+
+" for syntastic
+let syntastic_quiet_warnings=1
+let syntastic_check_on_open=1
+let syntastic_mode_map = { 'mode': 'passive',
+                         \ 'active_filetypes': [],
+                         \ 'passive_filetypes': [] }
+let syntastic_c_no_include_search = 1
+let syntastic_erroricon=g:errormarker_erroricon
+let syntastic_warningicon=g:errormarker_warningicon
+exec "sign define SyntasticError texthl=error icon=".g:syntastic_erroricon
+exec "sign define SyntasticWarning texthl=todo icon=".g:syntastic_warningicon 
+exec "sign define SyntasticStyleError texthl=error icon=".g:syntastic_erroricon
+exec "sign define SyntasticStyleWarning texthl=todo icon=".g:syntastic_warningicon
+
+" if using macvim build of vim, regardless if we're in 
+" gui or terminal
+if has("gui_macvim")
+    let g:ConqueTerm_TERM = 'nsterm'
+endif
+
+if has("gui_running")
+    aun Tools.Make
+    an 40.360 &Tools.&Make<Tab>:make! :make!<CR>
+
+    set selection=exclusive
+    set guioptions-=T
+    colorscheme xkod
+    set guicursor=a:blinkon0
+    set number
+    set nowrap
+    "set insertmode
+    let conquesplitsize=15
+
+    call Amap("", "<C-s><down>", ":rightbelow new<cr>")
+    call Amap("", "<C-s><S-down>", ":botright new<cr>")
+    call Amap("", "<C-s><up>", ":leftabove new<cr>")
+    call Amap("", "<C-s><S-up>", ":topleft new<cr>")
+    call Amap("", "<C-s><right>", ":rightbelow vnew<cr>")
+    call Amap("", "<C-s><S-right>", ":botright vnew<cr>")
+    call Amap("", "<C-s><left>", ":leftabove vnew<cr>")
+    call Amap("", "<C-s><S-left>", ":topleft vnew<cr>")
+
+    imap <leader>p <esc>:call conque_term#get_instance().write(@*)<CR>i
+
+    if has("gui_macvim")
+        macm Tools.Make<Tab>:make! key=<D-b>
+
+        set guifont=Menlo:h11 
+        set transp=1
+        set guioptions+=LlRrb
+        set guioptions-=LlRrb " hide all scrollbars
+        let macvim_hig_shift_movement = 1
+
+        call Amap("", "<D-i>", ":set insertmode<cr>")
+        call Amap("", "<D-I>", ":set noinsertmode<cr>")
+        call Amap("", "<D-B>", ":make clean<cr>")
+
+        " NERDCommenter shortcuts
+        call Amap("", "<D-/>", "<leader>c<space>")
+        smap <D-/> <C-o><D-/>
+
+        " NERDTree shortcuts
+        call Amap_literal("", "<D-1>", "<F1>")
+        call Amap_literal("", "<D-!>", "<S-F1>")
+        call Amap_literal("", "<D-2>", "<F2>")
+        call Amap_literal("", "<D-3>", "<F3>")
+
+        " for ConqueTerm
+        call Amap_literal("", "<D-8>", "<F8>")
+        call Amap_literal("", "<D-*>", "<S-F8>")
+        call Amap_literal("", "<D-9>", "<F9>")
+        call Amap_literal("", "<D-(>", "<S-F9>")
+        call Amap_literal("", "<D-0>", "<F10>")
+        call Amap_literal("", "<D-)>", "<S-F10>")
+        call Amap_literal("", "<D-7>", "<F7>")
+        call Amap_literal("", "<D-&>", "<S-F7>")
+
+        " for other
+        call Amap_literal("", "<D-4>", "<F4>")
+        call Amap_literal("", "<D-$>", "<S-F4>")
+        call Amap_literal("", "<D-5>", "<F5>")
+        call Amap_literal("", "<D-%>", "<S-F5>")
+        call Amap_literal("", "<D-6>", "<F6>")
+        call Amap_literal("", "<D-^>", "<S-F6>")
+    else " has("gui_macvim")
+
+    endif " has("gui_macvim")
+
+else " has("gui_running")
+    " mappings of F keys for Terminal.app
+    call Amap_literal("", "[25~", "<S-F5>")
+    call Amap_literal("", "[26~", "<S-F6>")
+    call Amap_literal("", "[28~", "<S-F7>")
+    call Amap_literal("", "[29~", "<S-F8>")
+    call Amap_literal("", "[31~", "<S-F9>")
+    call Amap_literal("", "[22~", "<S-F10>")
+endif " has("gui_running")
+
+if exists("macvim_hig_shift_movement")
+  " Shift + special movement key (<S-Left>, etc.) and mouse starts insert mode
+  set selectmode=mouse,key
+  set keymodel=startsel,stopsel
+
+  " HIG related shift + special movement key mappings
+  nn   <S-D-Left>     <S-Home>
+  vn   <S-D-Left>     <S-Home>
+  ino  <S-D-Left>     <S-Home>
+  nn   <S-M-Left>     <S-C-Left>
+  vn   <S-M-Left>     <S-C-Left>
+  ino  <S-M-Left>     <S-C-Left>
+
+  nn   <S-D-Right>    <S-End>
+  vn   <S-D-Right>    <S-End>
+  ino  <S-D-Right>    <S-End>
+  nn   <S-M-Right>    <S-C-Right>
+  vn   <S-M-Right>    <S-C-Right>
+  ino  <S-M-Right>    <S-C-Right>
+
+  nn   <S-D-Up>       <S-C-Home>
+  vn   <S-D-Up>       <S-C-Home>
+  ino  <S-D-Up>       <S-C-Home>
+
+  nn   <S-D-Down>     <S-C-End>
+  vn   <S-D-Down>     <S-C-End>
+  ino  <S-D-Down>     <S-C-End>
+endif " exists("macvim_skip_hig_shift_movement")
+
+""
+"" EOF
+""
+

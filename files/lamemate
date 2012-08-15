@@ -1,0 +1,105 @@
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+
+set encoding=utf-8
+
+colorscheme molokai
+
+syntax on
+set number
+
+filetype on
+filetype plugin on
+filetype indent on
+autocmd FileType python set complete+=k~/.vim/syntax/python.vim isk+=.,(
+
+set encoding=utf-8
+
+
+" Formating options for text
+set formatoptions=qrn1
+set wrap
+set textwidth=79
+"set colorcolumn=79
+set linebreak
+set list
+set listchars=tab:▸\ ,eol:¬
+
+" Tabs and whitespaces
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+set noexpandtab
+set backspace=indent,eol,start
+set smarttab
+set scrolloff=4
+set ttyfast
+set cursorline
+
+" Search and replace
+set showmatch
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+set gdefault
+
+" glogal undo file
+set undofile
+set undodir=~/temp
+
+" Vim behaviour
+set hidden
+set nobackup
+set noswapfile
+set wildmenu
+set wildmode=list:full
+set novisualbell
+set noerrorbells
+"set rule
+set showcmd
+set autoread
+
+" Hide toolbar in gui
+if has("gui_running")
+	set go-=T
+	set guioptions-=L
+	set guioptions-=r
+end
+
+" Better python highlighting
+let python_highlight_all=1
+
+" Autocomplete on cmd space
+"if has("gui")
+"	inoremap <C-Space> <C-n>
+"else
+"	if has("unix")
+"		inoremap <Nul> <C-n>
+"	else
+"	endif
+"endif
+
+" Load pydict file for autocomplete, absolute path!
+let g:pydiction_location= '/Users/henning/.vim/ftplugin/pydiction/complete-dict'
+
+" Regular expression for search
+nnoremap / /\v
+vnoremap / /\v
+
+" Taglist variables
+" Display function name in status bar:
+let g:ctags_statusline=1
+" Automatically start script
+let generate_tags=1
+" Display taglist results in a vertical window:
+let Tlist_Use_Horiz_Window=0
+" Shorter commands to toggle Taglist display
+nnoremap TT :TlistToggle<CR>
+map <F4> :TlistToggle<CR>
+" Various Taglist display config:
+let Tlist_Use_Right_Window=1
+let Tlist_Compact_Format=1
+let Tlist_Exit_OnlyWindow=1
+let Tlist_GainFocus_On_ToggleOpen=1
+let Tlist_File_Fold_Auto_Close=1

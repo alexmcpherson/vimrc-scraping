@@ -1,0 +1,1339 @@
+" Maintainer:	sgur <sgurrr@gmail.com>
+" Usage: "runtime vimrc" in ~/.vimrc
+"
+
+" singleton {{{1
+" =========
+" BUNDLE: https://github.com/thinca/vim-singleton.git
+
+if has('vim_starting')
+  try
+    runtime bundle/vim-singleton/autoload/singleton.vim
+    call singleton#enable()
+  catch /^Vim\%((\a\+)\)\=:E117/	" catch error E117
+    echohl WarningMsg
+    echomsg 'vim-singleton: not installed'
+    echohl None
+  endtry
+endif
+
+
+" common {{{1
+" ======
+
+" <SID>
+function! s:SID_PREFIX()
+  return matchstr(expand('<sfile>'), '<SNR>\d\+_')
+endfunction
+
+" Windows 上で実行されているか
+let s:is_win = has('win32') || has('win64')
+
+" ~/.vim, ~/vimfiles のパス
+let s:rc_dir =
+      \ substitute(fnamemodify(expand('<sfile>'),':p:h'), '\\', '/', 'g')
+
+" bundle/ 以下に配置されているか
+function! s:bundled(bundle)
+  return stridx(&runtimepath, a:bundle) > -1
+        \ && !empty(globpath(s:rc_dir.'/bundle/'.a:bundle, '*'))
+endfunction
+
+
+" options {{{1
+" =======
+
+if &encoding != 'utf-8'
+  " https://github.com/vim-jp/issues/issues/103
+  let s:last_enc = &encoding
+  function! s:on_encoding_changed()
+    if s:last_enc !=# &encoding
+      let &runtimepath = iconv(&runtimepath, s:last_enc, &encoding)
+      let s:last_enc = &encoding
+    endif
+  endfunction
+  augroup vimrc_encoding
+    autocmd!
+    autocmd EncodingChanged * call s:on_encoding_changed()
+  augroup END
+  set encoding&
+  let &termencoding=&encoding
+  set encoding=utf-8
+endif
+
+set ambiwidth=double
+set autoindent
+set backup
+set backspace=indent,start
+let &backupdir = expand(s:rc_dir.'/.backup')
+if !isdirectory(&backupdir)
+  call mkdir(expand(&backupdir))
+endif
+set cmdheight=1
+set colorcolumn=+1
+set completeopt+=longest
+let &dictionary=expand(s:rc_dir . '/etc/look/words')
+if !filereadable(&dictionary)
+  set dictionary&
+endif
+let &directory=expand(s:rc_dir.'/.swap')
+if !isdirectory(&directory)
+  call mkdir(expand(&directory))
+endif
+
+set helplang=ja
+call fileencodings#setup()  " set fileencodings
+set foldcolumn=2
+set foldlevelstart=2
+set formatoptions& formatoptions+=mM
+let &grepprg = executable('jvgrep') ? 'jvgrep -n' : 'grep -nH' " jvgrepを利用
+set guioptions+=M   " (マウスのメニューのみ gvimrc でロード)
+set history=200
+set hlsearch
+set ignorecase
+set iminsert=1
+set imsearch=0
+set incsearch
+set laststatus=2
+set path+=include/,../include/
+set shiftwidth=4
+set showmatch
+set showtabline=2
+set smartcase
+set smartindent
+set smarttab
+set softtabstop=4
+set tabstop=4
+set tags+=tags;
+set textwidth=78
+set timeoutlen=300
+set ttimeoutlen=1000
+if has('persistent_undo')
+  let &undodir = expand(s:rc_dir . '/.undo')
+  if !isdirectory(&undodir)
+    call mkdir(expand(&undodir))
+  endif
+  set undofile
+endif
+set virtualedit+=block
+set visualbell
+set wildignore=*.o,*.obj,*.exe,*.dll,*.R30
+set wildmenu
+set wildmode=longest:full
+
+" tabline {{{2
+" -------
+
+" n 番目のタブのラベルを返す
+function! s:tabpage_label(n)
+  " t:title と言う変数があったらそれを使う
+  let title = gettabvar(a:n, 'title')
+  if title !=# ''
+    return title
+  endif
+  " タブページ内のバッファのリスト
+  let bufnrs = tabpagebuflist(a:n)
+  " カレントタブページかどうかでハイライトを切り替える
+  let hi = a:n is tabpagenr() ? '%#TabLineSel#' : '%#TabLine#'
+  " バッファが複数あったらバッファ数を表示
+  let no = len(bufnrs)
+  if no is 1
+    let no = ''
+  endif
+  " タブページ内に変更ありのバッファがあったら '+' を付ける
+  let mod = len(filter(copy(bufnrs), 'getbufvar(v:val, "&modified")')) ? '+' : ''
+  let sp = (no . mod) ==# '' ? '' : ' '  " 隙間空ける
+  " カレントバッファ
+  let curbufnr = bufnrs[tabpagewinnr(a:n) - 1]  " tabpagewinnr() は 1 origin
+  let fname = fnamemodify(bufname(curbufnr), ':t')
+  let label = ' ' . no . mod . sp . fname . ' '
+  return '%' . a:n . 'T' . hi . label . '%T%#TabLineFill#'
+endfunction
+
+function! MakeTabLine()
+  let titles = map(range(1, tabpagenr('$')), 's:tabpage_label(v:val)')
+  let sep = '|'  " タブ間の区切り
+  let tabpages = join(titles, sep) . sep . '%#TabLineFill#%T'
+  let info = '|%#TabLineSel#' . pathshorten(fnamemodify(getcwd(), ":~")) . '%#TabLineFill#|'
+  return tabpages . '%=' . info  " タブリストを左に、情報を右に表示
+endfunction
+
+set tabline=%!MakeTabLine()
+
+" $PATH {{{2
+" -----
+
+function! s:append_path(path_list)
+  let sep = s:is_win ? ';' : ':'
+  let path = filter(a:path_list, 'stridx($PATH, v:val) == -1')
+  if !empty(path)
+    let $PATH = join(path ,sep).sep.$PATH
+  endif
+endfunction
+
+" g:exec_path を ~/[._]vimrc で定義しておく (各PC,OS依存のため)
+call s:append_path(get(g:, 'exec_path', []))
+
+
+" map {{{1
+" ===
+
+" mapleader, maplocalleader
+" -------------------------
+
+" <Leader> を f に割当て
+let mapleader='f'
+" <LocalLeader> を t に割当て
+let maplocalleader='t'
+
+" 基本操作
+" --------
+
+" <PageDown>, <PageUp>
+noremap <Leader>j <PageDown>
+noremap <Leader>k <PageUp>
+
+" <C-@> も <ESC> として使えるようにする
+noremap <C-@> <ESC>
+noremap! <C-@> <ESC>
+
+" f,t を <Leader>経由にする
+noremap <Leader>f f
+noremap <Leader>F F
+noremap <Leader>t t
+noremap <Leader>T T
+
+" hh で <BS>
+noremap! hh <BS>
+
+" http://whileimautomaton.net/2008/08/vimworkshop3-kana-presentation より
+" ; と : を交換する
+noremap ; :
+noremap : ;
+
+" tags-and-search を使いやすく
+nnoremap <C-k>  :<C-u>tag<CR>
+
+" http://www.timedia.co.jp/karetta/article/blog/relay/023312
+" undo-able <C-w>/<C-u> fooo
+inoremap <C-w>  <C-g>u<C-w>
+inoremap <C-u>  <C-g>u<C-u>
+
+" http://vim-users.jp/2011/04/hack214/
+" ) はカーソル以降の ) までを対象とする
+onoremap ) t)
+vnoremap ) t)
+" ( はカーソル以前の ( までを対象とする
+onoremap ( T(
+vnoremap ( T(
+
+" https://gist.github.com/971940
+" Y の挙動を変更 (こちらの方が本来の動作に近い)
+nnoremap Y y$
+
+" <ESC> で :nohlsearch を実行
+noremap <silent> <ESC> :<C-u>nohlsearch<CR>
+noremap <silent> <C-@> :<C-u>nohlsearch<CR>
+
+" i_CTRL-L も画面再描画
+inoremap <C-l> <C-o><C-l>
+
+
+" quickfix {{{1
+" ========
+
+" http://whileimautomaton.net/2007/02/16165600
+" キーボードマクロ q は滅多に使わないので Q へ降格
+" Ex-mode Q は絶対に使わないので存在しないことに
+nnoremap Q q
+nnoremap q <Nop>
+
+" q; で cmdwin を開く
+nnoremap q; q:
+" q/, q? は従来通り履歴を表示する
+nnoremap q/ q/
+nnoremap q? q?
+" q{action} の形に統一
+nnoremap qj :cnext<CR>
+nnoremap qk :cprevious<CR>
+nnoremap qr :crewind<CR>
+nnoremap qK :cfirst<CR>
+nnoremap qJ :clast<CR>
+nnoremap qf :cnfile<CR>
+nnoremap qF :cpfile<CR>
+nnoremap ql :clist<CR>
+nnoremap qq :cc<CR>
+nnoremap qo :copen<CR>
+nnoremap qc :cclose<CR>
+nnoremap qw :cwindow<CR>
+nnoremap qp :colder<CR>
+nnoremap qn :cnewer<CR>
+nnoremap qm :make<CR>
+nnoremap qM :make<Space>
+nnoremap qg :grep<Space>
+
+
+" syntax {{{1
+" ======
+
+" ft-c-syntax
+let c_comment_strings = 1 " コメント内の文字列と数値
+let c_space_errors = 1    " 行末の空白文字とタブ文字前のスペース文字
+let c_no_comment_fold = 1 " コメントを折り畳まない
+" let c_syntax_for_h = 1    " ファイル*.hにC++ではなくCの構文を適用する
+
+" doxygen-syntax
+
+" C, C++, C#, IDL, PHP で自動的にDoxygenのシンタックスを有効にする
+let g:load_doxygen_syntax=1
+let g:doxygen_enhanced_color = 1
+let g:doxygen_my_rendering = 1
+
+
+" autocmd {{{1
+" =======
+
+" Vim の初期化中のエラーは起動完了時にリセットする
+augroup vimrc_finalize
+  autocmd!
+  autocmd VimEnter * let v:errmsg = ''
+augroup END
+
+" Doxyfile を開くときにカレントディレクトリを移動する
+augroup vimrc_doxyfile
+  autocmd!
+  autocmd BufEnter DoxyFile lcd <afile>:p:h | compiler doxygen augroup END
+augroup END
+
+" ファイルタイプ毎のomnifuncがない場合はシンタックスから補完する
+augroup vimrc_no_omnifunc
+  autocmd!
+  autocmd Filetype *
+        \ if &omnifunc == "" || index(['c', 'cpp', 'objc', 'objcpp'], &filetype) > -1 |
+        \   setlocal omnifunc=syntaxcomplete#Complete |
+        \ endif
+augroup END
+
+" ファイルを読み込んだときに、そのバッファを最後に終了した時のカーソル位置に移動する
+" ref :help line()
+augroup vimrc_lastmodified
+  autocmd!
+  autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$")
+        \ | execute "normal! g`\"" | endif
+augroup END
+
+" バックアップにタイムスタンプを追加
+augroup vimrc_timestamp
+  autocmd!
+  autocmd BufWritePre * let &backupext = '.' . strftime("%Y%m%d_%H") . '~'
+augroup END
+
+" C のファイルタイプ別設定
+augroup vimrc_ft_c
+  autocmd!
+  " syntax で折り畳み
+  autocmd FileType c set foldmethod=syntax
+augroup END
+
+" log のファイルタイプ別設定
+augroup vimrc_ft_log
+  autocmd!
+  " logファイルを読むときは colorcolumn を無効にする
+  autocmd FileType log set colorcolumn&
+augroup END
+
+" vimscript のファイルタイプ別設定
+augroup vimrc_ft_vim
+  autocmd!
+  autocmd Filetype vim setlocal
+        \ expandtab
+        \ tabstop     =8
+        \ shiftwidth  =2
+        \ softtabstop =2
+  autocmd Filetype vim let &l:path = &g:path.','.s:rc_dir.'/**'
+  autocmd Filetype vim setlocal iskeyword+=:
+  autocmd Filetype vim call s:auto_lcd()
+  function! s:auto_lcd()
+    if !filereadable(expand('%'))
+      return
+    endif
+    let path = expand('%:p')
+    let i = match(path, '\(after\|autoload\|plugin\|ftplugin\|colors\|doc\)[/\\]')
+    if i > -1
+      lcd `=path[:i-1]`
+    endif
+  endfunction
+augroup END
+
+" python のファイルタイプ別設定
+augroup vimrc_ft_python
+  autocmd!
+  autocmd Filetype python setlocal
+        \ cinwords    =if,elif,else,for,while,try,except,finally,def,class
+        \ cursorcolumn
+        \ expandtab
+        \ shiftwidth  =4
+        \ smartindent
+        \ smarttab
+        \ softtabstop =4
+        \ tabstop     =4
+        \ textwidth   =80
+augroup END
+
+" git-commit のエンコーディング設定
+augroup vimrc_ft_gitcommit
+  autocmd!
+  autocmd BufEnter .git/TAG_EDITMSG setlocal fileencoding=utf-8
+  autocmd FileType gitcommit setlocal fileencoding=utf-8
+augroup END
+
+" bat, cmd のファイルタイプ別設定
+
+augroup vimrc_ft_cmd
+  autocmd!
+  autocmd BufNewFile,Bufread *.cmd,*.bat set commentstring=@REM\ %s
+augroup END
+
+
+" filetype {{{1
+" ========
+
+" see after/ftplugin/markdown.vim
+
+" mlang {{{1
+" =====
+
+" メッセージのロケールは "C" にしておく
+language message C
+
+
+" if_cscope {{{1
+" =========
+
+set cscopetag
+set cscopetagorder=1
+set cscopequickfix=s-,c-,d-,i-,t-,e-
+
+augroup vimrc_cscope
+  autocmd!
+  autocmd FileType c,cpp nnoremap <buffer> <silent> <LocalLeader>a :cscope add <C-r>=<SID>get_cscope_db_path(getcwd())<CR><CR>
+  autocmd FileType c,cpp nnoremap <buffer> <silent> <LocalLeader>k :cscope kill <C-r>=<SID>get_cscope_db_path(getcwd())<CR><CR>
+  autocmd FileType c,cpp call <SID>cscope_mapping()
+  autocmd FileType c,cpp nnoremap <buffer> <silent> <LocalLeader>f :cscope find f <C-R>=expand("<cfile>")<CR><CR>
+  autocmd FileType c,cpp nnoremap <buffer> <silent> <LocalLeader>i :cscope find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+  autocmd FileType c,cpp nnoremap <silent> <LocalLeader>u :call <SID>update_cscope()<CR>
+augroup END
+
+function! s:cscope_mapping()
+  for key in ['s', 'g', 'd', 'c', 't', 'e']
+    execute 'nnoremap <buffer> <silent> <LocalLeader>'.key ':cscope find' key '<C-R>=expand("<cword>")<CR><CR>'
+  endfor
+endfunction
+
+function! s:get_cscope_db_path(path)
+  let l:path = a:path
+  if match(l:path, ' ') > 0
+    let l:path = fnamemodify(l:path, ":p:h:8")
+  endif
+  return l:path
+endfunction
+
+" make cscope.out
+if executable('cscope')
+  function! s:auto_update_cscope()
+    if filereadable('cscope.out')
+          \ && stridx(expand('%:p'), getcwd()) > -1
+          \ && (localtime() - getftime('cscope.out')) > 60 * 30 "sec
+      call s:update_cscope()
+    endif
+  endfunction
+  augroup vimrc_cscope_update
+    autocmd!
+    autocmd BufWritePost * call s:auto_update_cscope()
+  augroup END
+  function! s:update_cscope()
+    let l:reconnect = cscope_connection(1, s:get_cscope_db_path(getcwd())) > 0
+    let l:msg = 'cscope: '
+    let l:args = ''
+    if exists('b:cscope')
+      let l:args .= b:cscope
+    endif
+    if l:reconnect
+      silent execute 'cscope kill ' . s:get_cscope_db_path(getcwd())
+    endif
+    let msg = vimproc#system('cscope -bqRv '
+                \ . join(map(
+                \  filter(split(&path, ','), '!empty(v:val)&&v:val!="."'),
+                \  '"-I \"" . substitute(v:val, "\*", "", "g") . "\""'))
+                \ . ' ' . l:args)
+    echo msg[: strridx(msg, '\n')-1]
+    if vimproc#get_last_status() > 0
+      for line in split(vimproc#get_last_errmsg(), '\r\n|\n\|\r')
+        echoerr line
+      endfor
+    endif
+    if l:reconnect
+      silent execute 'cscope add ' . s:get_cscope_db_path(getcwd())
+    endif
+  endfunction
+endif
+
+
+" pi_netrw {{{1
+" ========
+
+let g:netrw_banner=0
+let g:netrw_home = expand('~')
+let g:netrw_liststyle=3
+let g:netrw_localcopycmd = executable('cp') ? 'cp' : 'copy'
+let g:netrw_localmovecmd = executable('mv') ? 'mv' : 'move'
+
+" <F4> で垂直分割表示/非表示トグル
+nnoremap <silent> <F4> :call <SID>toggle_vexplore()<CR>
+function! s:toggle_vexplore()
+  execute '25Vexplore' expand('%:p:h')
+  nnoremap <silent> <buffer> <F4> :bwipeout<CR>
+endfunction
+
+
+" misc {{{1
+" ====
+
+
+" F7 でビルド
+function! s:map_make_cmd()
+  if exists('b:current_compiler')
+    wall
+    nnoremap <silent> <F7> :make!<CR>
+  endif
+endfunction
+augroup vimrc_make_f7
+  autocmd!
+  autocmd BufRead,BufNewFile * call s:map_make_cmd()
+augroup END
+
+" <Leader>e で編集中のファイルのフォルダを開く
+function! s:open_filer()
+  let dir = expand('%:p:h')
+  if exists('+shellslash') && &shellslash
+    let dir = substitute(dir,'/','\\','g')
+  endif
+  if &encoding != &termencoding
+    let dir = iconv(dir, &encoding, &termencoding)
+  endif
+  if s:is_win
+    silent execute '!start /b explorer' '"'.dir.'"'
+  endif
+endfunction
+nnoremap <expr> <Leader>e <SID>open_filer()
+
+" just-on-space
+" ref. https://gist.github.com/162604
+
+" Replace many spaces with one in Vim
+" With help from Al: http://stackoverflow.com/questions/1228100/substituting-zero-width-match-in-vim-script
+
+function! s:just_one_space()
+  " Get the current contents of the current line
+  let current_line = getline(".")
+  " Get the current cursor position
+  let cursor_position = getpos(".")
+  " Generate a match using the column number of the current cursor position
+  let matchre = '\s*\%' . cursor_position[2] . 'c\s*'
+  let pos = match(current_line, matchre) + 2
+  " Modify the line by replacing with one space
+  let modified_line = substitute(current_line, matchre, " ", "")
+  " Modify the cursor position to handle the change in string length
+  let cursor_position[2] = pos
+  " Set the line in the window
+  call setline(".", modified_line)
+  " Reset the cursor position
+  call setpos(".", cursor_position)
+endfunction
+command! -nargs=0 JustOneSpace call s:just_one_space()
+nnoremap <Leader>. :call <SID>just_one_space()<CR>
+
+" Git gui
+
+function! s:git_ext(cmd, dir)
+  let pwd = getcwd()
+  try
+    lcd `=a:dir`
+    if s:is_win
+      silent execute '!start /b' a:cmd
+    else
+      call system(a:cmd)
+    endif
+  finally
+    lcd `=pwd`
+  endtry
+endfunction
+if executable('git')
+  command! -nargs=0 GitGUI call s:git_ext('git gui', expand('%:p:h'))
+  command! -nargs=0 GitK call s:git_ext('gitk', expand('%:p:h'))
+endif
+
+" Visual Studio の環境変数を取り込む
+
+if has('win64')
+  let s:vcvars_bat = 'c:/Program Files (x86)/Microsoft Visual Studio 10.0/VC/vcvarsall.bat'
+elseif has('win32')
+  let s:vcvars_bat = 'c:/Program Files/Microsoft Visual Studio 10.0/VC/vcvarsall.bat'
+endif
+
+" FIXME:
+command! -nargs=0 VcVars64 call compiler#setenv(compiler#env_list(s:vcvars_bat, 'amd64'))
+command! -nargs=0 VcVars32on64 call compiler#setenv(compiler#env_list(s:vcvars_bat, 'x86'))
+command! -nargs=0 VcVars32 call compiler#setenv(compiler#env_list(s:vcvars_bat, 'x86'))
+command! -nargs=0 VcVars64on32 call compiler#setenv(compiler#env_list(s:vcvars_bat, 'x86_amd64'))
+
+" http://whileimautomaton.net/2008/08/vimworkshop3-kana-presentation
+" 任意のエンコードで現在のファイルを開き直す
+" UTF-8
+command! -bang -nargs=? UTF8 edit<bang> ++enc=utf-8 <args>
+" SHIFT-JIS
+command! -bang -nargs=? CP932 edit<bang> ++enc=cp932 <args>
+command! -bang -nargs=? SJIS edit<bang> ++enc=cp932 <args>
+" euc-jp
+command! -bang -nargs=? EUCJP edit<bang> ++enc=euc-jp <args>
+command! -bang -nargs=? EUCJISX0213 edit<bang> ++enc=euc-jisx0213 <args>
+" iso-2022-jp
+command! -bang -nargs=? JIS edit<bang> ++enc=iso-2022-jp <args>
+command! -bang -nargs=? ISO2022JP edit<bang> ++enc=iso-2022-jp <args>
+
+" matchit
+" -------
+
+runtime macros/matchit.vim
+
+" Open junk file
+" --------------
+
+" http://vim-users.jp/2010/11/hack181/
+command! -nargs=? -complete=filetype Junk call s:open_junk_file(<f-args>)
+function! s:open_junk_file(...)
+  let junk_dir=expand('~') . '/.junk'. strftime('/%Y/%m')
+  if !isdirectory(junk_dir)
+    call mkdir(expand(junk_dir), 'p')
+  endif
+  let base = junk_dir.strftime('/%Y-%m-%d-%H%M%S.')
+  let filename = a:0 ? base.a:1 : input('Junk Code: ', base)
+  if filename != ''
+    execute 'edit' filename
+    call append(0, printf(&commentstring, ' '.fnamemodify(filename, ':p:~')))
+    set nomodified
+  endif
+endfunction
+
+
+" local/ftplugin {{{1
+" ==============
+
+" java_getset
+" -----------
+
+let no_java_maps = 1
+
+
+" local/plugin {{{1
+" ============
+
+" DoxygenToolkit
+" --------------
+
+let g:DoxygenToolkit_blockHeader = '**************************************************************'
+let g:DoxygenToolkit_blockFooter = '**************************************************************'
+let g:DoxygenToolkit_authorName = $USERNAME
+let g:DoxygenToolkit_paramTag_pre = '@param[] '
+let g:DoxygenToolkit_compactOneLineDoc = 'yes'
+
+" FoldMiss
+" --------
+
+command! FoldMisses call foldmiss#fold()
+
+" local/syntax {{{1
+" ============
+
+" alloy4 {{{2
+" ------
+
+augroup vimrc_syntax_alloy4
+  autocmd!
+  autocmd BufRead,BufNewFile *.als setfiletype alloy4
+augroup END
+
+
+" pathogen {{{1
+" ========
+" BUNDLE: https://github.com/tpope/vim-pathogen.git
+
+if has('vim_starting') && !exists('g:loaded_pathogen')
+  runtime bundle/vim-pathogen/autoload/pathogen.vim
+  call pathogen#infect()
+  call pathogen#infect(expand(s:rc_dir.'/develop'))
+endif
+
+syntax enable
+filetype plugin indent on
+
+
+" bundle {{{1
+" ======
+
+" alignta {{{2
+" BUNDLE: https://github.com/h1mesuke/vim-alignta.git
+
+" altr {{{2
+" BUNDLE: https://github.com/kana/vim-altr.git
+
+if s:bundled('vim-altr')
+  " 代替ファイルへの移動
+  nmap <Leader>a <Plug>(altr-forward)
+endif
+
+" ambicmd {{{2
+" BUNDLE: https://github.com/thinca/vim-ambicmd.git
+
+if s:bundled('vim-ambicmd')
+  cnoremap <expr> <Space> ambicmd#expand("\<Space>")
+  cnoremap <expr> <CR>    ambicmd#expand("\<CR>")
+
+  augroup vimrc_ambicmd
+    autocmd!
+    autocmd CmdwinEnter * call s:init_cmdwin()
+  augroup END
+
+  function! s:init_cmdwin()
+    inoremap <buffer> <expr> <Space> ambicmd#expand("\<Space>")
+    inoremap <buffer> <expr> <CR>    ambicmd#expand("\<CR>")
+    startinsert!
+  endfunction
+endif
+
+" AsyncCommand {{{2
+" BUNDLE: https://github.com/pydave/AsyncCommand.git
+
+" autodate {{{2
+" BUNDLE: https://github.com/vim-scripts/autodate.vim.git
+
+let g:autodate_format = '%d %b %Y'
+let g:autodate_keyword_pre = '\cLast Modified: '
+
+" autofmt {{{2
+" BUNDLE: http://vim-soko.googlecode.com/svn/trunk/autofmt/ -subversion /autofmt
+
+if s:bundled('autofmt')
+  set formatexpr=autofmt#compat#formatexpr()
+endif
+
+" benchmark {{{2
+" BUNDLE: https://github.com/h1mesuke/vim-benchmark.git
+
+" bundlesync {{{2
+" BUNDLE: https://github.com/sgur/bundlesync.vim.git
+
+" CCTree {{{2
+" BUNDLE: https://github.com/vim-scripts/CCTree.git
+
+" citation-utils {{{2
+" BUNDLE: https://github.com/sgur/citation-utils.vim.git
+
+" cmdline_completion {{{2
+" BUNDLE: https://github.com/vim-scripts/cmdline-completion.git
+
+if s:bundled('cmdline-completion')
+  cmap <silent> <C-x><C-n> <Plug>CmdlineCompletionForward
+  cmap <silent> <C-x><C-p> <Plug>CmdlineCompletionBackward
+endif
+
+" clang-binaries {{{2
+" BUNDLE: https://github.com/sgur/clang-binaries.git
+
+" clang_complete {{{2
+" BUNDLE: https://github.com/Rip-Rip/clang_complete.git
+
+" see after/plugin/clang_complete.vim
+
+let g:clang_auto_select = 1
+
+" colors-solarized {{{2
+" BUNDLE: https://github.com/altercation/vim-colors-solarized.git
+
+let g:solarized_menu   = 0
+let g:solarized_italic  = 0
+let g:loaded_togglebg = 1
+
+" css3-syntax {{{2
+" BUNDLE: https://github.com/hail2u/vim-css3-syntax.git
+
+" commentary {{{2
+" BUNDLE: https://github.com/tpope/vim-commentary.git
+
+if s:bundled('vim-commentary')
+  xmap gc  <Plug>Commentary
+  nmap gc  <Plug>Commentary
+  nmap gcc <Plug>CommentaryLine
+  nmap gcu <Plug>CommentaryUndo
+endif
+
+" cpp {{{2
+" BUNDLE: https://github.com/vim-jp/cpp-vim.git
+
+" ctrlp {{{2
+" BUNDLE: https://github.com/kien/ctrlp.vim.git
+
+let g:ctrlp_max_depth = s:is_win ? 3 : 30
+let g:ctrlp_extensions = ['mixed', 'menu', 'yankring', 'cmdline', 'dir']
+let g:ctrlp_clear_cache_on_exit = 0
+let g:ctrlp_mruf_exclude = s:is_win && exists('$TEMP')
+      \ ? escape(expand($TEMP), '\').'\\.*'
+      \ : '/tmp/.*\|/var/.*'
+let g:ctrlp_cmd = 'CtrlPMixed'
+
+function! s:regexp_or(list)
+  return empty(a:list) ? ''
+        \ : escape(join(map(copy(a:list), 'escape(v:val, "^$")."$"'), '|'), '.|')
+endfunction
+let s:ignore = {
+      \ 'dir' : ['.git', '.hg', '.svn', '.undo', '.swap', '.backup',
+      \ '.neocon', '.cache', 'Debug', 'Release', 'AppData', 'AppVerifierLogs'],
+      \ 'file' : ['.exe', '.so', '.dll', '.rxc', '.jar', '.out',
+      \ '.png', '.jpg', '.ico',
+      \ '.pyc', '.pyo', '.pdf', '.lnk', '.xlsx\?', '.docx\?', '.pptx\?', '.sys'],
+      \ 'link' : '',
+      \ }
+let g:ctrlp_custom_ignore = {
+      \ 'dir' : s:regexp_or(s:ignore.dir),
+      \ 'file' : s:regexp_or(s:ignore.file),
+      \ 'link' : s:regexp_or(s:ignore.link),
+      \ }
+delfunction s:regexp_or
+unlet s:ignore
+
+if s:bundled('ctrlp.vim')
+  nnoremap <silent> g<C-p> :<C-u>CtrlP<CR>
+  nnoremap <silent> <C-n> :<C-u>CtrlPLastMode<CR>
+endif
+
+" ctrlp-extensions {{{2
+" BUNDLE: https://github.com/sgur/ctrlp-extensions.vim.git
+
+" diff {{{2
+" BUNDLE: https://github.com/ynkdir/vim-diff.git
+
+if s:bundled('vim-funlib')
+      \ && s:bundled('vim-diff')
+  set diffexpr=diff#diffexpr()
+endif
+
+" ft-markdown_fold {{{2
+" BUNDLE: https://github.com/thinca/vim-ft-markdown_fold.git
+
+" ft-vim_fold {{{2
+" BUNDLE: https://github.com/thinca/vim-ft-vim_fold.git
+
+" errormarker {{{2
+" BUDNEL: https://github.com/vim-scripts/errormarker.vim.git
+
+" fugitive {{{2
+" BUNDLE: https://github.com/tpope/vim-fugitive.git
+
+if s:bundled('vim-fugitive')
+  command! -nargs=* Gpush Git push <args>
+  command! -nargs=* Gpull Git pull <args>
+endif
+
+" funlib {{{2
+" BUNDLE: https://github.com/ynkdir/vim-funlib.git
+
+" fontzoom {{{2
+" BUNDLE: https://github.com/thinca/vim-fontzoom.git
+
+let g:fontzoom_no_default_key_mappings = 1
+silent! nmap <silent> <Leader>+ <Plug>(fontzoom-larger)
+silent! nmap <silent> <Leader>; <Plug>(fontzoom-larger)
+silent! nmap <silent> <Leader>- <Plug>(fontzoom-smaller)
+
+" gf-diff {{{2
+" BUNDLE: https://github.com/kana/vim-gf-diff.git
+
+" gf-user {{{2
+" BUNDLE: https://github.com/kana/vim-gf-user.git
+
+" gist {{{2
+" BUNDLE: https://github.com/mattn/gist-vim.git
+
+" gitv {{{2
+" BUNDLE: https://github.com/gregsexton/gitv.git
+
+let g:Gitv_OpenHorizontal = 1
+let g:Gitv_WipeAllOnClose = 1
+let g:Gitv_OpenPreviewOnLaunch = 0
+
+function! s:only()
+  if winnr('$') > 1
+    only
+  endif
+endfunction
+
+augroup vimrc_gitv
+  autocmd!
+  autocmd FileType gitv nnoremap <buffer> <silent> h :help gitv<CR>
+  autocmd FileType gitv nnoremap <buffer> <silent> m :call <SID>only()<CR>
+  autocmd FileType gitv nnoremap <buffer> <silent> n <C-n>
+  autocmd FileType gitv nnoremap <buffer> <silent> p <C-p>
+  autocmd FileType gitv setlocal textwidth&
+augroup END
+
+" golden-ratio {{{2
+" BUNDLE: https://github.com/roman/golden-ratio.git
+
+" autocmd をデフォルトで無効にする
+let g:golden_ratio_autocommand = 0
+
+if s:bundled('golden-ratio')
+  nmap <silent> <C-W>u <Plug>(golden_ratio_resize)
+  function! s:golden_ratio_vimsize()
+    if &lines > 40 && &columns > 140
+      GoldenRatioResize
+    endif
+  endfunction
+  augroup vimrc_golden_ratio
+    autocmd!
+    autocmd WinEnter,BufEnter * call s:golden_ratio_vimsize()
+  augroup END
+endif
+
+" guess {{{2
+" BUNDLE: https://github.com/ynkdir/vim-guess.git
+
+if s:bundled('vim-guess')
+      \ && s:bundled('vim-funlib')
+  " Windowsでエンコーディングの違いによる文字化けを回避
+  " http://sites.google.com/site/fudist/Home/vim-nihongo-ban/-vimrc-sample#make
+  augroup vimrc_guess
+    autocmd!
+    autocmd  QuickfixCmdPost grep,make call s:fix_encoding()
+  augroup END
+  function! s:fix_encoding()
+    let qflist = getqflist()
+    for i in qflist
+      let i.text = iconv(i.text, guess#guess(i.text), &enc)
+    endfor
+    call setqflist(qflist)
+  endfunction
+endif
+
+" gummybears {{{2
+" BUNDLE: https://github.com/jelera/vim-gummybears-colorscheme.git
+
+" gundo {{{2
+" BUNDLE: https://bitbucket.org/sjl/gundo.vim
+
+if s:bundled('gundo.vim')
+  nnoremap <F5> :<C-u>GundoToggle<CR>
+  nnoremap <Leader>u :<C-u>GundoToggle<CR>
+endif
+
+" haskellConceal {{{2
+" BUNDLE: https://github.com/Twinside/vim-haskellConceal.git
+
+" html5 {{{2
+" BUNDLE: https://github.com/othree/html5.vim.git
+
+" jellybeans {{{2
+" BUNDLE: https://github.com/nanotech/jellybeans.vim.git
+
+" lawrencium {{{2
+" BUNDLE: https://bitbucket.org/ludovicchabant/vim-lawrencium
+
+" localrc {{{2
+" BUNDLE: https://github.com/thinca/vim-localrc.git
+
+" memolist {{{2
+" BUNDLE: https://github.com/sgur/memolist.vim.git
+
+let g:memolist_memo_suffix = 'rst'
+let g:memolist_template_dir_path = s:rc_dir . '/template/memolist'
+
+" molokai {{{2
+" BUNDLE: https://github.com/tomasr/molokai.git
+
+" neco-ghc {{{2
+" BUNDLE: https://github.com/ujihisa/neco-ghc.git
+
+augroup vimrc_neco_ghc
+  autocmd!
+  autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
+augroup END
+
+" ocaml-conceal {{{2
+" BUNDLE: https://github.com/MnO2/vim-ocaml-conceal.git
+
+" open-browser {{{2
+" BUNDLE: https://github.com/tyru/open-browser.vim.git
+
+let g:netrw_nogx = 1 " disable netrw's gx mapping.
+
+if s:bundled('open-browser.vim')
+  nmap gx <Plug>(openbrowser-smart-search)
+  vmap gx <Plug>(openbrowser-smart-search)
+endif
+
+" operator-openbrowser {{{2
+" BUNDLE: https://github.com/sgur/vim-operator-openbrowser.git
+
+if s:bundled('vim-operator-user')
+      \ && s:bundled('vim-operator-openbrowser')
+      \ && s:bundled('open-browser.vim')
+  nmap <Leader>x <Plug>(operator-openbrowser)
+  vmap <Leader>x <Plug>(operator-openbrowser)
+endif
+
+" operator-replace {{{2
+" BUNDLE: https://github.com/kana/vim-operator-replace.git
+
+if s:bundled('vim-operator-user') && s:bundled('vim-operator-replace')
+  " R で yank したものを置換できる](http://vim.g.hatena.ne.jp/yamazakiccs/20090913)
+  nmap R <Plug>(operator-replace)
+  vmap R <Plug>(operator-replace)
+endif
+
+" operator-star {{{2
+" BUNDLE: https://github.com/tyru/operator-star.vim.git
+
+if s:bundled('vim-operator-user')
+      \ && s:bundled('operator-star.vim')
+      \ && s:bundled('vim-visualstar')
+  nmap <Leader>*  <Plug>(operator-*)
+  nmap <Leader>g* <Plug>(operator-g*)
+  nmap <Leader>#  <Plug>(operator-#)
+  nmap <Leader>g# <Plug>(operator-g#)
+endif
+
+" operator-user {{{2
+" BUNDLE: https://github.com/kana/vim-operator-user.git
+
+" powerline {{{2
+" BUNDLE: https://github.com/Lokaltog/vim-powerline.git
+
+if !has('gui_running')
+  let g:Powerline_cache_enable = 0
+  let g:Powerline_symbols = 'compatible'
+else
+  let g:Powerline_cache_enable = 1
+  let g:Powerline_symbols = 'fancy'
+endif
+
+" prettyprint {{{2
+" BUNDLE: https://github.com/thinca/vim-prettyprint.git
+
+" quickrun {{{2
+" BUNDLE: https://github.com/thinca/vim-quickrun.git
+
+if !exists('g:quickrun_config')
+  let g:quickrun_config = {}
+endif
+if executable('pandoc')
+  let g:quickrun_config['markdown/pandoc/browser'] = {
+        \ 'type': 'markdown/pandoc',
+        \ 'input' : '%{expand("%")}',
+        \ 'exec': '%c --from=markdown --to=html %o %a',
+        \ 'outputter' : 'browser',
+        \ }
+  let g:quickrun_config['markdown/pandoc/docx'] = {
+        \ 'input' : '%{expand("%")}',
+        \ 'command': 'pandoc',
+        \ 'cmdopt' : '%{tempname()}.docx',
+        \ 'exec': ['%c -s --from=markdown --to=docx -o "%o" %a',
+        \ (has('win32') || has('win64'))
+        \ ? 'move /Y "%o" "%S:p:r.docx"'
+        \ : 'mv %o %S:pr:r.docx'],
+        \ 'outputter' : 'error',
+        \ 'output_encode' : 'cp932',
+        \ }
+  let g:quickrun_config.markdown = {
+        \ 'type' : 'markdown/pandoc/browser',
+        \ }
+  let g:quickrun_config['rst/pandoc/browser'] = {
+        \ 'input' : '%{expand("%")}',
+        \ 'command': 'pandoc',
+        \ 'exec': '%c -s --from=rst --to=html %o %a',
+        \ 'outputter' : 'browser',
+        \ 'output_encode' : 'utf-8',
+        \ }
+  let g:quickrun_config['rst/pandoc/docx'] = {
+        \ 'input' : '%{expand("%")}',
+        \ 'command': 'pandoc',
+        \ 'cmdopt' : '%{tempname()}.docx',
+        \ 'exec': ['%c -s --from=rst --to=docx -o "%o" %a',
+        \ (has('win32') || has('win64'))
+        \ ? 'move /Y "%o" "%S:p:r.docx"'
+        \ : 'mv %o %S:pr:r.docx'],
+        \ 'outputter' : 'error',
+        \ 'output_encode' : 'cp932',
+        \ }
+  let g:quickrun_config.rst = {
+        \ 'type' : 'rst/pandoc/browser',
+        \ }
+endif
+if s:is_win
+  if executable('csc')
+    let g:quickrun_config.cs = {
+          \ 'command'  : 'csc',
+          \ 'exec'     : ['%c /nologo %s:gs?/?\\? > /dev/null',
+          \               '"%S:p:r:gs?/?\\?.exe" %a',
+          \               ':call delete("%S:p:r.exe")'],
+          \ 'tempfile' : '{tempname()}.cs',
+          \ }
+  endif
+  let g:quickrun_config.c = {
+        \ 'type' : 'c/vc',
+        \ 'output_encode' : 'cp932'
+        \ }
+endif
+
+" repeat {{{2
+" BUNDLE: https://github.com/tpope/vim-repeat.git
+
+" restart {{{2
+" BUNDLE: https://github.com/tyru/restart.vim.git
+
+" sessionoptions for restart.vim
+let g:restart_sessionoptions = 'buffers,curdir,tabpages'
+
+function! s:save_colorscheme()
+  return [printf('colorscheme %s', g:colors_name)]
+endfunction
+function! s:save_fn()
+  let _ = []
+  call extend(_, s:save_colorscheme())
+  " call extend(_, s:save_buffers())
+  return _
+endfunction
+
+if !exists('g:restart_save_fn')
+  let g:restart_save_fn = []
+endif
+call add(g:restart_save_fn, s:SID_PREFIX().'save_fn')
+
+" riv {{{2
+" BUNDLE: https://github.com/Rykka/riv.vim.git
+
+let g:_riv_loaded = 1
+
+if s:bundled('riv.vim')
+  augroup vimrc_riv
+    autocmd!
+    autocmd BufReadPre *.rst call riv#init() | autocmd! vimrc_riv
+  augroup END
+endif
+
+" scala-tool-suppoert {{{2
+" BUNDLE: http://lampsvn.epfl.ch/svn-repos/scala/scala-tool-support/trunk/src/vim/ -subversion /scala-tool-support
+
+" shadow {{{2
+" BUNDLE: https://github.com/ujihisa/shadow.vim.git
+
+" signature {{{2
+" BUNDLE: https://github.com/kshenoy/vim-signature.git
+
+let g:SignatureDisableMenu = 1
+
+" smartchr {{{2
+" BUNDLE: https://github.com/kana/vim-smartchr.git
+
+if s:bundled('vim-smartchr')
+  " , の後に <Space> を挿入する
+  inoremap <expr> , smartchr#one_of(', ', ',')
+  " ~/ の簡単入力
+  cnoremap <expr> ; smartchr#one_of('~/', ';', {'ctype': ':', 'fallback': ';'})
+  " 非正規表現 → 正規表現 の順に入力
+  cnoremap <expr> ( smartchr#one_of('(', '\(', {'ctype': '/?', 'fallback': '('})
+  cnoremap <expr> ) smartchr#one_of(')', '\)', {'ctype': '/?', 'fallback': ')'})
+  cnoremap <expr> / smartchr#one_of('\/', '/', {'ctype': '/?', 'fallback': '/'})
+  cnoremap <expr> + smartchr#one_of('+', '\+', {'ctype': '/?', 'fallback': '+'})
+  cnoremap <expr> . smartchr#one_of('\.', '.', {'ctype': '/?', 'fallback': '.'})
+  augroup vimrc_smartchr
+    autocmd!
+    autocmd FileType c,cpp,vim inoremap <buffer> <expr> = smartchr#one_of('= ', '== ', '=')
+    autocmd FileType c,cpp inoremap <buffer> <expr> . smartchr#one_of('.', '->', '..')
+    autocmd FileType vimshell inoremap <buffer> <expr> ; smartchr#loop('~/', ';', ':', {'ctype' : ':'})
+  augroup END
+endif
+
+" smartinput {{{2
+" BUNDLE: https://github.com/kana/vim-smartinput.git
+
+" 2012-07-31:
+" やっぱりやめた。ambicmd を優先する
+" 2012-07-30:
+" ambcmd の c_<CR> と衝突しているため、E227 が発生する
+" ambcmd の <CR> より smartinput を優先する
+" let g:smartinput_no_default_key_mappings = 1
+" call smartinput#map_trigger_keys(1)
+
+" surround {{{2
+" BUNDLE: https://github.com/tpope/vim-surround.git
+
+" sonictemplate {{{2
+" BUNDLE: https://github.com/mattn/sonictemplate-vim.git
+
+if !exists('g:sonictemplate_vim_template_dir')
+  let g:sonictemplate_vim_template_dir = []
+endif
+
+call add(g:sonictemplate_vim_template_dir, s:rc_dir.'/template')
+
+" sonictemplate-templates {{{2
+" BUNDLE: https://github.com/sgur/sonictemplate-templates.git
+
+if s:bundled('sonictemplate-templates')
+  call add(g:sonictemplate_vim_template_dir, sonictemplate#template#default())
+endif
+
+" taghighlight {{{2
+" BUNDLE: https://bitbucket.org/abudden/taghighlight
+
+let g:loaded_TagHighlight = 1
+
+if s:bundled('taghighlight')
+  " なにかバッファを開いたときに初期化
+  augroup vimrc_taghighlight
+    autocmd!
+    autocmd Syntax,FileType *
+          \ | unlet! g:loaded_TagHighlight
+          \ | runtime plugin/TagHighlight.vim
+          \ | autocmd! vimrc_taghighlight
+  augroup END
+ endif
+
+" TaskList {{{2
+" BUNDLE: https://github.com/vim-scripts/TaskList.vim.git
+
+if s:bundled('TaskList.vim')
+  nmap <Leader>d <Plug>TaskList
+endif
+
+" thesaurus-gutenberg {{{2
+" BUNDLE: https://github.com/sgur/thesaurus-gutenberg.vim.git
+
+" textobj-between (aF iF) {{{2
+" BUNDLE: https://github.com/thinca/vim-textobj-between.git
+
+let g:textobj_between_no_default_key_mappings = 1
+
+if s:bundled('vim-textobj-between')
+  omap ib <Plug>(textobj-between-i)
+  omap ab <Plug>(textobj-between-a)
+  vmap ib <Plug>(textobj-between-i)
+  vmap ab <Plug>(textobj-between-a)
+endif
+
+" textobj-comment {{{2
+" BUNDLE: https://github.com/thinca/vim-textobj-comment.git
+
+" textobj-fold {{{2
+" BUNDLE: https://github.com/kana/vim-textobj-fold.git
+
+" textobj-function {{{2
+" BUNDLE: https://github.com/kana/vim-textobj-function.git
+
+" textobj-function-javascript {{{2
+" BUNDLE: https://github.com/thinca/vim-textobj-function-javascript.git
+
+" textobj-function-perl {{{2
+" BUNDLE: https://github.com/thinca/vim-textobj-function-perl.git
+
+" textobj-indent {{{2
+" BUNDLE: https://github.com/kana/vim-textobj-indent.git
+
+" textobj-line {{{2
+" BUNDLE: https://github.com/kana/vim-textobj-line.git
+
+" textobj-parameter {{{2
+" BUNDLE: https://github.com/sgur/vim-textobj-parameter.git
+
+" textobj-syntax {{{2
+" BUNDLE: https://github.com/kana/vim-textobj-syntax.git
+
+" textobj-user {{{2
+" BUNDLE: https://github.com/kana/vim-textobj-user.git
+
+" up2date.vim {{{2
+" BUNDLE: https://github.com/sgur/up2date.vim.git
+
+" vimdoc-ja {{{2
+" BUNDLE: https://github.com/vim-jp/vimdoc-ja.git
+
+" vimomni {{{2
+" BUNDLE: https://github.com/c9s/vimomni.vim.git
+
+" vimplenote {{{2
+" BUNDLE: https://github.com/mattn/vimplenote-vim.git
+
+" vimproc {{{2
+" BUNDLE: https://github.com/Shougo/vimproc.git
+
+let g:vimproc_dll_path = s:rc_dir . '/etc/vimproc/'
+if has('win64')
+  let g:vimproc_dll_path .= 'windows/vimproc_win64.dll'
+elseif has('win32')
+  let g:vimproc_dll_path .= 'windows/vimproc_win32.dll'
+elseif has('win32unix')
+  let g:vimproc_dll_path .= 'win32unix/proc.dll'
+elseif has('unix')
+  if executable('uname') && system('uname -m') =~? 'x86_64'
+    let g:vimproc_dll_path .= 'linux/vimproc_unix64.so'
+  else
+    let g:vimproc_dll_path .= 'linux/vimproc_unix.so'
+  endif
+endif
+
+" vimshell {{{2
+" BUNDLE: https://github.com/Shougo/vimshell.git
+
+let g:vimshell_enable_smart_case = 1
+let g:vimshell_prompt = '% '
+let g:vimshell_right_prompt = 'fnamemodify(getcwd(), ":~")'
+let g:vimshell_user_prompt = 'hostname()'
+
+augroup vimrc_ft_vimshell
+  autocmd!
+  autocmd FileType vimshell setlocal omnifunc=vimshell#complete#candidate
+augroup END
+
+if s:bundled('vimshell')
+  " <F3> で visor のような vimshellpop
+  nnoremap <silent> <F3> :call <SID>vimshell_visor()<CR>
+  function! s:vimshell_visor()
+    noautocmd execute 'VimShellPop' expand('%:p:h')
+    set previewwindow
+    inoremap <buffer> <F3> <ESC>:pclose<CR>
+    nnoremap <buffer> <F3> :pclose<CR>
+  endfunction
+endif
+
+" vinarize {{{2
+" BUNDLE: https://github.com/Shougo/vinarise.git
+
+" visualctrlg {{{2
+" BUNDLE: https://github.com/tyru/visualctrlg.vim.git
+
+" visualstar {{{2
+" BUNDLE: https://github.com/thinca/vim-visualstar.git
+
+" vspec {{{2
+" BUNDLE: https://github.com/kana/vim-vspec.git
+
+" webapi {{{2
+" BUNDLE: https://github.com/mattn/webapi-vim.git
+
+" zencoding {{{2
+" BUNDLE: https://github.com/mattn/zencoding-vim.git
+
+" BUNDLE: https://github.com/Shougo/neocomplcache.git
+
+" }}}2
+" }}}1 __END__

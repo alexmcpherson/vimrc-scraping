@@ -1,0 +1,67 @@
+" Enable pathogen
+call pathogen#runtime_append_all_bundles()
+
+" UTF-8 All the way
+scriptencoding utf-8
+
+" Use zsh.
+set shell=zsh
+
+set nocompatible
+set autoindent
+set title
+set smartindent
+set tabstop=2
+set softtabstop=2
+set shiftwidth=2
+set expandtab
+set number
+set ls=2
+set ruler
+set ttyfast
+set bg=dark
+syntax on
+filetype on
+
+colorscheme vividchalk
+highlight OverLength ctermbg=red ctermfg=white guibg=#592929
+match OverLength /\%81v.*/
+
+set ls=2
+"set statusline=[%n]\ %<%.99f\ %h%w%m%r%y\ %{fugitive#statusline()}%{exists('*CapsLockStatusline')?CapsLockStatusline():''}%=%-16(\ %l,%c-%v\ %)%P
+
+set laststatus=2
+set statusline=\ "
+set statusline+=%f\ " file name
+set statusline+=[
+set statusline+=%{strlen(&ft)?&ft:'none'} " filetype
+set statusline+=]
+set statusline+=%h%1*%m%r%w%0* " flag
+set statusline+=%= " right align
+set statusline+=%-14.(%l,%c%V%)\ %<%P " offset
+
+if has('gui_running')
+    set guioptions-=T  " no toolbar
+    set guifont=Pragmata\ TT:h14
+    colorscheme vividchalk
+endif
+" NERDTree CONFIGURATION
+
+" Enable nice colors
+let NERDChristmasTree = 1
+
+" Make it easy to see where we are
+let NERDTreeHighlightCursorline = 1
+
+" Make bookmarks visible
+let NERDTreeShowBookmarks = 1
+
+" Show hidden files
+let NERDTreeShowHidden = 1
+
+" Don't hijack NETRW
+let NERDTreeHijackNetrw = 0
+let NERDTreeIgnore=['\.$', '\~$']
+
+" Make F2 open NERDTree
+nmap <F2> :NERDTreeToggle<CR>

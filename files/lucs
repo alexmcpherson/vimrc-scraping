@@ -1,0 +1,434 @@
+" --------------------------------------------------------------------
+" Set these correctly.
+
+    " External plugins I use.
+let g:lucs_vimext = "/opt/apps/vim.ext/"
+    " My shared vimfiles.
+let g:lucs_vimfiles = "/opt/dvcs/vimcfg/vimfiles"
+
+" --------------------------------------------------------------------
+set nocompatible
+    " Clear autocommands.
+autocmd!
+
+    " Make sure there are as many comman connected "%s" as there are runtime
+    " path directories.
+exec printf("set runtimepath=%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
+  \ $VIMRUNTIME,
+  \ g:lucs_vimext . "_misc",
+  \ g:lucs_vimext . "NERD_tree",
+  \ g:lucs_vimext . "snipMate",
+  \ g:lucs_vimext . "repeat",
+  \ g:lucs_vimext . "matchit",
+  \ g:lucs_vimext . "lilypond",
+  \ g:lucs_vimext . "csspretty",
+  \ g:lucs_vimext . "runVimTests",
+  \ g:lucs_vimext . "VimTAP-0.3",
+  \ g:lucs_vimext . "csound",
+  \ g:lucs_vimext . "vim-latex",
+  \ g:lucs_vimfiles
+\)
+
+let NERDTreeWinPos="right"
+
+" --------------------------------------------------------------------
+if has('perl')
+    let myINC = system("perl -e '$,=\" \";print @INC'")
+    perl push @INC, split(/ /,VIM::Eval("myINC"))
+endif
+
+" --------------------------------------------------------------------
+" Similar to something found at
+" http://vim.wikia.com/wiki/Easier_buffer_switching
+function! BufSel (pattern, listunlisted)
+    let bufcount = bufnr("$")
+    let currbufnr = 1
+    let nummatches = 0
+    let firstmatchingbufnr = 0
+    if a:pattern == ""
+        let pattern = "."
+    else
+        let pattern = a:pattern
+    endif
+    while currbufnr <= bufcount
+        if (bufexists(currbufnr))
+            if (buflisted(currbufnr) || a:listunlisted == 1)
+                let currbufname = bufname(currbufnr)
+                if (match(currbufname, pattern) > -1)
+                    echo currbufnr . ": ". bufname(currbufnr)
+                    let nummatches += 1
+                    let firstmatchingbufnr = currbufnr
+                endif
+            endif
+        endif
+        let currbufnr = currbufnr + 1
+    endwhile
+    if (nummatches == 1)
+        execute ":buffer ". firstmatchingbufnr
+    elseif (nummatches > 1)
+        let desiredbufnr = input("Enter buffer number: ")
+        if (strlen(desiredbufnr) != 0)
+            execute ":buffer ". desiredbufnr
+        endif
+    else
+        echo "No matching buffers"
+    endif
+endfunction
+command! -nargs=* Bs :call BufSel("<args>", 1)
+command! -nargs=* Bs2 :call BufSel("<args>", 0)
+"map <f5> :Bs<space>
+"map <f6> :Bs2<space>
+map <f6> :Bs<cr>
+map <f5> :Bs2<cr>
+
+" --------------------------------------------------------------------
+    " To make sure ftdetect are reread.
+filetype off
+filetype plugin on
+
+    " Disable loading of the plugin.
+let loaded_matchparen = 1
+
+setglobal fileencoding=utf-8
+
+set autowrite
+set backspace=indent,eol,start
+set confirm
+    " I store the swap files here from now on.
+exec "set directory=/opt/tmp/" . $USER . "/vimtmp//"
+set encoding=utf-8
+set expandtab
+set ffs=unix,dos,mac
+set hidden
+set history=1000
+set hlsearch
+set incsearch
+set laststatus=2
+set modeline
+set mouse=a
+set nobackup
+set nodigraph
+set nostartofline
+set notimeout ttimeout ttimeoutlen=200
+set notitle
+set nowrapscan
+set nowritebackup
+set pheader=%<%f%h%m%40{strftime(\"%I:%M:%S\ \%p,\ %a\ %b\ %d,\ %Y\")}%=Page\ %N
+set printoptions=paper:letter
+set shortmess=atIToO
+set showcmd
+set splitbelow
+set statusline=%{&paste?'PASTE':''}\ %n%m\ %f\ %l/%L\ %P\ %c-%v
+set whichwrap+=<,>,[,]
+set wildmenu
+
+if &term =~ "rxvt-unicode" || &term =~ "screen"
+    set t_Co=256
+"    set t_Sf=[3%p1%dm
+"    set t_Sb=[4%p1%dm
+"else
+"    set t_Co=88
+"    set t_Sf=[3%dm
+"    set t_Sb=[4%dm
+endif
+
+" --------------------------------------------------------------------
+if has("gui_running")
+    set guifont=Monospace\ 12
+endif
+
+" --------------------------------------------------------------------
+" Miscellaneous mappings
+
+nnoremap ' `
+nnoremap ` '
+
+    " Vim-compile the code that is visually highlighted.
+vmap <f9> y:exec substitute(@", '\n\s*\\', ' ', 'g')<cr>
+
+    " Toggle syntax highlighting on and off.
+map <silent> <f7> :if exists("syntax_on") <bar>
+  \   syntax off <bar>
+  \ else <bar>
+  \   syntax enable <bar>
+  \ endif <cr>
+
+    " Toggle 'paste'.
+map  <silent> <f3> :call TogglePaste()<cr>
+func! TogglePaste ()
+    if &paste == 0
+        set paste
+    else
+        set nopaste
+    endif
+endfunc
+
+map  <silent> <f4> :call ToggleScrollOffset()<cr>
+func! ToggleScrollOffset ()
+    if &scrolloff == 0
+        set scrolloff=100
+    elseif &scrolloff == 100
+        set scrolloff=0
+    endif
+endfunc
+
+    " Move between buffers.
+nmap <tab>   :bn<cr>
+nmap <s-tab> :bp<cr>
+
+    " To trap the ISO_Left_Tab xterm (I guess) mapping.
+nmap <esc>[Z <s-tab>
+
+    " Force UTF-8 encoding.
+nmap gt8 :set fenc=utf-8<cr>
+
+    " Keep highlighting when shifting text in or out.
+vnoremap < <gv
+vnoremap > >gv
+
+" --------------------------------------------------------------------
+    " Allow toggling search highlight, but turn it back on when a
+    " search is done.
+nnoremap <silent> <c-L> :set hls!<cr><c-l>
+inoremap <silent> <c-L> <esc>:set hls!<cr>a<c-l>
+vnoremap <silent> <c-L> <esc>:set hls!<cr>gv<c-l>
+nnoremap <silent> n :set hls<cr>n
+nnoremap <silent> N :set hls<cr>N
+nnoremap / :set hls<cr>/
+nnoremap ? :set hls<cr>?
+nnoremap <silent> * :set hls<cr>*
+nnoremap <silent> g* :set hls<cr>g*
+
+    " Prompt for clearing lines of trailing blanks.
+func! ClearTrailingBlanks ()
+    try
+        %s/\s\+$//c
+    catch
+        echo "No trailing blanks found."
+    endtry
+    nohl
+endfunc
+map <silent> gs :call ClearTrailingBlanks()<cr>
+
+    " Open this file, which lists file names, one per line, for easy
+    " opening with  gf  (built-in) or  gm  (defined later).
+nmap gtk :e $HOME/.freq<cr>
+
+    " Insert a timestamp.
+noremap glk
+  \ :let read_at = line(".") - 1 <bar>
+  \ :exec read_at . "r! perl " . g:lucs_vimfiles . "/plugin/tstamp.pl" <cr>0i.<esc>A <esc>A
+
+    " Insert a separator line, then a timestamp. Requires my pg_sep
+    " plugin.
+noremap gll :call InsertPg(1) <bar>
+  \ :exec "r! perl " . g:lucs_vimfiles . "/plugin/tstamp.pl" <cr> A <esc>A
+
+" --------------------------------------------------------------------
+let mapleader = " "
+
+" --------------------------------------------------------------------
+func! DeleteUnloaded ()
+    let fname = expand('<afile>')
+    let bname = bufname(fname)
+   " let junk = input(bname)
+    exec ":bwipeout " . bname
+    return system("rm " . fname)
+endfunc
+autocmd  BufUnload  *.TO_DELETE   :call DeleteUnloaded()
+
+" --------------------------------------------------------------------
+" Open file or directory browser (FoD) for what is on line under
+" cursor.
+
+func! CloseOpen ()
+    let @z = @"
+    normal yy
+    let FoD = @"
+    let FoD = substitute(FoD, "\n", "", "g")
+    let FoD = expand(FoD)
+    let @" = @z
+    if isdirectory(FoD)
+        if has("gui_running")
+            exec ":set bsdir=" . escape(FoD, '\')
+            bdelete
+            emenu File.Open\.\.\.
+        else
+            exec ":bd | :e " . FoD
+        endif
+    else
+        if filereadable(FoD)
+            exec ":bd | :e " . FoD
+        else
+            echo "Can't read '" . FoD . "'"
+        endif
+    endif
+endfunc
+nmap gm :call CloseOpen()<cr>
+
+" --------------------------------------------------------------------
+" Force filetype. Example usage:  :Fft vim
+func! Fft (ft)
+    if (exists('b:did_ftplugin'))
+        unlet b:did_ftplugin
+    endif
+    exec "set ft=" . a:ft
+endfunc
+com! -nargs=1 Fft call Fft("<args>")
+
+" --------------------------------------------------------------------
+func! Errmess ()
+    redir! > /tmp/mess.vim
+    silent mess
+    redir END
+    sp /tmp/mess.vim
+    norm G
+endfunc
+com! -nargs=0 M call Errmess()
+
+" --------------------------------------------------------------------
+" Open a Perl module in the current Vim session.
+" Example usage:  :Pm Module::Install
+func! Pm (module)
+    let f = system("perl -MModule::Locate "
+      \ . "-e 'print scalar(Module::Locate::locate(" . a:module . "))'")
+    if empty(f)
+        echo a:module "not found."
+        return
+    endif
+    exec ":e " . f
+    setl ft=perl ro nomod noma
+endfunc
+com! -nargs=1 Pm call Pm("<args>")
+
+" --------------------------------------------------------------------
+" Open a Perl POD file in the current Vim session.
+" Example usage:  :Pd Module::Install
+func! Pd (module)
+    let f = system("perldoc -l " . a:module)[:-2]
+    if v:shell_error != 0
+        echo a:module "not found."
+        return
+    endif
+    exec ":e " . f
+    setl ft=pod ro nomod noma
+endfunc
+com! -nargs=1 Pd call Pd("<args>")
+
+" --------------------------------------------------------------------
+" View a Perl POD file in the current Vim session.
+" Example usage:  :Pod Module::Install
+func! Pod (module)
+        " We will read the data into this file.
+    let fname = "/tmp/" . a:module . ".TO_DELETE"
+        " Move to it if it's already open.
+    let bnum = bufnr(fname)
+    if bnum != -1
+        exec ":e #" . bnum
+        return
+    endif
+    let f = system("perldoc -l " . a:module)[:-2]
+    if v:shell_error != 0
+        echo a:module "not found."
+        return
+    endif
+        " Open a new buffer unless the current one is available.
+    if bufname('%') != '' || &modified
+        new
+        only
+    endif
+    exec "r!" . "pod2man " . f . " | nroff -man | col -bpx | iconv -c"
+    setl ft=man nolist fenc=utf8 ro nomod noma
+    norm gg
+    exec ":w " . fname
+endfunc
+com! -nargs=1 Pod call Pod("<args>")
+
+" --------------------------------------------------------------------
+" Open file in a special place.
+" Example usage, showing which file will be opened:
+"   :Eu irssi       " /opt/prj/admin/notes/irssi
+"   :El vim         " /opt/prj/lrn/vim/Notes
+"   :El perl moose  " /opt/prj/lrn/perl/moose
+"   :Ej domestic    " /opt/prj/domestic/Notes
+"
+" This uses Vim's "completion" mechanism.
+
+func! Edit (prj)
+    let w = split(a:prj, ' ')
+    let l = len(w)
+    if l == 1
+        exec "e " . b:EditDir . a:prj . b:Suffix
+    elseif l == 2
+        exec "e " . b:EditDir . w[0] . "/" . w[1]
+    elseif l == 3
+        exec "e " . b:EditDir . w[0] . "/" . w[1] . "/" . w[2]
+    endif
+endfunc
+
+func! ListSys (A,L,P)
+    let w = split(a:L, ' ')
+    let l = len(w)
+    if l == 2
+        if match(a:L, "Eu ") == 0
+            let b:EditDir = "/opt/prj/a/admin/notes/"
+            let b:Suffix  = ""
+        elseif match(a:L, "El ") == 0
+            let b:EditDir = "/opt/prj/l/"
+            let b:Suffix  = "/Notes"
+        elseif match(a:L, "Ej ") == 0
+            let b:EditDir = "/opt/prj/"
+            let b:Suffix  = "/Notes"
+        endif
+        return system("ls " . b:EditDir)
+    elseif l == 3
+        return system("ls " . b:EditDir . "/" . w[1])
+    elseif l == 4
+        return system("ls " . b:EditDir . "/" . w[1] . "/" . w[2])
+    endif
+endfunc
+
+com! -complete=custom,ListSys -nargs=1 Eu call Edit("<args>")
+com! -complete=custom,ListSys -nargs=1 El call Edit("<args>")
+com! -complete=custom,ListSys -nargs=1 Ej call Edit("<args>")
+
+" --------------------------------------------------------------------
+" View a man page in the current Vim session.
+" Example usage:  :Man ls
+func! Man (page)
+        " We will read the data into this file.
+    let fname = "/tmp/" . a:page . ".TO_DELETE"
+        " Move to it if it's already open.
+    let bnum = bufnr(fname)
+    if bnum != -1
+        exec ":e #" . bnum
+        return
+    endif
+   " let f = system("perldoc -l " . a:page)[:-2]
+   " if v:shell_error != 0
+   "     echo a:page "not found."
+   "     return
+   " endif
+        " Open a new buffer unless the current one is available.
+    if bufname('%') != '' || &modified
+        new
+        only
+    endif
+   " exec "r!" . "man " . a:page
+   " exec "r!" . "pod2man " . f . " | nroff -man | col -bpx | iconv -c"
+     exec "r!" . "/usr/bin/man -Tascii " . a:page . " | col -bpx | iconv -c"
+    setl ft=man nolist fenc=utf8 ro nomod noma
+    norm gg
+    exec ":w " . fname
+endfunc
+com! -nargs=1 Man call Man("<args>")
+
+" --------------------------------------------------------------------
+syntax enable
+
+if &t_Co == 256
+    colorscheme desert256
+else
+    colorscheme default
+endif
+

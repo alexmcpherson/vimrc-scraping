@@ -1,0 +1,311 @@
+" All installation of plugins in the .vim/bundle directory
+filetype off
+call pathogen#infect()
+call pathogen#helptags()
+
+" enable syntax highlighting and indentation
+if version > 600
+    syntax enable
+    filetype plugin indent on
+else
+    syntax on
+    filetype settings indent on
+endif
+
+" Make sure we're running in Vim mode
+set nocompatible
+
+" Load matchit as it's required by various plugins
+source $VIMRUNTIME/macros/matchit.vim
+
+set autoindent
+set autoread
+set backspace=indent,eol,start
+set completeopt=longest,menuone,preview
+set expandtab
+set formatoptions=qrn1
+set hidden
+set history=1000
+set hlsearch
+set incsearch
+set lazyredraw                          " don't redraw when don't have to
+set linebreak                           " wrap at 'breakat' instead of the last char
+set matchtime=2                         " jump back to the opening paren for 0.2s
+set noautowrite                         " don't automagically write on :next
+set noerrorbells                        " don't beep
+set nolist                              " turn off list mode by default
+set noshowmode
+set noswapfile
+set number
+set ruler
+set scrolloff=3                         " keep at least 3 lines above/below
+set shiftround                          " indent/outdent to nearest tabstop
+set shiftwidth=4
+set showcmd                             " show us the command we're typing
+set showfulltag                         " show full completion tags
+set showmatch                           " show matching parenthesis
+set sidescrolloff=5                     " keep at least 5 chars left/right
+set smartcase                           " ignore case if search pattern is all lowercase
+set smarttab
+set splitbelow
+set splitright
+set tabstop=4
+set textwidth=500
+set timeout timeoutlen=3000 ttimeoutlen=100 " reduce timeout to fix switching back to normal
+set ttyfast                             " we have a fast terminal
+set undolevels=1000
+set visualbell                          " turn off audio bell
+
+if exists('+colorcolumn')
+    set colorcolumn=+1
+endif
+
+" Wildmenu completion {{{
+
+set wildmenu
+set wildmode=list:longest
+
+set wildignore+=*.swp,*.bak
+set wildignore+=.hg,.git,.svn
+set wildignore+=*.spl
+set wildignore+=*.sw?
+
+" }}}
+
+" Turn off the alternate screen in terminals
+set t_ti=
+set t_te=
+
+" Tell vim to remember certain things when we exit
+"  '10  :   marks will be remembered for up to 10 previously edited files
+"  "100 :   will save up to 100 lines for each register
+"  :20  :   up to 20 lines of command-line history will be remembered
+"  n... :   where to save the viminfo files
+set viminfo='10,\"100,:20,n~/.viminfo
+
+if matchend($HOSTNAME, ".epub.net") != 1 | set t_Co=256 | endif
+
+" Highlight VCS conflict markers
+match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
+
+" don't use Q for Ex mode
+map Q :q
+
+" Don't move on *
+nnoremap * *<c-o>
+
+let mapleader=","
+let maplocalleader=";"
+
+" Show a visual list of buffers on the left
+noremap <silent> <Leader>j :BufExplorer<cr>
+
+" Change the working directory to the same as the file being edited
+noremap <silent> <Leader>cd :cd %:p:h<CR>
+
+" Cycle through the open windows resizing as you go
+noremap <silent> <Leader>w <C-W><C-W>:res<CR>
+
+" Turn on spell checking for the buffer
+noremap <buffer> <silent> <Leader>sp :set spell spelllang=en_ca<CR>
+
+
+" Set up the perl settings before the syntax file is loaded
+let perl_include_pod = 1
+let perl_want_scope_in_variables = 1
+let perl_extended_vars = 1
+let perl_string_as_statement = 1
+
+
+" Task paper date format
+let g:task_paper_date_format = "%Y-%m-%dT%H:%M:%S%z"
+
+
+" Enable ALL the python highlighting
+let python_highlight_all=1
+
+" Toggle paste
+set pastetoggle=<F8>
+
+
+" Reposition cursor when reopening a file
+if has("autocmd")
+    au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+endif
+
+
+" this is for MySQL's 'edit' command while in the client
+au! BufRead,BufNewFile /tmp/sql* :call SetMySQL()
+au! BufRead,BufNewFile /var/tmp/sql* :call SetMySQL()
+function! SetMySQL()
+    set ft=sql
+    SQLSetType mysql
+endfunction
+
+" load the snippets from my repository
+let g:snips_author = 'Robert James Kaes'
+let g:snippets_dir = '~/.vim/snippets'
+
+
+" Add the file type and buffer number to the status line
+set laststatus=2
+
+" Help with code formatting.  Aligns lines to make them look like:
+"   variable = 1
+"   var      = 2
+function! AlignAssignments ()
+    " Patterns needed to locate assignment operators...
+    let ASSIGN_OP   = '[-+*/%|&]\?=\@<!=[=~]\@!'
+    let ASSIGN_LINE = '^\(.\{-}\)\s*\(' . ASSIGN_OP . '\)\(.*\)$'
+
+    " Locate block of code to be considered (same indentation, no blanks)...
+    let indent_pat = '^' . matchstr(getline('.'), '^\s*') . '\S'
+    let firstline  = search('^\%('. indent_pat . '\)\@!','bnW') + 1
+    let lastline   = search('^\%('. indent_pat . '\)\@!', 'nW') - 1
+    if lastline < 0
+        let lastline = line('$')
+    endif
+
+    " Decompose lines at assignment operators...
+    let lines = []
+    for linetext in getline(firstline, lastline)
+        let fields = matchlist(linetext, ASSIGN_LINE)
+        if len(fields)
+            call add(lines, {'lval':fields[1], 'op':fields[2], 'rval':fields[3]})
+        else
+            call add(lines, {'text':linetext,  'op':''                         })
+        endif
+    endfor
+
+    " Determine maximal lengths of lvalue and operator...
+    let op_lines = filter(copy(lines),'!empty(v:val.op)')
+    let max_lval = max( map(copy(op_lines), 'strlen(v:val.lval)') ) + 1
+    let max_op   = max( map(copy(op_lines), 'strlen(v:val.op)'  ) )
+
+    " Recompose lines with operators at the maximum length...
+    let linenum = firstline
+    for line in lines
+        let newline = empty(line.op)
+        \ ? line.text
+        \ : printf("%-*s%*s%s", max_lval, line.lval, max_op, line.op, line.rval)
+        call setline(linenum, newline)
+        let linenum += 1
+    endfor
+endfunction
+
+nmap <silent>  ;=  :call AlignAssignments()<CR>
+
+" switch to using Perl standard regular expressions
+nnoremap / /\v
+vnoremap / /\v
+
+" Piggyback on <C-l> to clear the search highlighting (and rewrite the screen)
+nnoremap <silent> <C-l> :<C-u>nohlsearch<CR><C-l>
+
+" toggle between last two buffers with Z (normally ctrl-shift-6)
+nnoremap <silent> <leader>z <C-^>
+
+" From ragtag (plugin) docs
+inoremap <M-o>       <Esc>o
+inoremap <C-j>       <Down>
+let g:ragtag_global_maps = 1
+
+"ruby
+if has("autocmd")
+    autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete
+    autocmd FileType ruby,eruby let g:rubycomplete_buffer_loading = 1
+    autocmd FileType ruby,eruby let g:rubycomplete_rails = 1
+    autocmd FileType ruby,eruby let g:rubycomplete_classes_in_global = 1
+endif
+
+" Split/Join {{{
+"
+" Basically this splits the current line into two new ones at the cursor position,
+" then joins the second one with whatever comes next.
+"
+" Example:                      Cursor Here
+"                                    |
+"                                    V
+" foo = ('hello', 'world', 'a', 'b', 'c',
+"        'd', 'e')
+"
+"            becomes
+"
+" foo = ('hello', 'world', 'a', 'b',
+"        'c', 'd', 'e')
+"
+" Especially useful for adding items in the middle of long lists/tuples in Python
+" while maintaining a sane text width.
+nnoremap K h/[^ ]<cr>"zd$jyyP^v$h"zpJk:s/\v +$//<cr>:noh<cr>j^
+" }}}
+
+
+" Search and replace based on visual selection {{{
+"
+" Code taken from: http://stackoverflow.com/questions/676600/vim-replace-selected-text
+" Escape special characters in a string for exact matching.
+" This is useful to copying strings from the file to the search tool
+" Based on this - http://peterodding.com/code/vim/profile/autoload/xolox/escape.vim
+function! EscapeString (string)
+  let string=a:string
+  " Escape regex characters
+  let string = escape(string, '^$.*\/~[]')
+  " Escape the line endings
+  let string = substitute(string, '\n', '\\n', 'g')
+  return string
+endfunction
+
+" Get the current visual block for search and replaces
+" This function passed the visual block through a string escape function
+" Based on this - http://stackoverflow.com/questions/676600/vim-replace-selected-text/677918#677918
+function! GetVisual() range
+  " Save the current register and clipboard
+  let reg_save = getreg('"')
+  let regtype_save = getregtype('"')
+  let cb_save = &clipboard
+  set clipboard&
+
+  " Put the current visual selection in the " register
+  normal! ""gvy
+  let selection = getreg('"')
+
+  " Put the saved registers and clipboards back
+  call setreg('"', reg_save, regtype_save)
+  let &clipboard = cb_save
+
+  "Escape any special characters in the selection
+  let escaped_selection = EscapeString(selection)
+
+  return escaped_selection
+endfunction
+
+" Start the find and replace command across the entire file
+vnoremap <C-r> <Esc>:%s/<c-r>=GetVisual()<cr>/
+
+" }}}
+
+" highlight the cursor line in only the active window
+set cursorline
+autocmd WinEnter * setlocal cursorline
+autocmd WinLeave * setlocal nocursorline
+
+" Set up for Ack.vim
+let g:ackprg="ack-grep -H --nocolor --nogroup --column"
+
+" Trim trailing space when saving a file {{{
+" Taken from: http://vim.wikia.com/wiki/Remove_unwanted_spaces and
+" http://rails-bestpractices.com/posts/60-remove-trailing-whitespace
+
+function! <SID>StripTrailingWhitespaces()
+    " Preparation: save last search, and cursor position.
+    let _s=@/
+    let l = line(".")
+    let c = col(".")
+    " Do the business:
+    %s/\(^--\)\@<!\s*$//
+    " Clean up: restore previous search history, and cursor position
+    let @/=_s
+    call cursor(l, c)
+endfunction
+autocmd FileType mail,txt,ruby,gitcommit autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
+" }}}

@@ -1,0 +1,77 @@
+runtime bundle/vim-pathogen/autoload/pathogen.vim
+call pathogen#infect()
+Helptags
+syntax on
+filetype plugin indent on
+set background=dark
+colorscheme solarized
+set cursorline
+set guioptions-=T
+set guioptions-=M
+set hlsearch
+set wildmenu
+set ruler
+set matchpairs=(:),{:},[:],<:>
+set whichwrap=b,s,<,>,[,]
+set nobackup
+set guifont=Monaco:h16
+set noerrorbells
+set textwidth=80 "自动换行
+
+
+" less文件高亮显示
+au BufNewFile,BufRead *.less set filetype=less
+
+" 编码
+set encoding=utf-8
+set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
+" 不生成swap文件
+setlocal noswapfile
+set bufhidden=hide
+
+" 不发出滴滴声
+set noerrorbells
+
+"解决菜单乱码
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
+set linespace=4
+
+"显示行号
+set number
+set numberwidth=4
+
+let mapleader=","
+let g:mapleader=","
+
+set tabstop=4
+set expandtab
+set smarttab
+set softtabstop=4
+set shiftwidth=4
+" 缩进
+set autoindent
+set smartindent
+set backspace=indent,eol,start
+
+"""""""""""""""""""""""""""""""
+" Plugin Setting
+"""""""""""""""""""""""""""""""
+
+"NERDTree setting
+let NERDTreeShowHidden = 0
+let g:netrw_winsize = 30
+nmap <silent> <leader>nt :NERDTree <CR>
+"map <F3> :NERDTree<CR>
+nmap <silent> <leader>fe :Sexplore!<CR>
+
+" Indent Guides
+let g:indent_guides_start_level = 2
+let g:indent_guides_guide_size = 1
+let g:indent_guides_enable_on_vim_startup = 1
+
+"miniBuffExpl
+let g:miniBufExplMapWindowNavVim = 1
+let g:miniBufExplMapWindowNavArrows = 1
+let g:miniBufExplMapCTabSwitchBufs = 1
+let g:miniBufExplModSelTarget = 1

@@ -1,0 +1,35 @@
+filetype off
+call pathogen#runtime_append_all_bundles()
+filetype plugin indent on
+syntax on
+colorscheme blue
+set nocompatible
+set modelines=0
+
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+set expandtab
+
+set encoding=utf-8
+set scrolloff=3
+set autoindent
+set showmode
+set showcmd
+set hidden
+set wildmenu
+set wildmode=list:longest
+set visualbell
+set cursorline
+set ttyfast
+set ruler
+set laststatus=2
+set relativenumber
+set undofile
+
+set cpoptions+=$
+set virtualedit=all
+
+if has('gui_running')
+    set guifont=Inconsolata\ 15
+endif

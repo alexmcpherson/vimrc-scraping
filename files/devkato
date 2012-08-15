@@ -1,0 +1,364 @@
+" ================================================================================
+"
+" ================================================================================
+
+" --------------------------------------------------------------------------------
+" Editor Display Settings
+" --------------------------------------------------------------------------------
+set t_Co=256
+set encoding=utf8
+set nocompatible
+syntax on
+filetype on
+filetype indent plugin on
+set background=light
+set autoindent
+set copyindent
+set autoread
+set autowrite
+set splitright
+set splitbelow
+"set lazyredraw
+set ttyfast
+set ttimeout
+set notimeout
+set nottimeout
+set number
+set norelativenumber
+set ruler
+set cursorline
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
+set expandtab
+set smarttab
+set backspace=indent,eol,start
+set shiftround
+set laststatus=2
+set showcmd
+set showmode
+set title
+set wildmenu
+set wildmode=list:longest
+set cmdheight=2
+set scrolloff=2
+
+" Status line ------------------------------------------------------------- {{{
+"set statusline=%<%f\ %m%r%h%w%y%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']'}%=%4v\ %l/%L
+set statusline=%f    " Path.
+set statusline+=%m   " Modified flag.
+set statusline+=%r   " Readonly flag.
+set statusline+=%w   " Preview window flag.
+
+set statusline+=\    " Space.
+
+set statusline+=%#warningmsg#
+"set statusline+=%{SyntasticStatuslineFlag()} " Syntastic errors.
+set statusline+=%*
+
+set statusline+=%=   " Right align.
+
+" File format, encoding and type.  Ex: "(unix/utf-8/python)"
+set statusline+=(
+set statusline+=%{&ff}                        " Format (unix/DOS).
+set statusline+=/
+set statusline+=%{strlen(&fenc)?&fenc:&enc}   " Encoding (utf-8).
+set statusline+=/
+set statusline+=%{&ft}                        " Type (python).
+set statusline+=)
+
+" Line and column position and counts.
+set statusline+=\ (line\ %l\/%L,\ col\ %03c)
+
+" File format, encoding and type.  Ex: "
+" set statusline+=(
+" set statusline+=%{&ff)
+" set statusline+=/
+" set statusline+=%{strlen()
+" set statusline+=/
+" set statusline+=%{&ft)
+" set statusline+=)
+"
+" " Line and column position and counts.
+" set statusline+=\ (line\ %l\/%L,\ col\ %03c)
+" }}}
+
+
+set hidden
+set modelines=0
+set list
+set listchars=tab:>-
+
+
+" ---------------------------------------------------------------------- {{{
+" Backup Settings
+set nobackup
+set noswapfile
+" }}}
+
+
+" ---------------------------------------------------------------------- {{{
+" Search Settings
+set ignorecase
+set smartcase
+set wrapscan
+set gdefault
+set incsearch
+set hlsearch
+
+set history=1000
+let undolevels=1000
+" }}}
+
+
+" ---------------------------------------------------------------------- {{{
+" Bell Settings
+set visualbell
+set noerrorbells
+" }}}
+
+set wrap
+set textwidth=100
+set formatoptions=qrn1
+
+let mapleader = ","
+nnoremap / /\v
+vnoremap / /\v
+nnoremap ; :
+nmap <silent> ,/ :nohlsearch<CR>
+
+" ---------------------------------------------------------------------- {{{
+" disable allow keys
+nnoremap <up> <nop>
+nnoremap <down> <nop>
+nnoremap <left> <nop>
+nnoremap <right> <nop>
+inoremap <up> <nop>
+inoremap <down> <nop>
+inoremap <left> <nop>
+inoremap <right> <nop>
+" }}}
+
+vnoremap { "zdi^V{<C-R>z}<ESC>
+vnoremap [ "zdi^V[<C-R>z]<ESC>
+vnoremap ( "zdi^V(<C-R>z)<ESC>
+vnoremap " "zdi^V"<C-R>z^V"<ESC>
+vnoremap ' "zdi'<C-R>z'<ESC>
+
+" ---------------------------------------------------------------------- {{{
+" Folding
+set foldlevelstart=0
+nnoremap <Space> za
+vnoremap <Space> za
+" }}}
+
+" ---------------------------------------------------------------------- {{{
+" Internal grep
+au QuickfixCmdPost vimgrep cw
+set grepprg=internal
+" }}}
+
+augroup filetypedetect
+  au! BufRead,BufNewFile *.app.src   setfiletype erlang
+  au! BufRead,BufNewFile *.config   setfiletype erlang
+augroup END
+
+
+" ======================================================================
+" Plugins
+" ======================================================================
+
+
+" ---------------------------------------------------------------------- {{{
+" Vundle
+set rtp+=~/.vim/bundle/vundle.git/
+call vundle#rc()
+Bundle "YankRing.vim"
+Bundle "jQuery"
+"Bundle "rails.vim"
+"Bundle 'tpope/vim-rails'
+"Bundle 'https://github.com/tpope/vim-rails.git'
+Bundle "L9"
+Bundle "Command-T"
+Bundle "iptables"
+Bundle "snipMate"
+Bundle "https://github.com/godlygeek/tabular.git"
+Bundle "Puppet-Syntax-Highlighting"
+Bundle "ZenCoding.vim"
+Bundle "taglist.vim"
+Bundle "https://github.com/thinca/vim-ref.git"
+Bundle "smartchr"
+Bundle "vim-erlang-skeleteons"
+Bundle "fugitive.vim"
+Bundle "gitv"
+Bundle "html5.vim"
+Bundle "The-NERD-tree"
+Bundle "https://github.com/Raimondi/delimitMate"
+Bundle "https://github.com/majutsushi/tagbar.git"
+Bundle "EasyMotion"
+Bundle "neocomplcache"
+Bundle "Tabular"
+Bundle "vibrantink"
+"Bundle "Syntastic"
+Bundle "gitolite.vim"
+Bundle "syntaxGemfile.vim"
+Bundle "vim-coffee-script"
+Bundle "Railscasts-Theme-GUIand256color"
+Bundle "https://github.com/briancollins/vim-jst.git"
+" }}}
+
+autocmd BufNewFile,BufRead *.coffee set filetype=coffee
+
+" ---------------------------------------------------------------------- {{{
+" vim-erlang
+let g:erlangHighlightBif = 1
+let g:erlangHighlightFunHead = 1
+
+" ---------------------------------------------------------------------- {{{
+" browsereload-mac.vim
+if has('mac')
+  Bundle "browsereload-mac.vim"
+  let g:returnApp = "iTerm"
+  let g:returnAppFlag = 1
+endif
+
+" ---------------------------------------------------------------------- {{{
+" Ruby Syntax Check
+" auto syntax check on saving with .rb files.
+"augroup rbsyntaxcheck
+"  autocmd!
+"  autocmd BufWrite *.rb w !ruby -c
+"augroup END
+" }}}
+
+" disable syntax check for ruby / eruby(because Sytastic don't work correctly with hash syntax in
+" ruby 1.9
+let loaded_ruby_syntax_checker = 0
+let loaded_eruby_syntax_checker = 0
+
+" ---------------------------------------------------------------------- {{{
+" ColorSchemes
+"colorscheme default
+"colorscheme distinguished
+"colorscheme molokai
+"colorscheme railscasts
+"colorscheme wombat
+"colorscheme desert
+"colorscheme solarized
+"colorscheme vibrantink
+" }}}
+
+"colorscheme default
+vnoremap * "zy:let @/ = @z<CR>n
+
+imap <Leader>v  <C-O>:set paste<CR><C-r>*<C-O>:set nopaste<CR>
+
+" ---------------------------------------------------------------------- {{{
+" Tabularize
+if exists("Tabularize")
+  nmap <Leader>a= :Tabularize /=<CR>
+  vmap <Leader>a= :Tabularize /=<CR>
+  nmap <Leader>a: :Tabularize /:\zs<CR>
+  vmap <Leader>a: :Tabularize /:\zs<CR>
+  nmap <Leader>al :Tabularize /,\zs<CR>
+  vmap <Leader>al :Tabularize /,\zs<CR>
+endif
+" }}}
+
+" ---------------------------------------------------------------------- {{{
+" smartchr
+inoremap <expr> => smartchr#one_of(' => ')
+inoremap <expr> -> smartchr#one_of(' ->')
+" }}}
+
+" ---------------------------------------------------------------------- {{{
+" EasyMotion
+let g:EasyMotion_leader_key = '<Leader>l'
+" }}}
+
+" ---------------------------------------------------------------------- {{{
+" Command-T
+let g:CommandTMaxHeight=40
+let g:CommandTMatchWindowAtTop=1
+nmap <silent> <Leader>t :CommandT<CR>
+nmap <silent> <Leader>b :CommandTBuffer<CR>
+nmap <silent> <Leader>f :CommandTFlush<CR>
+nmap <silent> <Leader>n :NERDTreeToggle<CR>
+nmap <silent> <Leader>m :TagbarToggle<CR>
+" }}}
+
+" ---------------------------------------------------------------------- {{{
+" WildMenu
+set wildignore+=.hg,.git,.svn                         " VCS
+set wildignore+=*.jpg,*.bmp,*.gif,*.png,*.jpeg        " Images
+set wildignore+=bin/*,vendor/*,log/*,tmp/*                  " Rails
+set wildignore+=*.jar,*.class                         " Java
+set wildignore+=rebar,tags,*.beam,deps/*,rel/*,doc/*,*/ebin/* " Erlang
+set wildignore+=*.lzo,*.zip,*.gz,*.tgz,*.tar          " Compressed files
+set wildignore+=*.log,BLANK,*.log.[0-9]*,*.lock,*.pid " log, lock, pid files"
+set wildignore+=*.DS_Store                            " OS X
+" }}}
+
+"au FocusLost * :wa
+
+" ---------------------------------------------------------------------- {{{
+" neocomplcache
+let g:neocomplcache_enable_at_startup = 0
+" }}}
+
+" ---------------------------------------------------------------------- {{{
+" tagbar
+let g:tagbar_ctags_bin = '/usr/local/bin/ctags'
+" }}}
+
+" ---------------------------------------------------------------------- {{{
+" yankring
+let g:yankring_history_file = '.yankring_history.txt'
+" }}}
+
+" ---------------------------------------------------------------------- {{{
+" NERD-tree
+let g:NERDTreeWinSize = 100
+" }}}
+
+" ---------------------------------------------------------------------- {{{
+" Japanese Encoding Auto Detection
+if &encoding !=# 'utf-8'
+  set encoding=japan
+  set fileencoding=japan
+endif
+
+"if has('iconv')
+"  let s:enc_euc = 'euc-jp'
+"  let s:enc_jis = 'iso-2022-jp'
+"  if iconv("\x87\x64\x87\x6a", 'cp932', 'eucjp-ms') ==# "\xad\xc5\xad\xcb"
+"    let s:enc_euc = 'eucjp-ms'
+"    let s:enc_jis = 'iso-2022-jp-3'
+"  elseif iconv("\x87\x64\x87\x6a", 'cp932', 'euc-jisx0213') ==# "\xad\xc5\xad\xcb"
+"    let s:enc_euc = 'euc-jisx0213'
+"    let s:enc_jis = 'iso-2022-jp-3'
+"  endif
+"  if &encoding ==# 'utf-8'
+"    let s:fileencodings_default = &fileencodings
+"    let &fileencodings = s:enc_jis .','. s:enc_euc .',cp932'
+"    let &fileencodings = &fileencodings .','. s:fileencodings_default
+"    unlet s:fileencodings_default
+"  else
+"    let &fileencodings = &fileencodings .','. s:enc_jis
+"    set fileencodings+=utf-8,ucs-2le,ucs-2
+"    if &encoding =~# '^\(euc-jp\|euc-jisx0213\|eucjp-ms\)$'
+"      set fileencodings+=cp932
+"      set fileencodings-=euc-jp
+"      set fileencodings-=euc-jisx0213
+"      set fileencodings-=eucjp-ms
+"      let &encoding = s:enc_euc
+"      let &fileencoding = s:enc_euc
+"    else
+"      let &fileencodings = &fileencodings .','. s:enc_euc
+"    endif
+"  endif
+"  unlet s:enc_euc
+"  unlet s:enc_jis
+"endif
+" }}}
+

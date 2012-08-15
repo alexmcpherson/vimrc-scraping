@@ -1,0 +1,580 @@
+"-------------------------------------------------------------------------------"
+" VIMRC by Matt Skinner ~ mdskinner.com
+"-------------------------------------------------------------------------------"
+" Colemak directional remapping - found in ~/.vim/after/plugin/
+"-------------------------------------------------------------------------------"
+" Windows   - find window mappings in ~/.vim/after/plugin/
+"-------------------------------------------------------------------------------"
+"|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
+"-------------------------------------------------------------------------------"
+" environment
+"-------------------------------------------------------------------------------"
+set nocompatible                " Use Vim settings, not Vi settings
+
+set hidden                      " Hide buffers when they are abandoned
+
+set background=dark
+colorscheme mdskinner
+
+let mapleader = ","
+
+set title                       " change the terminal's title
+
+set nu                          " Displays line numbers
+
+set backspace=2                 " Allow backspacing over indent, eol, and the start of an insert
+set backspace=indent,eol,start  " allow backspacing over everything in insert mode
+set virtualedit=block           " 'all' allows you to move anywhere
+
+set noerrorbells                " don't beep
+set visualbell                  " don't beep
+
+set history=1000                " remember more commands and search history
+set undolevels=1000             " use many muchos levels of undo
+
+set ch=2                        " make command line two lines high
+set showmode                    " Display what mode we are in
+set showcmd                     " Show (partial) command in status line.
+
+" Set the status line the way I like it
+set laststatus=2                " Place status line even if there is only 1 window
+" statusbar output
+set stl=%{CurrentFile()}\ %m\ %r\ \|\ %{CurrentDir()}\ \|\ %{GitBranchInfoString()}
+" File Type
+set statusline+=\ %y
+" Display the Highlight Group for the Cursor Position
+set statusline+=\ [%{synIDattr(synID(line('.'),col('.'),1),'name')}]
+" Right Align
+set statusline+=%=
+" Column Position, Line Number of Total Lines (Percentage)
+set statusline+=[%c\,\ %l\:%L\ (%p%%)]
+
+" change color based on mode
+  au InsertEnter * hi Normal guibg=#220000
+  au InsertLeave * hi Normal guibg=#000000
+  au InsertEnter * hi StatusLine ctermbg=0 ctermfg=7
+  au InsertLeave * hi StatusLine ctermbg=7 ctermfg=0
+
+" jump to the last position when reopening a file
+au bufreadpost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g'\"" | endif
+
+" Automagically save files when focus is lost, but ignore any warnings, e.g.
+" when a buffer doesn't have an associated file
+"autocmd BufLeave,FocusLost silent! wall
+
+"make help window open in vsplit on the right
+autocmd FileType help wincmd L
+
+set showmatch                   " Show matching brackets.
+
+set scrolloff=4                 " Always show # lines above and bellow cursor (context)
+
+set mousehide                   " Hide the mouse pointer while typing
+
+set spell                       " spell checking
+
+set lazyredraw                  " Do not redraw the screen when executing macros
+
+" Tab completion
+set wildmenu                    " Enhanced command line completion
+set wildchar=<Tab>              " type tab in cmdline to start wildcard expansion
+set wildmode=list:longest,list:full
+set wildignore+=*.o,*.obj,.git,*.rbc
+
+set nobackup                    " no backup files
+set nowritebackup               " only in case you don't want a backup file while editing
+set noswapfile                  " no swap files
+set modelines=0                 " Configuration file for vim
+set wildignore=*.swp,*.bak,*.pyc,*.jpg,*.png,*.xpm,*.gif,.DS_Store
+
+
+"-------------------------------------------------------------------------------"
+" syntax
+"-------------------------------------------------------------------------------"
+syntax on
+
+" Set encoding
+scriptencoding utf-8
+set encoding=utf-8
+set fenc=utf-8
+set fencs=utf-8,big5,euc-jp,gbk,euc-kr,utf-bom,iso8859-1
+set ffs=unix,mac,dos
+
+" Enable syntastic syntax checking
+let g:syntastic_enable_signs=1
+let g:syntastic_quiet_warnings=1
+
+au BufRead,BufNewFile *.js set ft=javascript syntax=jquery
+
+" Show syntax highlighting groups for word under cursor
+nmap <C-S-P> :call <SID>SynStack()<CR>
+
+function! <SID>SynStack()
+  if !exists("*synstack")
+    return
+  endif
+  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+endfunc
+
+
+"-------------------------------------------------------------------------------"
+" whitespace
+"-------------------------------------------------------------------------------"
+set autoindent                    " indents line relative to the line above it
+set smartindent
+set expandtab                     " convert tab to spaces
+set softtabstop=2                 " tab of length 2
+set tabstop=2
+set shiftwidth=2                  " indentation tab to 2 spaces
+
+" show hidden characters
+set list
+" toggle hidden characters
+nnoremap <Leader>sc :set list!<CR>
+
+set listchars=tab:▸\ ,eol:¬,trail:·,nbsp:.
+set listchars+=precedes:<,extends:>
+set isk+=_,$,@,%,#,-              " none of these should be word dividers, so make them not be
+
+"set cpoptions+=$                 " Displays a $ char at the end of a word boundary.
+
+set nowrap                        " don't wrap visible lines
+"set showbreak=>\
+"let &showbreak = '||-->            '
+
+" Remove excess whitespace on save
+"autocmd BufWritePre * :%s/\s\+$//<cr>:let @/=''<CR>
+autocmd BufWritePre * :%s/\s\+$//e
+
+" Only use one space after ., ? or ! with a join command
+set nojoinspaces
+
+"-------------------------------------------------------------------------------"
+" searching
+"-------------------------------------------------------------------------------"
+set hlsearch
+set ignorecase                  " Case insensitive searching, see smartcase
+set incsearch                   " live search while typing search expression
+set smartcase                   " Override 'ignorecase' when pattern has upper case characters
+
+" Search the current file for what's currently in the search register and display matches
+nnoremap <silent> ,gf :vimgrep /<C-r>// %<CR>:ccl<CR>:cwin<CR><C-W>J:set nohls<CR>
+
+" Search the current file for the word under the cursor and display matches
+nnoremap <silent> ,gw :vimgrep /<C-r><C-w>/ %<CR>:ccl<CR>:cwin<CR><C-W>J:set nohls<CR>
+
+
+set gdefault                    " (regex search) instead of :%s/foo/bar/g you just type :%s/foo/bar/
+noremap <Leader>/ :%s/
+inoremap <Leader>/ <ESC>:%s/
+
+" Add ignorance of whitespace to diff
+set diffopt+=iwhite
+
+" Clear out any search by typing <leader><space>
+nnoremap <leader><space> :noh<cr>
+
+
+"-------------------------------------------------------------------------------"
+" folds
+"-------------------------------------------------------------------------------"
+" Open folds on these events
+set foldopen=block,insert,jump,mark,percent,quickfix,search,tag,undo
+set foldmethod=manual
+"set foldcolumn=1
+noremap zz zR
+noremap zm zM
+noremap zM zm
+" folding html
+noremap zh zfit
+" for folding php
+noremap zp zfa}
+
+
+"-------------------------------------------------------------------------------"
+" marks
+"-------------------------------------------------------------------------------"
+" swap the marks hunter so you land on column not just line.
+noremap ` '
+noremap ' `
+
+
+"-------------------------------------------------------------------------------"
+" General Mapping improvements
+"-------------------------------------------------------------------------------"
+" exit insert mode
+inoremap ,, <Right><ESC>
+inoremap <ESC> <Right><ESC>
+
+" don't move the cursor after pasting
+" (by jumping to back start of previously changed text)
+noremap p p`[
+noremap P P`[
+
+" make g play a little nicer
+noremap gn G
+noremap gk gg
+
+" number pad enter mapping
+nnoremap <kEnter> G
+nnoremap <s-kEnter> gg
+vnoremap <kEnter> G
+vnoremap <s-kEnter> gg
+
+"Ctrl-a/e start/end of line as expected
+noremap <C-a> 0
+noremap <C-e> $
+nnoremap <C-a> 0
+nnoremap <C-e> $
+inoremap <C-a> <ESC>0i
+inoremap <C-e> <ESC>$a
+"let 'h' have the power too
+noremap <C-h> 0
+nnoremap <C-h> 0
+inoremap <C-h> <ESC>0i
+
+"let l in visual mode select the current line
+vnoremap l ^o$<Left>
+
+"scroll cursor to top/bottom
+noremap zn zt
+noremap zk zb
+
+"yank into register
+noremap <C-y> "xy
+noremap <C-Y> "xY
+noremap <C-p> "xp
+
+"Undo/Redo  - cos Undo line is pointless
+noremap U <C-r>
+nnoremap <C-u> <C-r>
+
+"expected use of Ctrl-c
+nnoremap <C-c> :close<CR>
+
+"open command line (lazy but beautiful)
+" you need to leave access to the standard colon for running functions with leader commands
+nnoremap ; :
+nnoremap \ ;
+
+" insert new line without breaking line
+inoremap <S-CR> <ESC>O
+inoremap <C-CR> <ESC>o
+noremap <S-CR> O<Right><ESC>
+noremap <C-CR> o<Right><ESC>
+
+
+" make backspace key delete in normal mode
+noremap <Backspace> i<Backspace><Right><ESC>
+
+
+"-------------------------------------------------------------------------------"
+" commandline mappings
+"-------------------------------------------------------------------------------"
+" like a & e is expected
+cnoremap <C-a> <Home>
+cnoremap <C-e> <End>
+
+" shame that you can't use 'i' here but that would break <TAB> completion
+cnoremap <C-h> <Left>
+cnoremap <C-d> <Right>
+
+" line print - nice
+cnoremap <C-l> <C-d>
+
+" recursive search through command history
+noremap <C-n> :<Up>
+cnoremap <C-n> <Up>
+cnoremap <C-k> <Down>
+
+
+"-------------------------------------------------------------------------------"
+" Leader mappings
+"-------------------------------------------------------------------------------"
+" Let's make it easy to edit this file (mnemonic for the key sequence is
+nnoremap <silent> <Leader>se :e $MYVIMRC<cr>
+
+" And to source this file as well (mnemonic for the key sequence is 's'ource 'v'imrc)
+nnoremap <silent> <Leader>sv :so $MYVIMRC<cr>
+nnoremap <silent> <Leader>sg :so ~/.gvimrc<cr>
+nnoremap <silent> <Leader>sa :so ~/.vim/after/plugin/colemak-mappings.vim<cr>
+
+" change the working directory to the location of the file being edited
+noremap <Leader>c :cd %:p:h<cr>
+noremap <Leader>cd <ESC>:cd<space>
+
+" open file under cursor
+noremap <Leader>o gf
+
+noremap <Leader>q :q<CR>
+noremap <Leader>w :w<CR>
+noremap <Leader>s :w<CR>
+noremap <Leader>ss :w<CR>
+inoremap <Leader>w <Right><ESC>:w<CR>
+inoremap <Leader>s <Right><ESC>:w<CR>
+inoremap <Leader>ss <Right><ESC>:w<CR>
+
+" Useful trick when I've forgotten to `sudo' before editing a file:
+cmap w!! w !sudo tee % >/dev/null
+noremap <Leader>W <ESC>:w !sudo tee % >/dev/null<CR>
+
+" exit insert mode
+inoremap <Leader>f <Right><ESC>
+
+" paste..  select "third", then replace it with "first".
+noremap <Leader>p viw"0p
+
+" reverse f & t
+noremap <Leader>f F
+noremap <Leader>t T
+
+" xdebug break point
+nnoremap <Leader>b :Bp<CR>
+
+" move between parenthesis
+noremap <Leader>. %
+
+" Toggle Case
+noremap <Leader>u ~<Left>
+inoremap <Leader>u <ESC>~i
+
+" Toggle paste mode
+nnoremap <Leader>v :set invpaste<CR>:set paste?<CR>
+
+" Ack so much better than grep
+noremap <Leader>ack :Ack -i<space>
+inoremap <Leader>ack <ESC>:Ack -i<space>
+
+" a little bit of git love
+noremap <Leader>gi :!git<space>
+noremap <Leader>gc :!git commit -am '
+noremap <Leader>gs :!git status<CR>
+inoremap <Leader>gi <ESC>:!git<space>
+inoremap <Leader>gc <ESC>:!git commit -am '
+inoremap <Leader>gs <ESC>:!git status<CR>
+
+
+"-------------------------------------------------------------------------------"
+" tabs
+"-------------------------------------------------------------------------------"
+" navigation
+noremap <Leader>m gt
+noremap <Leader>M gT
+inoremap <Leader>m <ESC>gt
+inoremap <Leader>M <ESC>gT
+
+" like terminal (through force of habit)
+noremap <D-Right> gt
+noremap <D-Left> gT
+inoremap <D-Right> <ESC>gt
+inoremap <D-Left> <ESC>gT
+noremap <D-S-Right> gt
+noremap <D-S-Left> gT
+inoremap <D-S-Right> <ESC>gt
+inoremap <D-S-Left> <ESC>gT
+
+" new tab
+noremap <Leader>gg :tabnew<cr>
+inoremap <Leader>gg <ESC>:tabnew<cr>
+
+
+"-------------------------------------------------------------------------------"
+" Text manipulation
+"-------------------------------------------------------------------------------"
+" indentation
+noremap <S-Left> x<Left>P
+noremap <S-Right> xp
+noremap <S-Down> :m+<CR>
+vnoremap <S-Down> dp
+noremap <S-Up> :m-2<CR>
+inoremap <S-Down> <ESC>:m+<CR>i
+inoremap <S-Up> <ESC>:m-2<CR>i
+
+inoremap <S-Left> <ESC>v<Left>
+inoremap <S-Right> <Right><ESC>v<Right>
+vnoremap <S-Left> <Left>
+vnoremap <S-Right> <Right>
+
+"turn same length line into =='s
+noremap <Leader>1 yypVr=
+
+"increment numbers
+noremap <C-Up> <C-a>
+noremap <C-Down> <C-x>
+
+"-------------------------------------------------------------------------------"
+" Plugin stuff
+"-------------------------------------------------------------------------------"
+" List recent buffers
+noremap <C-t> :MRU<CR>
+noremap <C-s> <C-^>
+
+" snipMate Configurations
+filetype on
+filetype indent on
+filetype plugin on
+
+function! ListKnownSnippetLanguageTypes(A, L, P)
+    let filesanddirs = split(globpath(g:snippets_dir, a:A . "*"), "\n")
+    let dirsonly = []
+    for f in filesanddirs
+        if isdirectory(f)
+            let each = split(f, '/')
+            let dirsonly = add(dirsonly, each[-1])
+        end
+    endfor
+    return dirsonly
+endfunction
+
+function! ReloadSnippets(type)
+    call ResetSnippets()
+    if a:type != ""
+        call ExtractSnips(g:snippets_dir . a:type, a:type)
+    else
+        let alltypes = ListKnownSnippetLanguageTypes("", "", "")
+        for type in alltypes
+            call ExtractSnips(g:snippets_dir . type, type)
+        endfor
+    endif
+endfunction
+
+command! -complete=customlist,ListKnownSnippetLanguageTypes
+         \ -nargs=? RS call ReloadSnippets("<args>")
+
+
+" Command-/ to toggle comments
+map <D-/> <plug>NERDCommenterToggle
+imap <D-/> <ESC><plug>NERDCommenterToggle
+
+" NERDTree
+let NERDTreeIgnore=['\.rbc$', '\~$']
+let NERDTreeWinSize=40
+let NERDTreeWinPos="Right"
+let NERDTreeShowHidden=1
+"let NERDTreeShowBookmarks=1
+let NERDTreeSortDirs=0
+noremap <Leader>r :NERDTreeToggle<CR>
+noremap <Leader><TAB> :NERDTreeToggle<CR>
+
+" TagList Configurations
+let Tlist_GainFocus_On_ToggleOpen = 1
+let Tlist_Show_Menu = 1
+let Tlist_Close_On_Select = 1
+let Tlist_Ctags_Cmd = "/usr/bin/ctags"
+let Tlist_WinWidth = 50
+map <Leader>tt :TlistToggle<cr>
+
+" Search for ctags index files named tags recurse to to the
+" home directory to search for them.
+set tags+=tags;$HOME
+
+" closetag plugin, required to function in php etc
+au FileType * let g:closetag_html_style=1
+au FileType * so ~/.vim/plugin/closetag.vim
+
+"------------------------------------------------------------------------------"
+" web development configurations
+"------------------------------------------------------------------------------"
+let php_sql_query=1
+let php_baselib=1
+let php_htmlInStrings=1
+let php_parent_error_close=1
+let php_parent_error_open=1
+let php_folding=1
+
+autocmd bufread,bufnewfile *.module set filetype=php
+autocmd bufread,bufnewfile *.install set filetype=php
+autocmd bufread,bufnewfile *.test set filetype=php
+
+autocmd filetype javascript set omnifunc=javascriptcomplete#completejs
+autocmd filetype html set omnifunc=htmlcomplete#completetags
+autocmd filetype css set omnifunc=csscomplete#completecss
+autocmd filetype xml set omnifunc=xmlcomplete#completetags
+autocmd filetype php set omnifunc=phpcomplete#completephp
+autocmd filetype inc set omnifunc=phpcomplete#completephp
+autocmd filetype module set omnifunc=phpcomplete#completephp
+autocmd filetype install set omnifunc=phpcomplete#completephp
+autocmd filetype test set omnifunc=phpcomplete#completephp
+
+
+"------------------------------------------------------------------------------"
+" Fix constant spelling mistakes
+"------------------------------------------------------------------------------"
+iab teh       the
+iab Teh       The
+iab taht      that
+iab Taht      That
+iab alos      also
+iab Alos      Also
+iab aslo      also
+iab Aslo      Also
+iab becuase   because
+iab Becuase   Because
+iab bianry    binary
+iab Bianry    Binary
+iab bianries  binaries
+iab Bianries  Binaries
+iab charcter  character
+iab Charcter  Character
+iab charcters characters
+iab Charcters Characters
+iab exmaple   example
+iab Exmaple   Example
+iab exmaples  examples
+iab Exmaples  Examples
+iab shoudl    should
+iab Shoudl    Should
+iab seperate  separate
+iab Seperate  Separate
+iab fone      phone
+iab Fone      Phone
+
+"------------------------------------------------------------------------------"
+" Bug Fixes
+"------------------------------------------------------------------------------"
+
+" From http://fishshell.org/wiki/moin.cgi/Recipes at 2008-01-06
+" Why does VIM give error messages when started from fish?
+" (Thanks to James Vega for this solution)
+"
+" When run from the fish shell, VIM gives error messages like: "E484: Can't open file /tmp/v916556/0"
+"
+" The problem occurs because VIM expects to be run from a POSIX shell, although this is not mentioned anywhere in the documentation. A workaround is to add the following lines to the your local ~/.vimrc or global /etc/vimrc file:
+if $SHELL =~ 'bin/fish'
+    set shell=/bin/sh
+endif
+" Assuming /bin/sh is a link to a POSIX compliant shell - even minimal shells like 'ash' or 'dash' will do.
+
+
+"------------------------------------------------------------------------------"
+" truncate common paths
+"------------------------------------------------------------------------------"
+function! CurrentDir()
+  let path=substitute(getcwd(), $HOME, "~", "")
+  let path=ChangeOut(path)
+  return path
+endfunction
+function! CurrentFile()
+  let path=substitute(bufname(""), $HOME, "~", "")
+  let path=ChangeOut(path)
+  return path
+endfunction
+
+function! ChangeOut(path)
+  let path=substitute(a:path, "etc", "e", "")
+  let path=substitute(path, "www", "w", "")
+  let path=substitute(path, "var", "v", "")
+  let path=substitute(path, "srv", "s", "")
+  let path=substitute(path, "apache", "a", "")
+  let path=substitute(path, "Sites", "s", "")
+  let path=substitute(path, "sites", "s", "")
+  let path=substitute(path, "modules", "mods", "")
+  let path=substitute(path, "application", "app", "")
+  let path=substitute(path, "clients", "c", "")
+  let path=substitute(path, "public", "p", "")
+  let path=substitute(path, "javascripts", "js", "")
+  let path=substitute(path, "stylesheets", "css", "")
+  return path
+endfunction
+
+

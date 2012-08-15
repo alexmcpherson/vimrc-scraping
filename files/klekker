@@ -1,0 +1,44 @@
+" ##### bundles and plugins #####
+
+" ## https://github.com/tpope/vim-pathogen#readme
+call pathogen#infect()
+
+" ## https://github.com/tomtom/tskeleton_vim
+autocmd BufNewFile *.html TSkeletonSetup plain.html
+
+
+" ##### settings #####
+set ruler
+set number
+set numberwidth=5
+set tabstop=4                     "Indentation levels every four columns
+"set expandtab                     "Convert all tabs typed to spaces
+set shiftwidth=4                  "Indent/outdent by four columns
+set shiftround                    "Indent/outdent to nearest tabstop
+set nowrap
+set visualbell
+set ai                            "autoindent
+set showmatch
+
+colorscheme mycolors
+syntax on
+
+
+" http://vim.wikia.com/wiki/Highlight_current_line
+hi CursorLine   cterm=NONE ctermbg=gray ctermfg=black guibg=darkred guifg=white
+:set cursorline
+
+set grepprg=ack\ -H\ --nocolor\ --nogroup
+
+" http://www.linux.com/feature/120126
+":set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [ASCII=\%03.3b]\ [HEX=\%02.2B]\ [POS=%04l,%04v][%p%%]\ [LEN=%L] 
+":set statusline=%F%m%r%h%w\ (%v,%l/%L)\ [%p%%]\ (%{&ff},\ %Y)\ [ASCII=\%03.3b]\ [HEX=\%02.2B]
+":set statusline=%F%m%r%h%w\ (%v,\ %l/%L)\ [%p%%]\ (%{&ff},\ %Y)
+:set statusline=%F%m%r%h%w\ (%v,\ %l/%L)\ [%p%%]\ (%{&ff},\ %Y) 
+:set laststatus=2
+
+" ##### filetype specific settings #####
+:au BufNewFile,BufRead *.pl,*.pm,*.t execute "so " VIMRC_DIR . "/" . "perl.vim"
+:au BufNewFile,BufRead *.py execute "so " VIMRC_DIR . "/" . "python.vim"
+
+

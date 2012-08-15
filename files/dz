@@ -1,0 +1,303 @@
+"needed for terminal
+
+"Colorscheme
+colorscheme ir_black
+
+"backups are annoying
+set noswapfile
+set nobackup
+
+"disable code folding
+set nofoldenable
+
+"set up fileformats for different line endings
+set fileformats=mac,dos,unix
+
+"show current commands in the bottom right corner
+set showcmd
+
+"show the last line in a really long line
+set display=lastline,uhex
+
+"when coloring syntax, always start coloring from
+"the start of the screen.  this ensures the 
+"most accurate syntax coloring, at the cost
+"of slower performance.   this is why I have
+"a dual core processor. 
+autocmd BufEnter * :syntax sync fromstart
+
+"Switch buffer to edit a new file, and use open file if it already open
+set switchbuf=useopen,split
+
+"Keep a longer history
+set history=1000
+
+"keep indents when going over lines.
+"yes, it can leave spaces on empty lines.
+"no, I don't care. i clean it up after save
+inoremap <CR> <CR><Space><BS>
+nnoremap o o<Space><BS>
+nnoremap O O<Space><BS>
+
+"typos sucks
+command! -bang -nargs=* W w<bang> <args>
+command! -bang -nargs=* Q q<bang> <args>
+command! -bang -nargs=* Wq wq<bang> <args>
+command! -bang -nargs=* WQ wq<bang> <args>
+
+"Other Options
+filetype plugin on
+filetype plugin indent on "turn on indenting
+set enc=utf-8
+set wildmode=longest,list,full
+set wildmenu
+set wildignore=*.o,*.fasl,CVS,*.pyc,._*,.DS_Store,*~,*.gif,*.jpg,*.png,*.pdf,*.psd,*.svn,.svn,.git,.hg
+
+"because no one in their right mind still uses vi over vim
+set nocompatible
+
+set ruler
+set number
+set nuw=4 "minimum line number column width
+set vb "set visual bell
+set binary noeol
+set backspace=indent,eol,start
+set laststatus=2
+set showmode
+set showmatch
+set autoindent
+syntax on
+
+set shiftwidth=4
+set expandtab
+set smarttab
+set softtabstop=4
+set smartindent
+
+"Change softwrap to sane setting
+set wrap linebreak textwidth=0
+
+"Set Mapleader
+let mapleader = ","
+let g:mapleader = ","
+
+"related buffer settings
+nmap <leader>n :bn<cr>
+nmap <leader>p :bp<cr>
+
+"Matchit options
+let b:match_ignorecase = 1
+
+"allow s to be fully squashed
+set winminheight=0
+
+let g:Grep_Xargs_Options='-0'
+
+let g:bufExplorerSortBy='number'     " Sort by the buffer's number.
+
+"Project plugin settings
+let g:proj__width=48
+let g:proj_flags="imstcFg"
+
+"Vim session autosaving
+au VimLeavePre * if v:this_session != '' | exec "mks! " . v:this_session | endif
+nmap <leader>z :source ~/session.vim<cr>
+
+"allow persistent undo and set undo levels
+set undofile
+set undodir=/Users/dzhou/.vim/undofiles
+
+"Allow hidden buffers
+set hidden
+
+nnoremap ' `
+nnoremap ` '
+
+"set scrolloffset
+set scrolloff=3
+
+set shortmess=atI
+
+"turn off middleclicking
+noremap <MiddleMouse> <LeftMouse>
+noremap <2-MiddleMouse> <LeftMouse>
+noremap <3-MiddleMouse> <LeftMouse>
+noremap <4-MiddleMouse> <LeftMouse>
+
+"rearrange s horizontal or vertical
+nmap <leader>h :windo wincmd K<cr>
+nmap <leader>v :windo wincmd H<cr>
+
+"Set to auto read when a file is changed from the outside
+set autoread
+
+"Highlight current line underneath cursor
+set cursorline
+
+set statusline=%t       "tail of the filename
+set statusline+=[%{strlen(&fenc)?&fenc:'none'}, "file encoding
+set statusline+=%{&ff}] "file format
+set statusline+=%h      "help file flag
+set statusline+=%m      "modified flag
+set statusline+=%r      "read only flag
+set statusline+=%y      "filetype
+set statusline+=%=      "left/right separator
+set statusline+=%c,     "cursor column
+set statusline+=%l/%L   "cursor line/total lines
+set statusline+=\ %P    "percent through file
+
+"remove windows line endings
+map <Leader>m mz:%s/\r//g<cr>`z
+
+"Nerd Tree commands and options
+map <Leader>, :NERDTreeToggle<cr>
+
+"map control/command arrows for moving between windows
+map <C-up> <C-W><up>
+map <C-down> <C-W><down>
+map <C-left> <C-W><left>
+map <C-right> <C-W><right>
+noremap <D-up> <C-W><up>
+noremap <D-down> <C-W><down>
+noremap <D-left> <C-W><left>
+noremap <D-right> <C-W><right>
+
+"map window manipulation
+noremap <D-1> :only<cr>
+noremap <D-0> :close<cr>
+noremap <D-2> :sp<cr>
+noremap <D-3> :vsp<cr>
+noremap! <D-1> <esc>:only<cr>
+noremap! <D-0> <esc>:close<cr>
+noremap! <D-2> <esc>:sp<cr>
+noremap! <D-3> <esc>:vsp<cr>
+
+" map CTRL-E to end-of-line (insert mode)
+map <C-e> <esc>$<right><esc>
+imap <C-e> <esc>$i<right>
+" map CTRL-A to beginning-of-line (insert mode)
+map <C-a> <esc>^<esc>
+imap <C-a> <esc>^i
+
+"GUI Options
+set guioptions=e 
+"set guioptions=""
+set tabpagemax=15
+
+fun! <SID>StripTrailingWhitespaces()
+    let l = line(".")
+    let c = col(".")
+    %s/\s\+$//e
+    call cursor(l, c)
+endfun
+
+ab teh the
+ab fro for
+
+set incsearch
+set ignorecase 
+set wrapscan
+set smartcase 
+
+"easily equalize windows with plus
+nmap + <c-w>= 
+
+"fuzyz finder options
+"let g:fuf_buffer_prompt = '[]>'
+"let g:fuf_modesDisable = [ 'mrufile', 'mrucmd', 'boomark', 'dir', 'file', 'tag', 'taggedfile', 'jumplist', 'changelist', 'quickfix', 'help]
+
+"quickname options
+"let g:qname_hotkey = "<D-b>" 
+
+"nmap <Leader>e :cal QNameInit(1)<cr>:~
+"noremap <D-b> :cal QNameInit(1)<cr>:~
+"noremap! <D-b> <esc>:cal QNameInit(1)<cr>:~
+
+nmap <Leader>e :LustyBufferExplorer<cr>
+noremap <D-b> :LustyBufferExplorer<cr>
+noremap! <D-b> <esc>:LustyBufferExplorer<cr>
+nmap <Leader>/ :LustyFilesystemExplorerFromHere<cr>
+nmap <Leader>m :LustyBufferExplorer<cr>
+nmap <Leader>. :LustyFilesystemExplorer<cr>
+
+"No scrollbars
+set guioptions-=L
+set guioptions-=l
+set guioptions-=R
+set guioptions-=r 
+
+"OmniComplete options and shortcuts
+set completeopt=menuone
+
+
+"Supertab options
+let g:SuperTabDefaultCompletionType = "context"
+let g:SuperTabContextDefaultCompletionType = "<c-x><c-n>"
+let g:SuperTabCompletionContexts = ['s:ContextDiscover', 's:ContextText']
+let g:SuperTabContextTextOmniPrecedence = ['&omnifunc', '&completefunc']
+let g:SuperTabContextDiscoverDiscovery = ["&completefunc:<c-x><c-u>", "&omnifunc:<c-x><c-o>"]
+
+"syntax color options for various languages
+
+"syntax coloring for apache log files
+autocmd BufRead,BufNewFile *access.log* set filetype=httplog
+
+"tumblr theme syntax coloring -- assumes files in with .tumblr.html
+autocmd BufRead,BufNewFile *.tumblr.html setfiletype=tumblr
+
+"Silverstripe ss files are html templates
+"So are facebook fbml files
+autocmd BufRead,BufNewFile *.ss set filetype=html
+autocmd BufRead,BufNewFile *.fbml set filetype=html
+"dreamweaver library items are html too
+autocmd BufRead,BufNewFile *.lbi set filetype=html
+
+"CSS3 syntax coloring
+autocmd BufRead,BufNewFile *.css set filetype=css syntax=css3
+
+"Google Go
+autocmd BufRead,BufNewFile *.go set filetype=go
+
+"LOLCODE
+autocmd BufRead,BufNewFile *.lol set filetype=lolcode
+
+"I edit actionscript files, not atlas files, whatever the hell they are
+autocmd BufRead,BufNewFile *.as set filetype=actionscript
+
+"jQuery syntax
+autocmd BufRead,BufNewFile *.js set ft=javascript.jquery
+"Disqus js templates are still js
+autocmd BufRead,BufNewFile *.dtjs set ft=javascript.jquery
+
+"closetags.vim support
+autocmd Filetype html,xml,xsl,php source ~/.vim/plugin/closetag.vim
+
+"language specific options
+
+"PHP
+let php_sql_query=1
+let php_baselib=1
+let php_htmlInStrings=1
+let PHP_BracesAtCodeLevel = 0 
+let PHP_removeCRwhenUnix = 1
+let php_noShortTags = 1
+autocmd BufWritePre *.php :call <SID>StripTrailingWhitespaces()
+
+"HTML
+let g:html_indent_script1 = "inc"
+let g:html_indent_style1 = "inc" 
+autocmd BufWritePre *.html :call <SID>StripTrailingWhitespaces()
+
+"Python
+autocmd BufWritePre *.py :call <SID>StripTrailingWhitespaces()
+
+"CSS
+autocmd BufWritePre *.css :call <SID>StripTrailingWhitespaces()
+
+"Javascript
+autocmd BufWritePre *.js :call <SID>StripTrailingWhitespaces()
+
+"SVNDiff
+hi DiffAdd      ctermfg=0 ctermbg=2 guibg='green'
+hi DiffDelete   ctermfg=0 ctermbg=1 guibg='red'
+hi DiffChange   ctermfg=0 ctermbg=3 guibg='yellow' 

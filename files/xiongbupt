@@ -1,0 +1,505 @@
+runtime bundle/vim-pathogen/autoload/pathogen.vim
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+""""打开不兼容模式"""
+set nocompatible
+
+"""""忽视大小写"""""
+set ignorecase
+set smartcase
+
+""""""""""设置文件类型缩进""""""""""
+filetype plugin indent on
+
+""""语法高亮""""
+syntax enable
+syntax on
+
+""""""""""""""""
+set smartindent
+set autoindent
+set cindent " 设置缩进方式，类似C语言的缩进
+
+"""""tab相关的设置"""""""
+""""设置TAB字符占多少个空格
+set tabstop=4
+""""设置每层缩进的空格数
+set shiftwidth=4
+""""是否将输入的TAB自动展成空格。开启后要输入TAB，需要输入Ctrl-V <TAB>
+set expandtab
+""""在行首按TAB将加入shiftwidth个空格，否则加入tabstop个空白
+set smarttab
+
+""""设置历史记录条目
+set history=1000
+
+""""设置读取编码的顺序
+set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,ISO-8859
+
+""""设置行号
+set number
+
+""""设置响铃取消
+set visualbell
+
+
+""""配色方案""""""""
+if has("gui_running")
+	colorscheme desert
+else
+"    let g:solarized_termcolors=16
+"	let g:solarized_menu=0
+"	colorscheme solarized
+"	set background=dark
+colorscheme desert
+endif
+""colorscheme desert
+""""""""""""""""""""
+
+""""显示标记
+set ruler
+
+""""编辑相关
+set backspace=indent,eol,start
+set whichwrap=b,s,<,>,[,]
+set mousemodel=popup
+
+""""高亮搜索
+set hlsearch
+
+set showcmd
+
+
+""""中文说明文档""""
+set helplang=cn
+set encoding=utf-8
+""""""""""""""""""""
+
+""""所有模式下均可以使用鼠标
+set mouse=a
+
+""""打开拼写检查
+"set spell
+set spelllang=en
+
+""""启动VIM时不显示介绍信息
+set shortmess+=I
+
+""""设置搜索方式
+set incsearch
+
+
+"""""cscope wiki中拷贝过来"""""""""""""""
+if has('cscope')
+  set cscopetag cscopeverbose
+
+  if has('quickfix')
+    set cscopequickfix=s-,c-,d-,i-,t-,e-
+  endif
+
+  cnoreabbrev csa cs add
+  cnoreabbrev csf cs find
+  cnoreabbrev csk cs kill
+  cnoreabbrev csr cs reset
+  cnoreabbrev css cs show
+  cnoreabbrev csh cs help
+
+"  command -nargs=0 Cscope cs add ./cscope.out
+endif
+""""cscope wiki auto loaded"""""""""
+"function! LoadCscope()
+"  let db = findfile("cscope.out", ".;")
+"  if (!empty(db))
+"    let path = strpart(db, 0, match(db, "/cscope.out$"))
+"    set nocsverbose " suppress 'duplicate connection' error
+"    exe "cs add " . db . " " . path
+"    set csverbose
+" endif
+"endfunction
+"au BufEnter
+"call LoadCscope()
+""""cscope""""""""""""""""""""""""""""""""""""""""""""""
+":set cscopequickfix=s-,c-,d-,i-,t-,e-
+
+if has("cscope")
+	set csprg=/usr/bin/cscope
+	set csto=0
+	set cst
+	set nocsverb
+	" add any database in current directory
+	if filereadable("cscope.out")
+	    cs add cscope.out
+	" else add database pointed to by environment
+	elseif $CSCOPE_DB != ""
+	    cs add $CSCOPE_DB
+	endif
+	set csverb
+endif
+
+"s: 查找C语言符号，即查找函数名、宏、枚举值等出现的地方
+"g: 查找函数、宏、枚举等定义的位置，类似ctags所提供的功能
+"d: 查找本函数调用的函数
+"c: 查找调用本函数的函数
+"t: 查找指定的字符串
+"e: 查找egrep模式，相当于egrep功能，但查找速度快多了
+"f: 查找并打开文件，类似vim的find功能
+"i: 查找包含本文件的文件
+nmap <C-_>s :cs find s <C-R>=expand("<cword>")<CR><CR>
+nmap <C-_>g :cs find g <C-R>=expand("<cword>")<CR><CR>
+nmap <C-_>c :cs find c <C-R>=expand("<cword>")<CR><CR>
+nmap <C-_>t :cs find t <C-R>=expand("<cword>")<CR><CR>
+nmap <C-_>e :cs find e <C-R>=expand("<cword>")<CR><CR>
+nmap <C-_>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
+nmap <C-_>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+nmap <C-_>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+
+" Using 'CTRL-spacebar' then a search type makes the vim window
+" split horizontally, with search result displayed in
+" the new window.
+
+nmap <C-Space>s :scs find s <C-R>=expand("<cword>")<CR><CR>
+nmap <C-Space>g :scs find g <C-R>=expand("<cword>")<CR><CR>
+nmap <C-Space>c :scs find c <C-R>=expand("<cword>")<CR><CR>
+nmap <C-Space>t :scs find t <C-R>=expand("<cword>")<CR><CR>
+nmap <C-Space>e :scs find e <C-R>=expand("<cword>")<CR><CR>
+nmap <C-Space>f :scs find f <C-R>=expand("<cfile>")<CR><CR>
+nmap <C-Space>i :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+nmap <C-Space>d :scs find d <C-R>=expand("<cword>")<CR><CR>
+
+" Hitting CTRL-space *twice* before the search type does a vertical
+" split instead of a horizontal one
+
+nmap <C-Space><C-Space>s
+	\:vert scs find s <C-R>=expand("<cword>")<CR><CR>
+nmap <C-Space><C-Space>g
+	\:vert scs find g <C-R>=expand("<cword>")<CR><CR>
+nmap <C-Space><C-Space>c
+	\:vert scs find c <C-R>=expand("<cword>")<CR><CR>
+nmap <C-Space><C-Space>t
+	\:vert scs find t <C-R>=expand("<cword>")<CR><CR>
+nmap <C-Space><C-Space>e
+	\:vert scs find e <C-R>=expand("<cword>")<CR><CR>
+nmap <C-Space><C-Space>i
+	\:vert scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+nmap <C-Space><C-Space>d
+	\:vert scs find d <C-R>=expand("<cword>")<CR><CR>
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+
+"""""Taglist"""""""""""""""""
+let Tlist_Show_one_File=1
+let Tlist_Exit_onlyWindow=1
+let Tlist_File_Fold_Auto_Close=1
+let Tlist_Use_Right_Window=1
+let Tlist_Process_File_Always=1
+let Tlist_Close_On_select=1
+let Tlist_GainFocus_On_ToggleOpen=1
+"""""""""""""""""""""""""""""
+
+""""NERD TREE设置""""""
+"nmap <silent> <c-n> :NERDTreeToggle<CR>
+nnoremap <f2> :NERDTreeToggle<cr>
+let g:NERDTreeMouseMode = 2
+let g:NERDTreeWinSize = 40
+
+"dont load csapprox if we no gui support - silences an annoying warning
+if !has("gui")
+        let g:CSApprox_loaded = 1
+    endif
+
+"nmap <silent> <C-L> :NERDTreeToggle<CR>
+"autocmd VimEnter * NERDTree
+"autocmd VimEnter * wincmd p
+""""quickfix"""""""""""""
+nmap <F6> :cn<cr>
+nmap <F7> :cp<cr>
+""""""""""""""""""""""""
+
+""""代码折叠"""""""""""""""""""""""
+"set foldmethod=syntax
+set foldmethod=indent
+set foldlevel=100
+"""""""""""""""""""""""""""""""""""
+
+" --------------------
+" ShowMarks
+" --------------------
+let showmarks_include ="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+let g:showmarks_enable = 1
+" For marks a-z
+highlight ShowMarksHLl gui=bold guibg=LightBlue guifg=Blue
+" For marks A-Z
+highlight ShowMarksHLu gui=bold guibg=LightRed guifg=DarkRed
+" For all other marks
+highlight ShowMarksHLo gui=bold guibg=LightYellow guifg=DarkYellow
+" For multiple marks on the same line.
+highlight ShowMarksHLm gui=bold guibg=LightGreen guifg=DarkGreen
+
+
+
+"google vim group
+"vim记住位置
+au BufReadPost * if line("'\"")>0|if line("'\"")<=line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
+
+nmap <F11> :!find . -iname '*.c' -o -iname '*.cpp' -o -iname '*.h' -o -iname '*.hpp' > cscope.files<CR>
+            \:!cscope -b -i cscope.files -f cscope.out<CR>
+            \:cs reset<CR>
+
+
+"鼠标所在行列高亮
+set cursorcolumn
+set cursorline
+
+"set background=dark
+"colorscheme solarized
+
+
+
+
+""""""""""statusline""""""""
+"hi StatuslinePath       cterm=none       ctermfg=white    ctermbg=green      gui=none    guibg=#C82E31    guifg=Black
+"hi StatuslineFileName   cterm=none       ctermfg=white    ctermbg=blue       gui=none    guibg=#D59B00    guifg=Black
+"hi StatuslinePosition   cterm=none       ctermfg=white    ctermbg=magenta    gui=none    guibg=#511F90   guifg=LightCyan
+"hi StatuslinePercent    cterm=reverse    ctermfg=white    ctermbg=red        gui=none    guibg=#8a2be2    guifg=Black
+""""""""""""""""""""""""""""
+
+"set statusline=%<%F%h%m%r%h%w%y\ %{&ff}\ %{strftime(\"%d/%m/%Y-%H:%M\")}%=\ col:%c%V\ ascii:%b\ pos:%o\ lin:%l\,%L\ %P
+
+
+
+"map <C-J> <C-W>j<C-W>_
+"map <C-K> <C-W>k<C-W>_
+nmap ,s :source $MYVIMRC
+nmap ,v :e $MYVIMRC
+
+"""""设置备份
+set backup
+set backupdir=./.backup,$HOME/.backup,.,/tmp
+set directory=./.backup,$HOME/.backup,.,/tmp
+
+"""""设置undo的级数
+set undolevels=50000
+set undodir=./.backup,$HOME/.backup,.,/tmp
+set undofile
+
+"""""Gundo设置，将F5映射为打开
+nnoremap <F5> :GundoToggle<CR>
+
+""""设置字典
+set dictionary=/usr/share/dict/words 
+set dictionary+=/usr/share/dict/cracklib-small
+set dictionary+=/usr/share/dict/self
+
+""""增加字典匹配到匹配模式中
+set complete-=k
+set complete+=k
+
+if v:lang =~? '^\(zh\)\|\(ja\)\|\(ko\)'
+    set ambiwidth=double
+endif
+
+let g:slimv_swank_cmd='! xterm -e sbcl --load /usr/share/common-lisp/source/slime/start-swank.lisp &'
+
+"use vim to see man page
+let $PAGER=''
+
+"bash_support
+let g:BASH_AuthorName = 'xiongbupt'
+let g:BASH_Email = 'xiongtangbup@gmail.com'
+let g:BASH_Company = 'BUPT'
+
+"display tabs and trailing spaces
+"set list
+"set listchars=
+
+"folding settings
+set foldmethod=indent   "fold based on indent
+set foldnestmax=3       "deepest fold is 3 levels
+set nofoldenable        "dont fold by default
+
+set wildmode=list:longest   "make cmdline tab completion similar to bash
+set wildmenu                "enable ctrl-n and ctrl-p to scroll thru matches
+set wildignore=*.o,*.obj,*~ "stuff to ignore when tab completing
+
+set formatoptions-=o "dont continue comments when pushing o/O
+
+"tell the term has 256 colors
+set t_Co=256
+"statusline setup
+set statusline =%#identifier#
+set statusline+=[%t]    "tail of the filename
+set statusline+=%*
+
+"display a warning if fileformat isnt unix
+set statusline+=%#warningmsg#
+set statusline+=%{&ff!='unix'?'['.&ff.']':''}
+set statusline+=%*
+
+"display a warning if file encoding isnt utf-8
+set statusline+=%#warningmsg#
+set statusline+=%{(&fenc!='utf-8'&&&fenc!='')?'['.&fenc.']':''}
+set statusline+=%*
+
+set statusline+=%h      "help file flag
+set statusline+=%y      "filetype
+
+"read only flag
+set statusline+=%#identifier#
+set statusline+=%r
+set statusline+=%*
+
+"modified flag
+set statusline+=%#identifier#
+set statusline+=%m
+set statusline+=%*
+
+set statusline+=%{fugitive#statusline()}
+
+"display a warning if &et is wrong, or we have mixed-indenting
+set statusline+=%#error#
+set statusline+=%{StatuslineTabWarning()}
+set statusline+=%*
+
+set statusline+=%{StatuslineTrailingSpaceWarning()}
+
+set statusline+=%{StatuslineLongLineWarning()}
+
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+"display a warning if &paste is set
+set statusline+=%#error#
+set statusline+=%{&paste?'[paste]':''}
+set statusline+=%*
+
+set statusline+=%=      "left/right separator
+set statusline+=%{StatuslineCurrentHighlight()}\ \ "current highlight
+set statusline+=%c,     "cursor column
+set statusline+=%l/%L   "cursor line/total lines
+set statusline+=\ %P    "percent through file
+set laststatus=2
+
+"recalculate the trailing whitespace warning when idle, and after saving
+autocmd cursorhold,bufwritepost * unlet! b:statusline_trailing_space_warning
+
+"return '[\s]' if trailing white space is detected
+"return '' otherwise
+function! StatuslineTrailingSpaceWarning()
+    if !exists("b:statusline_trailing_space_warning")
+
+        if !&modifiable
+            let b:statusline_trailing_space_warning = ''
+            return b:statusline_trailing_space_warning
+        endif
+
+        if search('\s\+$', 'nw') != 0
+            let b:statusline_trailing_space_warning = '[\s]'
+        else
+            let b:statusline_trailing_space_warning = ''
+        endif
+    endif
+    return b:statusline_trailing_space_warning
+endfunction
+
+
+"return the syntax highlight group under the cursor ''
+function! StatuslineCurrentHighlight()
+    let name = synIDattr(synID(line('.'),col('.'),1),'name')
+    if name == ''
+        return ''
+    else
+        return '[' . name . ']'
+    endif
+endfunction
+
+"recalculate the tab warning flag when idle and after writing
+autocmd cursorhold,bufwritepost * unlet! b:statusline_tab_warning
+
+"return '[&et]' if &et is set wrong
+"return '[mixed-indenting]' if spaces and tabs are used to indent
+"return an empty string if everything is fine
+function! StatuslineTabWarning()
+    if !exists("b:statusline_tab_warning")
+        let b:statusline_tab_warning = ''
+
+        if !&modifiable
+            return b:statusline_tab_warning
+        endif
+
+        let tabs = search('^\t', 'nw') != 0
+
+        "find spaces that arent used as alignment in the first indent column
+        let spaces = search('^ \{' . &ts . ',}[^\t]', 'nw') != 0
+
+        if tabs && spaces
+            let b:statusline_tab_warning =  '[mixed-indenting]'
+        elseif (spaces && !&et) || (tabs && &et)
+            let b:statusline_tab_warning = '[&et]'
+        endif
+    endif
+    return b:statusline_tab_warning
+endfunction
+
+"recalculate the long line warning when idle and after saving
+autocmd cursorhold,bufwritepost * unlet! b:statusline_long_line_warning
+
+"return a warning for "long lines" where "long" is either &textwidth or 80 (if
+"no &textwidth is set)
+"
+"return '' if no long lines
+"return '[#x,my,$z] if long lines are found, were x is the number of long
+"lines, y is the median length of the long lines and z is the length of the
+"longest line
+function! StatuslineLongLineWarning()
+    if !exists("b:statusline_long_line_warning")
+
+        if !&modifiable
+            let b:statusline_long_line_warning = ''
+            return b:statusline_long_line_warning
+        endif
+
+        let long_line_lens = s:LongLines()
+
+        if len(long_line_lens) > 0
+            let b:statusline_long_line_warning = "[" .
+                        \ '#' . len(long_line_lens) . "," .
+                        \ 'm' . s:Median(long_line_lens) . "," .
+                        \ '$' . max(long_line_lens) . "]"
+        else
+            let b:statusline_long_line_warning = ""
+        endif
+    endif
+    return b:statusline_long_line_warning
+endfunction
+
+"return a list containing the lengths of the long lines in this buffer
+function! s:LongLines()
+    let threshold = (&tw ? &tw : 80)
+    let spaces = repeat(" ", &ts)
+    let line_lens = map(getline(1,'$'), 'len(substitute(v:val, "\\t", spaces, "g"))')
+    return filter(line_lens, 'v:val > threshold')
+endfunction
+
+"find the median of the given array of numbers
+function! s:Median(nums)
+    let nums = sort(a:nums)
+    let l = len(nums)
+
+    if l % 2 == 1
+        let i = (l-1) / 2
+        return nums[i]
+    else
+        return (nums[l/2] + nums[(l/2)-1]) / 2
+    endif
+endfunction
+
+:command! -complete=file -nargs=1 Rpdf :r !pdftotext -nopgbrk <q-args> - |fmt -csw78
+
+let g:Tex_DefaultTargetFormat = 'pdf'
+let g:Tex_FormatDependency_pdf = 'dvi,ps,pdf'
+"set grepprg = grep\ -nH\ $*
+set grepprg=grep\ -nH\ $*
+let g:tex_flavor = 'latex'
+

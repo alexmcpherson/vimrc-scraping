@@ -1,0 +1,31 @@
+set ruler
+set nocompatible
+set visualbell
+set nobackup
+set incsearch
+
+syntax on
+
+"vtreeexplorer variables
+let g:treeExplVertical = 1
+let g:treeExplWinSize = 30
+nmap <F5> :VSTreeExplore<CR>
+
+au BufRead,BufNewFile *.java set cindent et sw=4 sts=4 ts=4
+au BufRead,BufNewFile *.php set cindent et sw=4 sts=4 ts=4 cinoptions+=(0,W4 formatoptions=croq
+au BufRead,BufNewFile *.phtml set cindent et sw=4 sts=4 ts=4 cinoptions+=(0,W4 formatoptions=croq
+au BufRead,BufNewFile *.js set cindent et sw=4 sts=4 ts=4 cinoptions+=(0,W4 formatoptions=croq
+au BufRead,BufNewFile *.as set cindent et sw=4 sts=4 ts=4 cinoptions+=(0,W4 formatoptions=croq
+au BufWritePre *.phtml,*.css,*.php setlocal binary noeol
+au BufWritePost *.phtml,*.css,*.php setlocal nobinary eol
+au BufRead,BufNewFile *.css set cindent sw=4 sts=4 ts=4
+
+"load xml editing capabilities in php files
+au Filetype php so ~/.vim/ftplugin/xml.vim
+
+"ruby autocomplete macros
+au Filetype ruby source ~/.vim/ftplugin/ruby-macros.vim 
+
+"set cursorline on TreeExplorer
+au BufEnter TreeExplorer set cursorline
+au BufLeave TreeExplorer set nocursorline

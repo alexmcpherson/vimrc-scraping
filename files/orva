@@ -1,0 +1,102 @@
+call pathogen#infect()
+call pathogen#helptags()
+
+" Coloring
+syntax on
+hi CursorLine cterm=underline term=underline gui=underline
+colorscheme solarized
+let g:solarized_bold = 0
+set background=light
+set cursorline
+set guicursor+=a:blinkon0
+set t_Co=256
+
+" Misc stuff
+set number
+set hidden
+set tw=80	" text-width
+set wrap"
+
+set tabstop=4		" ts
+set shiftwidth=4	" sw
+set softtabstop=4	" sts
+set noexpandtab
+
+
+" Wildmenu
+if has("wildmenu")
+	set wildignore+=*.a,*.o
+	set wildignore+=*.bmp,*.gif,*.ico,*.jpg,*.png
+	set wildignore+=.DS_Store,.git,.hg,.svn
+	set wildignore+=*~,*.swp,*.tmp
+	set wildignore+=*.pyc
+	set wildmenu
+	set wildmode=longest,list
+endif
+
+
+" Autocommands
+if has("autocmd")
+	filetype on
+	filetype indent on
+	filetype plugin on
+
+	" Use ghc functionality with haskell files
+	au Bufenter *.hs compiler ghc
+	au BufNewFile,BufRead SCons*,*.scons set filetype=python
+
+	au FileType haskell setlocal ts=2 sw=2 sts=2 expandtab
+	au FileType clojure setlocal ts=2 sw=2 sts=2 expandtab
+	au FileType ruby	setlocal ts=2 sw=2 sts=2 expandtab
+	au FileType python	setlocal ts=4 sw=4 sts=4 expandtab
+	au FileType c		setlocal ts=8 sw=8 sts=8 noexpandtab
+	au FileType cpp		setlocal ts=8 sw=8 sts=8 noexpandtab
+endif
+
+if has("gui_running")
+	set gfn=Bitstream\ Vera\ Sans\ Mono\ Bold\ 10
+	set go=aegimLt
+	set background=light
+endif
+
+
+
+" Key settings.
+
+" Move between windows.
+map <C-h> <C-w>h
+map <C-j> <C-w>j
+map <C-k> <C-w>k
+map <C-l> <C-w>l
+
+map <C-o> :CtrlPBuffer<CR>
+map <C-m> :CtrlPMRU<CR>
+map <C-e> :CtrlPMixed<CR>
+
+map gs :Gstatus<CR>
+
+imap jj ->
+imap JJ =>
+
+let mapleader=","
+let maplocalleader=","
+
+
+" Here lies misc settings
+
+set tags=./tags
+let g:easytags_dynamic_files = 2 " Use only tags in current dir 
+let g:haddoc_browser = "/usr/bin/firefox"
+
+" zoncoding settings
+let g:user_zen_leader_key = '<c-e>'
+let g:user_zen_settings = {
+\	"indentation" : "	",
+\}
+
+let g:ctrlp_working_path_mode = 2
+let g:ctrlp_custom_ignore = {
+	\ 'dir':  '\.git$\|\.hg$\|\.svn$',
+	\ 'file': '\.exe$\|\.so$\|\.dll$',
+	\ 'link': 'some_bad_symbolic_links',
+	\ }

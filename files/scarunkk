@@ -1,0 +1,74 @@
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+
+colorscheme jellybeans
+
+filetype on        " enable file type detection
+filetype plugin on
+filetype indent on
+
+set nocompatible
+
+set shell=zsh
+
+set showcmd         " show command
+set showmode        " show current mode
+set timeoutlen=200  " (default 1000) time to wait when a part of a maped sequence is typped
+set laststatus=2    " set the status line always on
+
+syn on              " syntax coloring
+set hlsearch        " highlight last search matches
+set incsearch       " show matches as soon as possible
+set wrapscan        "
+set autoread        " watch for file changes by other programs
+set ignorecase      " ignore case when searching
+set smartcase       " ... except if there is one uppercase character
+set showmatch       " show the matching bracket when inserting
+set matchtime=3     " tenths of second to show the matching bracket
+set nowrap          " do not split the line if it is too long
+set cpoptions+=ces$ " make the 'cw' and like commands put a $ at the end
+set backspace=2     " enable backspace
+set scrolloff=8     " keep at least 8 lines after the cusor when scrolling
+set wildmenu        " better command line completion menu
+set wildignore+=*.o,*.a,*.pyc,*.git,*.svn,*.sw*,*.d
+
+set tags=tags;/     " look in the parent directories for the ctags file
+
+set autowrite       " save before :next and :make
+
+set shiftwidth=2
+
+" Show trailing spaces
+:highlight ExtraWhitespace ctermbg=red guibg=red
+:match ExtraWhitespace /\s\+$/
+
+"H/L -> prev/next tab
+map L gt
+map H gT
+" ,c : close tab
+nmap ,c	:tabclose<CR>
+" ,z : zlock
+nmap ,z :r!zlock -immed &<CR>
+
+" remap ESC to Caps Lock
+silent !xmodmap -e "clear lock" -e "keycode 0x42 = Escape"
+
+
+""" Plugins
+
+"" Fugitive
+" print current branch in statusline
+set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
+
+"" Tagbar
+nnoremap \\g :TagbarOpen<CR>
+
+"" CtrlP
+nnoremap ,, :CtrlPCurWD<CR>
+" use current file wd
+nnoremap ,m :CtrlP<CR>
+let g:ctrlp_max_height = 60
+
+" a.vim
+let g:alternateExtensions_cpp = "hh,h,hpp"
+let g:alternateExtensions_hh = "cpp,cc"

@@ -1,0 +1,111 @@
+set nocompatible
+
+syntax on
+filetype plugin on
+filetype indent on
+
+" do not beep at me
+set novisualbell
+
+" enable mouse for (a)ll, (n)ormal, (v)isual, (i)nsert, or (c)ommand line
+" mode -- seems to work in most terminals
+set mouse=a
+
+" display commands as-typed + current position in file
+set showcmd
+set ruler
+
+" keep lots of command-line history
+set history=3000
+
+" search 
+set incsearch
+set ignorecase
+set smartcase
+
+" display tab characters as 8 spaces, indent 2 spaces,
+" always use spaces instead of tabs
+set tabstop=8
+set shiftwidth=2
+set softtabstop=2
+set expandtab
+set autoindent
+"set smarttab
+"set smartindent
+
+" for gvim. no toolbar, otherwise these are the defaults:
+set guioptions=aegimrLt
+
+" turn off tab expansion for Makefiles
+" au BufEnter ?akefile* set noexpandtab
+" au BufLeave ?akefile* set expandtab
+au FileType make setlocal noexpandtab
+
+" -- TWEAKME --
+
+" use comma for the leader key
+let mapleader = ","
+
+" treat p1k3 entries as HTML. lazy, but unlikely to hit many false positives:
+au BufReadPost,BufNewFile */p1k3/*[0123456789]* call PikeHighlight()
+
+" the ! means this can be freely redeclared - makes it easier to source
+" ~/.vimrc after changes
+fun! PikeHighlight()
+  " make sure NERDTree windows don't get messed up
+  if bufname("%") =~ "NERD_tree"
+    return
+  endif
+
+  " the initial slash seems to be necessary to make \v work
+  if bufname("%") =~ "\\v([0-9]{1,2}|[a-z]+)$"
+    set filetype=html
+  endif
+endfun
+
+" assume *.t files are perl - not actually much use for this
+" au BufRead,BufNewFile *.t set filetype=perl
+
+" let me delete stuff like crazy in insert mode
+set backspace=indent,eol,start
+
+" split lines under the cursor
+map K i<CR><Esc>g;
+
+map <F2> :NERDTreeToggle<CR>
+map <F3> :call FindInNERDTree()<CR>
+map <F4> :set invnumber<CR>
+imap <F4> <ESC>:set invnumber<CR>a
+" toggle search highlighting:
+map <F9> :set invhlsearch<CR>
+
+" tab navigation somewhat like firefox
+" http://vim.wikia.com/wiki/Alternative_tab_navigation
+:nmap <C-S-tab> :tabprevious<CR>
+:nmap <C-tab> :tabnext<CR>
+:map <C-S-tab> :tabprevious<CR>
+:map <C-tab> :tabnext<CR>
+:imap <C-S-tab> <Esc>:tabprevious<CR>i
+:imap <C-tab> <Esc>:tabnext<CR>i
+" leaving these off for now 'cause i don't want to mess with the tag stack
+" :nmap <C-t> :tabnew<CR>
+" :imap <C-t> <Esc>:tabnew<CR>
+
+" pipe the file to sudo, tee it to itself
+" an effective workaround for not noticing that you've opened a file read only
+"
+" see:
+" http://www.commandlinefu.com/commands/view/1204/save-a-file-you-edited-in-vim-without-the-needed-permissions
+" turns out to be kind of annoying
+" com Wdammit w !sudo tee %
+
+" retain view/folds
+au BufWinLeave notes mkview
+au BufWinEnter notes silent loadview
+
+colorscheme pyte
+" colorscheme brookstream
+
+" display tabs
+:set lcs=tab:⇾\ 
+:set list

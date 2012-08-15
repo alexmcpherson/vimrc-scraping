@@ -1,0 +1,78 @@
+" Must come first because it changes other options.
+set nocompatible                 
+
+"turn off error bells:
+set noerrorbells
+set visualbell
+set t_vb=
+
+" turn line numbers on
+set number
+
+" set color scheme to
+syntax enable
+set background=dark
+colorscheme solarized
+
+" Handle multiple buffers better.
+set hidden
+
+"required for pathogen to work
+"call pathogen#infect('bundle')
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags() " generate helptags for everything in 'runtimepath'
+
+"required for ios app prompt to map delete key propery
+fixdel
+
+"Font info
+set gfn=Monaco:h13
+set encoding=utf8
+
+"a tab is four spaces
+set tabstop=4
+
+"set copy indent, copy the previous indenting
+set copyindent
+
+"number of spaces to use for autoindenting
+set shiftwidth=4
+
+"highlight search terms
+set hlsearch
+
+"show search matches as you type
+set incsearch
+
+"no swap file
+set noswapfile
+set nobackup
+
+"Always hide the statusline
+set laststatus=2
+
+"Turn filetype plugin on
+filetype plugin on
+filetype indent on
+
+" Set to auto read when a file is changed from the outside
+set autoread
+
+"GUI Options
+if has("gui_running")
+    set guioptions=e
+endif
+
+"set autoindent
+set autoindent
+
+"disable arrow keys
+inoremap  <Up>     <NOP>
+inoremap  <Down>   <NOP>
+inoremap  <Left>   <NOP>
+inoremap  <Right>  <NOP>
+noremap   <Up>     <NOP>
+noremap   <Down>   <NOP>
+noremap   <Left>   <NOP>
+noremap   <Right>  <NOP>
+

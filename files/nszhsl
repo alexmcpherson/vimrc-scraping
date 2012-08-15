@@ -1,0 +1,168 @@
+set undodir=~/.vim/undodir
+set undofile
+set undolevels=2000
+set nocompatible
+set backspace=indent,eol,start
+set t_Co=256
+set mouse=a
+set noswapfile
+set nobackup
+set nowb
+set expandtab
+set shiftwidth=4
+set tabstop=4
+set smarttab
+syntax enable
+set background=dark
+set gfn=Monaco:h12
+set cursorline
+colorscheme jellybeans 
+
+let mapleader=","
+let maplocalleader=","
+noremap <leader>w <Esc>:w<CR>
+vnoremap <leader>w <Esc>:w<CR>
+filetype on
+filetype plugin on
+filetype indent on
+
+let b:javascript_fold=1
+let javascript_enable_domhtmlcss=1
+
+set ruler
+set wildmenu
+set wildignore=*.dll,*.o,*.pyc,*.bak,*.exe,*.jpg,*.jpeg,*.png,*.gif,*$py.class,*.class
+set autoindent
+set smartindent
+set cindent
+set hlsearch
+set incsearch
+set showmatch
+set matchtime=2
+
+" NERDtree on <leader>t
+nnoremap <leader>t :NERDTreeToggle<CR>
+let NERDTreeIgnore=['\~$', '\.pyc$', '\.pyo$', '\.class$', 'pip-log\.txt$', '\.o$']
+
+" Make the command line two lines high and change the statusline display to
+" something that looks useful.
+set showcmd
+set showmode
+set number
+set enc=utf-8
+set scrolloff=7
+set cmdheight=2
+set history=700
+set autoread
+
+" hide some files and remove stupid help
+let g:netrw_list_hide='^\.,.\(pyc\|pyo\|o\)$'
+
+set autochdir
+""""""""""""""""""""""""""""""
+" => Visual mode related
+""""""""""""""""""""""""""""""
+" Really useful!
+"  In visual mode when you press * or # to search for the current selection
+vnoremap <silent> * :call VisualSearch('f')<CR>
+vnoremap <silent> # :call VisualSearch('b')<CR>
+
+function! CmdLine(str)
+    exe "menu Foo.Bar :" . a:str
+    emenu Foo.Bar
+    unmenu Foo
+endfunction
+
+" From an idea by Michael Naumann
+function! VisualSearch(direction) range
+    let l:saved_reg = @"
+    execute "normal! vgvy"
+
+    let l:pattern = escape(@", '\\/.*$^~[]')
+    let l:pattern = substitute(l:pattern, "\n$", "", "")
+
+    if a:direction == 'b'
+        execute "normal ?" . l:pattern . "^M"
+    elseif a:direction == 'gv'
+        call CmdLine("vimgrep " . '/'. l:pattern . '/' . ' **/*.')
+    elseif a:direction == 'f'
+        execute "normal /" . l:pattern . "^M"
+    endif
+
+    let @/ = l:pattern
+    let @" = l:saved_reg
+endfunction
+
+""""""""""""""""""""""""""""""
+" => Statusline
+""""""""""""""""""""""""""""""
+" Always hide the statusline
+set laststatus=2
+
+" Format the statusline
+set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{CurDir()}%h\ \ \ Line:\ %l/%L:%c
+
+function! CurDir()
+    let curdir = substitute(getcwd(), '/Users/amir/', "~/", "g")
+    return curdir
+endfunction
+
+function! HasPaste()
+    if &paste
+        return 'PASTE MODE  '
+    else
+        return ''
+    endif
+endfunction
+set viminfo='10,\"100,:20,%,n~/.viminfo
+function! ResCur()
+  if line("'\"") <= line("$")
+    normal! g`"
+    return 1
+  endif
+endfunction
+
+if has("folding")
+  function! UnfoldCur()
+    if !&foldenable
+      return
+    endif
+    let cl = line(".")
+    if cl <= 1
+      return
+    endif
+    let cf  = foldlevel(cl)
+    let uf  = foldlevel(cl - 1)
+    let min = (cf > uf ? uf : cf)
+    if min
+      execute "normal!" min . "zo"
+      return 1
+    endif
+  endfunction
+endif
+
+augroup resCur
+  autocmd!
+  if has("folding")
+    autocmd BufWinEnter * if ResCur() | call UnfoldCur() | endif
+  else
+    autocmd BufWinEnter * call ResCur()
+  endif
+augroup END
+
+let g:acp_enableAtStartup=0
+let g:neocomplcache_enable_at_startup = 1 
+let g:neocomplcache_enable_smart_case=1
+let g:neocomplcache_enable_camel_case_completion=1
+let g:neocomplcache_enable_underbar_completion=1
+let g:neocomplcache_enable_auto_select=1
+let g:neocomplcache_min_syntax_length=3
+let g:neocomplcache_lock_buffer_name_pattern='\*ku\*'
+
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS 
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags 
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS 
+autocmd FileType python setlocal omnifunc=pythoncomplete#Complete 
+autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags 
+
+

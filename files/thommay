@@ -1,0 +1,146 @@
+set nocompatible
+filetype off                   " required!
+
+set rtp+=$HOME/.vim/bundle/vundle/
+call vundle#rc()
+
+" let Vundle manage Vundle
+" required! 
+Bundle 'gmarik/vundle'
+
+Bundle "mileszs/ack.vim"
+Bundle "tpope/vim-fugitive"
+Bundle "tpope/vim-git"
+Bundle "tpope/vim-haml"
+Bundle "michaeljsmith/vim-indent-object"
+Bundle "pangloss/vim-javascript"
+Bundle "wycats/nerdtree"
+Bundle "tpope/vim-surround"
+Bundle "altercation/vim-colors-solarized"
+Bundle "tpope/vim-rails"
+Bundle "taq/vim-rspec"
+Bundle "tpope/vim-markdown"
+Bundle "tsaleh/vim-align"
+Bundle "tpope/vim-unimpaired"
+Bundle "tpope/vim-endwise"
+Bundle "kchmck/vim-coffee-script"
+Bundle "mattn/webapi-vim"
+Bundle "mattn/gist-vim"
+Bundle "tpope/vim-rake"
+Bundle "tpope/vim-bundler"
+Bundle "kien/ctrlp.vim"
+Bundle "tpope/vim-commentary"
+Bundle "nono/vim-handlebars"
+Bundle "scrooloose/syntastic"
+Bundle "vim-scripts/utl.vim"
+Bundle "jceb/vim-orgmode"
+
+
+set number
+set ruler
+set laststatus=2
+syntax on
+
+set encoding=utf-8
+
+set nowrap
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
+set expandtab
+
+set incsearch
+set ignorecase
+set smartcase
+
+set title
+
+set hidden
+nnoremap ' `
+nnoremap ` '
+let mapleader = ","
+set history=1000
+runtime! macros/matchit.vim
+set clipboard=unnamed
+
+set wildmenu
+set wildmode=list:longest
+set wildignore+=*.o,*.obj,.git,*.rbc,*.class,.svn,vendor/gems/*
+
+" CTags
+map <Leader>rt :!ctags --extra=+f -R *<CR><CR>
+map <C-\> :tnext<CR>
+
+colorscheme elflord
+
+function s:setupWrap()
+  set wrap
+  set wrapmargin=2
+  set textwidth=72
+endfunction
+
+function s:setupMarkup()
+  call s:setupWrap()
+endfunction
+
+au BufRead,BufNewFile {Gemfile,Rakefile,Vagrantfile,Thorfile,config.run} set ft=ruby
+au BufRead,BufNewFile *.{markdown,md} call s:setupMarkup()
+au BufRead,BufNewFile *.json set ft=javascript
+au BufRead,BufNewFile *.hjs set ft=handlebars
+au BufRead,BufNewFile *.txt call s:setupWrap()
+
+set backspace=indent,eol,start
+filetype plugin indent on
+
+" Display tabs and trailing spaces visually
+set list listchars=tab:\ \ ,trail:·
+
+set nowrap       "Don't wrap lines
+set linebreak    "Wrap lines at convenient points
+
+" gist-vim defaults
+if has("mac")
+  let g:gist_clip_command = 'pbcopy'
+elseif has("unix")
+  let g:gist_clip_command = 'xclip -selection clipboard'
+endif
+let g:gist_detect_filetype = 1
+let g:gist_open_browser_after_post = 1
+
+" NERDTree config
+let NERDTreeIgnore=['\.pyc$', '\.rbc$', '\~$']
+map <Leader>n :NERDTreeToggle<CR>
+
+set backupdir=$HOME/.vim/backup
+set directory=$HOME/.vim/backup
+
+" Turn off jslint errors by default
+let g:JSLintHighlightErrorLine = 0
+
+" MacVIM shift+arrow-keys behavior (required in .vimrc)
+let macvim_hig_shift_movement = 1
+
+set statusline=
+set statusline+=%-3.3n\                      " buffer number
+set statusline+=%f\                          " filename
+set statusline+=%h%m%r%w                     " status flags
+set statusline+=\%y                          " file type
+
+set statusline+=\ %{fugitive#statusline()}   " fugitive
+
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+"display a warning if &paste is set
+set statusline+=%#warningmsg#
+set statusline+=%{&paste?'[paste]':''}
+set statusline+=%*
+
+set statusline+=%=                           " right align remainder
+set statusline+=%-14(%l,%c%V%)               " line, character
+set statusline+=%<%P                         " file position
+
+if filereadable(expand("~/.vimrc.local"))
+  source ~/.vimrc.local
+endif

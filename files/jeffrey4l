@@ -1,0 +1,389 @@
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+set runtimepath+=/home/jeffrey/.vim_addon_manager/
+set number
+if $TERM =~ '^xterm'
+        set t_Co=256
+        colorscheme molokai
+elseif $TERM =~ '^screen-bce'
+        set t_Co=256            " just guessing
+        colorscheme molokai
+elseif $TERM =~ '^rxvt'
+        set t_Co=88
+        color desert
+elseif $TERM =~ '^linux'
+        set t_Co=8
+        color desert
+else
+        set t_Co=16
+        color desert
+endif
+set nocompatible
+
+set hlsearch
+set incsearch
+
+set backspace=indent,eol,start
+set wildmenu
+" sudo save
+command W w !sudo tee % > /dev/null
+
+"
+set clipboard+=unnamed
+
+autocmd BufWritePre * silent! %s/\s\+$//
+autocmd BufWritePre * silent! %s/\(\s*\n\)\+\%$//
+
+set expandtab
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+set cindent
+set autoindent
+if has("win32")
+    let DROPBOX=$USERPROFILE."/My\ Documents/My\ Dropbox"
+    let VIMFILES=$VIM."/vimfiles"
+    set guifont=Bitstream\ Vera\ Sans\ Mono:h10
+else
+    let DROPBOX="/home/jeffrey//Downloads/Dropbox"
+    let VIMFILES=$HOME."/.vim"
+    set guifont=Monospace\ 12
+endif
+"""""""""""""""""""""""
+"   vim mapping setting
+"""""""""""""""""""""""
+map - <C-W>-
+map + <C-W>+
+map <C-.> <C-w>>
+map <C-,> <C-w><
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+map <A-j> <C-W>j<C-w>_
+map <A-k> <C-W>k<C-w>_
+map <A-h> <C-W>h<c-w><Bar>
+map <A-l> <C-W>l<c-w><Bar>
+set winaltkeys=no
+"set winheight=999
+map <C-s> :w<CR>
+nnoremap j gj
+vmap j gj
+nnoremap k gk
+vmap k gk
+map ; :
+au FileType javascript map <C-f> :call g:Jsbeautify()<CR>
+let mapleader=","
+
+""""""""""""""""""""""
+" vim undo (for vim 7.3)
+""""""""""""""""""""""
+if v:version >= 703
+    set undofile
+    set undolevels=10000
+    if has('win32')
+        set undodir=c:/windows/temp/
+    else
+        set undodir=/tmp/vimundo/
+    endif
+endif
+
+set go-=m
+set go-=T
+set go-=r
+
+filetype plugin on
+syntax on
+filetype indent on
+
+set mouse=a
+set selection=exclusive
+set selectmode=mouse,key
+set completeopt=longest,menu
+set smartindent
+set scrolloff=5
+set history=1000
+set ignorecase
+set fencs=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936 "set gvim to show chinese
+set statusline=%F%m%r%h%w\ [F=%{&ff}]\ [T=%Y]\ [A=\%03.3b]\ [H=\%02.2B]\ [POS=%04l,%04v][%p%%]\ [LEN=%L]
+set laststatus=2
+
+
+
+if has('win32')
+    set encoding=cp936
+	au GUIEnter * simalt ~x
+else
+    set encoding=utf-8
+	au GUIEnter * call MaximizeWindow()
+endif
+
+function! MaximizeWindow()
+	silent !wmctrl -r :ACTIVE: -b add,maximized_vert,maximized_horz
+endfunction
+"""""""""""""""""""""""
+"   YankRing setting
+"""""""""""""""""""""""
+let g:yankring_max_history=20
+"""""""""""""""""""""""
+"   tags setting
+"""""""""""""""""""""""
+map<F12> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
+""""""""""""""""""""""""""""""
+" BufExplorer
+""""""""""""""""""""""""""""""
+let g:bufExplorerDefaultHelp=0       " Do not show default help.
+let g:bufExplorerShowRelativePath=1 " Show relative paths.
+let g:bufExplorerSortBy='name'        " Sort by most recently used.
+let g:bufExplorerSplitRight=0        " Split left.
+let g:bufExplorerSplitVertical=1     " Split vertically.
+let g:bufExplorerSplitVertSize = 30 " Split width
+let g:bufExplorerUseCurrentWindow=0 " Open in new window.
+"let g:miniBufExplMapCTabSwitchBufs = 1
+""""""""""""""""""""""""""""""
+" NERD_commenter
+""""""""""""""""""""""""""""""
+let NERDShutUp=1
+map <c-i> <leader>c<space>
+
+""""""""""""""""""""""""""""""
+" NERD_tree
+""""""""""""""""""""""""""""""
+"let loaded_nerd_tree=1
+let NERDChristmasTree = 1		" Tells the NERD tree to make itself colourful and pretty.
+let NERDTreeAutoCenter =1		" Window centers when the cursor moves within a specified distance to the top/bottom of the window.
+let NERDTreeAutoCenterThreshold = 3	" Controls the sensitivity of autocentering.
+let NERDTreeCaseSensitiveSort = 0	" Tells the NERD tree whether to be case sensitive or not when sorting nodes.
+let NERDTreeChDirMode = 0		" Tells the NERD tree if/when it should change vim's current working directory.
+let NERDTreeHighlightCursorline = 1	" Tell the NERD tree whether to highlight the current cursor line.
+let NERDTreeHijackNetrw = 1		" Tell the NERD tree whether to replace the netrw autocommands for exploring local directories.
+let NERDTreeIgnore= ['\~$','.*\.pyc','.*\.pyo']		" Tells the NERD tree which files to ignore.
+let NERDTreeBookmarksFile =$HOME.'/.NERDTreeBookmarks' " Where the bookmarks are stored.
+let NERDTreeMouseMode = 2 		" Tells the NERD tree how to handle mouse clicks.
+let NERDTreeQuitOnOpen = 0		" Closes the tree window after opening a file.
+let NERDTreeShowBookmarks = 0		" Tells the NERD tree whether to display the bookmarks table on startup
+let NERDTreeShowFiles = 1		" Tells the NERD tree whether to display files in the tree on startup.
+let NERDTreeShowHidden = 0		" Tells the NERD tree whether to display hidden files on startup.
+let NERDTreeShowLineNumbers = 0		" Tells the NERD tree whether to display line numbers in the tree window.
+let NERDTreeSortOrder = ['\/$', '*', '\.swp$', '\.bak$', '\~$'] " Tell the NERD tree how to sort the nodes in the tree.
+let NERDTreeStatusline = "%{exists('b:NERDTreeRoot')?b:NERDTreeRoot.path.str():''}" " Set a statusline for NERD tree windows.
+let NERDTreeWinPos = "left"		" Tells the script where to put the NERD tree window
+let NERDTreeWinSize = 21		" Sets the window size when the NERD tree is opened.
+nmap <F3> :NERDTreeToggle<CR>
+
+""""""""""""""""""""""""""""""
+" NeoComplcache plugin
+""""""""""""""""""""""""""""""
+let g:neocomplcache_enable_at_startup = 1
+"let g:NeoComplCache_SmartCase = 1
+"let g:NeoComplCache_EnableUnderbarCompletion = 1
+"let g:NeoComplCache_MinKeywordLength = 0
+"let g:NeoComplCache_CachingPercentInStatusline = 1
+imap <silent><C-l>     <Plug>(neocomplcache_snippets_expand)
+smap <silent><C-l>     <Plug>(neocomplcache_snippets_expand)
+"inoremap <expr><C-h> pumvisible() ? "\<C-y>\<C-h>" : "\<C-h>"
+"inoremap <expr><silent><C-g>     neocomplcache#undo_completion()
+"inoremap <expr><C-s>     neocomplcache#complete_common_string()
+let g:neocomplcache_dictionary_filetype_lists = {
+    \ 'default':'',
+    \}
+    "\ 'python':'/home/jeffrey/.vim/dictionary/python_dict',
+let g:neocomplcache_snippets_dir=VIMFILES.'/snippets/'
+""""""""""""""""""""""""""""""
+" snippets plugin
+""""""""""""""""""""""""""""""
+autocmd FileType python set ft=python.django
+"autocmd FileType html set ft=htmldjango.html
+"autocmd FileType xhtml set ft=htmldjango.html
+
+""""""""""""""""""""""""""""""
+" cscope
+""""""""""""""""""""""""""""""
+set cscopequickfix=s-,c-,d-,i-,t-,e-
+nmap <C-_>s :cs find s <C-R>=expand("<cword>")<CR><CR>
+nmap <C-_>g :cs find g <C-R>=expand("<cword>")<CR><CR>
+nmap <C-_>c :cs find c <C-R>=expand("<cword>")<CR><CR>
+nmap <C-_>t :cs find t <C-R>=expand("<cword>")<CR><CR>
+nmap <C-_>e :cs find e <C-R>=expand("<cword>")<CR><CR>
+nmap <C-_>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
+nmap <C-_>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+nmap <C-_>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+map <F11> :!cscope -Rbk<CR>
+""""""""""""""""""""""""""""""
+" Tlist
+""""""""""""""""""""""""""""""
+let Tlist_Use_Right_Window =1
+let Tlist_File_Fold_Auto_Close = 0
+let Tlist_Show_One_File = 1
+let Tlist_Auto_Update = 1
+""""""""""""""""""""""""""""""
+" Show Function
+""""""""""""""""""""""""""""""
+if has("win32")
+    let g:showfuncctagsbin="c:\\windows\\ctags.exe"
+else
+    let g:showfuncctagsbin="/usr/bin/ctags"
+endif
+""""""""""""""""""""""""""""""
+" xml plugins
+""""""""""""""""""""""""""""""
+let xml_no_html=1
+""""""""""""""""""""""""""""""
+" Format XML by using xmllint
+""""""""""""""""""""""""""""""
+function! DoPrettyXML()
+  " save the filetype so we can restore it later
+  let l:origft = &ft
+  set ft=
+  " delete the xml header if it exists. This will
+  " permit us to surround the document with fake tags
+  " without creating invalid xml.
+  1s/<?.*?>//e
+  " insert fake tags around the entire document.
+  " This will permit us to pretty-format excerpts of
+  " XML that may contain multiple top-level elements.
+  0put =''
+  $put =''
+  silent %!xmllint --format -
+  " xmllint will insert an header. it's easy enough to delete
+  " if you don't want it.
+  " delete the fake tags
+  2d
+  $d
+  " restore the 'normal' indentation, which is one extra level
+  " too deep due to the extra tags we wrapped around the document.
+  silent %<
+  " back to home
+  1
+  " restore the filetype
+  exe "set ft=" . l:origft
+endfunction
+command! PrettyXML call DoPrettyXML()
+""""""""""""""""""""""""""""""
+" YankRing
+""""""""""""""""""""""""""""""
+let g:yankring_zap_keys = '@'
+""""""""""""""""""""""""""""""
+" pylint
+""""""""""""""""""""""""""""""
+autocmd FileType python compiler pylint
+let g:pylint_onwrite = 0 " disable calling Pylint every time when buffer is saved
+""""""""""""""""""""""""""""""
+" trac syntax
+""""""""""""""""""""""""""""""
+au! BufRead,BufNewFile *.tracwiki set filetype=tracwiki
+""""""""""""""""""""""""""""""
+" tiddlywiki syntax
+""""""""""""""""""""""""""""""
+au! BufRead,BufNewFile *.tiddlywiki set filetype=tiddlywiki
+""""""""""""""""""""""""""""""
+" tmux config syntax
+""""""""""""""""""""""""""""""
+au BufNewFile,BufRead .tmux.conf*,tmux.conf* set filetype=tmux
+""""""""""""""""""""""""""""""
+" snipMate
+""""""""""""""""""""""""""""""
+let g:snips_author='Jeffrey Zhang <zhang.lei.fly@gmail.com>'
+ino <c-j> <c-r>=TriggerSnippet()<cr>
+snor <c-j> <esc>i<right><c-r>=TriggerSnippet()<cr>
+
+""""""""""""""""""""""""""""""
+" CommandT plugin
+""""""""""""""""""""""""""""""
+let g:CommandTMaxDepth=3
+nmap <F8> :SrcExplToggle<CR>
+
+" // Set the height of Source Explorer window
+let g:SrcExpl_winHeight = 8
+
+" // Set 100 ms for refreshing the Source Explorer
+let g:SrcExpl_refreshTime = 100
+
+" // Set "Enter" key to jump into the exact definition context
+" let g:SrcExpl_jumpKey = "<ENTER>"
+
+" // Set "Space" key for back from the definition context
+let g:SrcExpl_gobackKey = "<SPACE>"
+
+" // In order to Avoid conflicts, the Source Explorer should know what plugins
+" // are using buffers. And you need add their bufname into the list below
+" // according to the command ":buffers!"
+let g:SrcExpl_pluginList = [
+        \ "__Tag_List__",
+        \ "_NERD_tree_",
+        \ "Source_Explorer"
+    \ ]
+
+" // Enable/Disable the local definition searching, and note that this is not
+" // guaranteed to work, the Source Explorer doesn't check the syntax for now.
+" // It only searches for a match with the keyword according to command 'gd'
+let g:SrcExpl_searchLocalDef = 1
+
+" // Do not let the Source Explorer update the tags file when opening
+let g:SrcExpl_isUpdateTags = 0
+
+" // Use 'Exuberant Ctags' with '--sort=foldcase -R .' or '-L cscope.files' to
+" //  create/update a tags file
+let g:SrcExpl_updateTagsCmd = "ctags --sort=foldcase -R ."
+
+" // Set "<F12>" key for updating the tags file artificially
+let g:SrcExpl_updateTagsKey = "<F12>"
+
+""""""""""""""""""""""""
+" Python template
+""""""""""""""""""""""""
+augroup python
+    function AddTitlePython()
+        call setline(1, '#!/usr/bin/env python')
+        call append(1, '#-*- coding:utf-8 -*-')
+        call append(2, '#Author: Lei Zhang <zhang.lei.fly@gmail.com>')
+        normal G
+        normal o
+        normal O
+    endf
+    autocmd BufNewFile *.py call AddTitlePython()
+augroup end
+
+"""""""""""""""""""""""
+" autoclose plugin
+"""""""""""""""""""""""
+let g:AutoClosePairs = {'(': ')', '{': '}', '[': ']', '"': '"', "'": "'"}
+"""""""""""""""""""""""
+" Tagbar plugin
+"""""""""""""""""""""""
+map <F4> :TagbarToggle<CR>
+let g:tagbar_width=20
+"""""""""""""""""""""""
+" Ack.vim plugin
+"""""""""""""""""""""""
+let g:ackprg="ack-grep -H --nocolor --nogroup --column"
+let g:langpair="en|zh-CN"
+"""""""""""""""""""""""
+" antlr plugin
+"""""""""""""""""""""""
+autocmd BufRead *.g set filetype=antlr3
+
+"""""""""""""""""""""""
+" Power line plugin
+"""""""""""""""""""""""
+let Powerline_colorscheme="skwp"
+"""""""""""""""""""""""
+" vim coffee plugin
+"""""""""""""""""""""""
+autocmd BufRead,BufNewFile *.coffee set filetype=coffee
+let coffee_compiler='/usr/local/bin/coffee'
+"""""""""""""""""""""""
+" AutoComplPop
+"""""""""""""""""""""""
+let g:acp_behaviorJavaEclimLength = 3
+function MeetsForJavaEclim(context)
+  return g:acp_behaviorJavaEclimLength >= 0 &&
+        \ a:context =~ '\k\.\k\{' . g:acp_behaviorJavaEclimLength . ',}$'
+endfunction
+let g:acp_behavior = {
+    \ 'java': [{
+      \ 'command': "\<c-x>\<c-u>",
+      \ 'completefunc' : 'eclim#java#complete#CodeComplete',
+      \ 'meets'        : 'MeetsForJavaEclim',
+    \ }]
+  \ }

@@ -1,0 +1,85 @@
+"""""""""""
+" General "
+"""""""""""
+
+" File-type highlighting and configuration.
+" Run :filetype (without args) to see what you may have
+" to turn on yourself, or just set them all to be sure.
+syntax on
+filetype on
+filetype plugin on
+filetype indent on
+
+" The current buffer can be put in the background without writing to disk
+set hidden
+
+" Visual instead of audio bell
+set visualbell
+
+" Increase the history size
+set history=1000
+
+" Marks the beginning of the file to differentiate
+" between utf and ucs encodings
+set bomb
+
+" Autoindent based on filetype
+filetype indent on
+
+" Keep indentation level from previous line
+set autoindent
+
+" Folding based on indentation
+set foldmethod=indent
+
+" Autocomplete on by pressing <Tab>
+set wildmenu
+set wildmode=list:longest
+
+" Case sensitive search only when there's a capital letter in the search string
+set ignorecase
+set smartcase
+
+" Always give the window a title
+set title
+
+" Show line numbers
+set number
+
+" Ruler at the bottom of the buffer
+set ruler
+
+" Set a directory for backups/temp files
+set backupdir=~/.vim/tmp,/tmp
+set directory=~/.vim/tmp,/tmp
+
+"""""""""""""""""""""""""
+" Key Commands/Mappings "
+"""""""""""""""""""""""""
+
+" Moving between split windows uses Ctrl and standard vim controls
+nmap <silent> <C-h> :wincmd h<CR>
+nmap <silent> <C-j> :wincmd j<CR>
+nmap <silent> <C-k> :wincmd k<CR>
+nmap <silent> <C-l> :wincmd l<CR>
+
+"""""""""""
+" Plugins "
+"""""""""""
+
+""""""""""
+" Python "
+""""""""""
+
+let python_highlight_all=1
+
+" Highlight lines that exceed 80 characters in length
+au BufRead,BufNewFile *.py,*.pyw match ErrorMsg '\%>80v.\+'
+
+""""""""""""""
+" Javascript "
+""""""""""""""
+
+""""""""
+" Ruby "
+""""""""

@@ -1,0 +1,47 @@
+syntax on             " syntax highlighting
+set expandtab         " Convert tabs to spaces
+set tabstop=4         " <TAB> four spaces
+set shiftwidth=4      " Shift width four spaces (for auto indent)
+set noautoindent      " Turn off autoindent by default
+set smartindent       " Use smart indent instead
+set incsearch         " Use incremental searches (cool)
+set backspace=2       " Set backspace mode to allow backspacing in insert mode
+set ruler             " Show position of cursor in status line
+set showmatch         " Show matching parens/braces when writing code
+set wh=55             " Minimum window height
+set textwidth=100      " Maximum line width when writing comments
+set number            " show line numbers
+
+" Speed up response to ESC key
+set notimeout
+set ttimeout
+set timeoutlen=100
+
+" Make completion more like bash
+set wildmode=longest,list
+
+" Cure hangs during compiles?
+set swapsync=
+
+" For fuck's sake, don't throw away the indent when i hit #
+inoremap # X^H#
+
+" Disable auto-commenting of // in C/C++
+au FileType c,cpp setlocal comments-=://
+
+" Highlight trailing whitespace
+hi TrailingSpace ctermbg=1
+au filetype c,cpp,python match TrailingSpace "\s\+\n"
+
+
+
+map <down> <nop>
+map <left> <nop>
+map <right> <nop>
+map <up> <nop>   
+
+imap <down> <nop>
+imap <left> <nop>
+imap <right> <nop>
+imap <up> <nop> 
+

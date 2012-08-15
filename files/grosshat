@@ -1,0 +1,192 @@
+" =================================
+" Basic settings
+" =================================
+let mapleader="," " change the leader to be a comma vs slash
+set textwidth=78 " Try this out to see how textwidth helps
+set ch=1 " Make command line two lines high
+set ls=2 " allways show status line
+set tabstop=4 " numbers of spaces of tab character
+set shiftwidth=4 " numbers of spaces to (auto)indent
+set scrolloff=3 " keep 3 lines when scrolling
+set nocursorline " have a line indicate the cursor location
+set cindent " cindent
+set autoindent " always set autoindenting on
+set showcmd " display incomplete commands
+set ruler " show the cursor position all the time
+set visualbell t_vb= " turn off error beep/flash
+set novisualbell " turn off visual bell
+set nobackup " do not keep a backup file
+set number " show line numbers
+set title " show title in console title bar
+set ttyfast " smoother changes
+set modeline " last lines in document sets vim mode
+set modelines=3 " number lines checked for modelines
+set shortmess=atI " Abbreviate messages
+set nostartofline " don't jump to first character when paging
+set backspace=start,indent,eol
+set matchpairs+=<:> " show matching <> (html mainly) as well
+set showmatch
+set matchtime=3
+set spell
+set expandtab " tabs are converted to spaces, use only when required
+set sm " show matching braces, somewhat annoying...
+
+set statusline=%{GitBranch()}\ %F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y\ %{&ff}]\ [ASCII=\%03.3b]\ [HEX=\%02.2B]\ [POS=%04l,%04v][%p%%]\ [LEN=%L]
+
+" ==================================================
+" Basic Maps
+" ==================================================
+" Maps for jj to act as Esc
+ino jj <esc>
+cno jj <c-c>
+
+" Map ;; to swap out the file with the previous one
+nnoremap ;; <c-^>
+
+" map ctrl-c to something else so I quick using it
+map <c-c> <Nop>
+imap <c-c> <Nop>
+
+" ==================================================
+" Completion
+" ==================================================
+" complete on ctrl-l
+inoremap <C-l> <C-x><C-o>
+
+set complete+=.
+set complete+=k
+set complete+=b
+set complete+=t
+
+set completeopt+=menuone,longest
+
+" vim as vim
+set nocompatible
+set enc=utf-8
+
+
+" always syntax on, for an easier life :)
+syntax on
+
+" turn off word wrapping
+set wrap!
+
+" load filetype plugins/indent settings
+filetype plugin indent on
+
+" work always as on the current file directory
+" set autochdir
+
+" backspace more flexible
+set backspace=indent,eol,start
+
+" current line
+" set cursorline
+" :hi CursorLine   cterm=NONE ctermbg= guibg=
+" :hi CursorColumn cterm=NONE ctermbg=blue ctermfg=white guibg=blue guifg=white
+" :nnoremap <Leader>c :set cursorline! cursorcolumn!<CR>
+
+" status line always visible
+set laststatus=2
+
+" show current position along the bottom
+set ruler
+
+" run file with PHP CLI (CTRL-M)
+:autocmd FileType php noremap <C-M> :w!<CR>:!/usr/bin/php %<CR>
+
+" PHP parser check (CTRL-L)
+autocmd FileType php noremap <C-L> :!/usr/bin/php -l %<CR>
+
+" load tags
+:set tags=/home/inigomedina/workspace/mirai/tags
+
+set cinkeys=0{0}0)0#!<Tab>;:oOe
+"set indentkeys=!<Tab>oO
+"map <Tab> i<Tab><Esc>^
+
+set smartindent
+
+" autoindent
+set autoindent
+
+" highlights things found with the search
+set hlsearch
+
+" wordpress 
+set noexpandtab
+set copyindent
+set preserveindent
+set colorcolumn=80 
+:hi ColorColumn ctermbg=lightgrey guibg=lightgrey
+
+"shortcut to auto indent entire file
+nmap <F11> 1G=G
+imap <F11> <ESC>1G=Ga
+
+" python
+"set softtabstop=4
+"set shiftwidth=4
+"set autoindent
+
+" shows what you are typing as command
+set showcmd
+
+" incremental search
+set incsearch
+set ignorecase
+set smartcase
+
+" path for :find
+set path=$PWD/**
+
+" watch for file changes
+set autoread
+
+" 100 for history is enought
+set history=100
+
+" a lot of undos, its not so expensive
+set undolevels=1000
+
+" bash as basic shell
+set shell=bash
+
+" :hi LineTooLong ctermbg=grey guibg=grey
+" :match LineTooLong '\%>80v.\+'
+
+" autocomplete
+autocmd FileType php set omnifunc=phpcomplete#CompletePHP
+autocmd FileType python set omnifunc=pythoncomplete#Complete
+autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
+autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+
+:nmap <C-t> :tabnew<CR>
+:nmap <C-f> :FindFile<CR>
+:nmap <f2> :zfa}<CR>
+:nmap <f3> :zo<CR>
+
+" PHP documentation
+set keywordprg=pman
+
+"set t_Co=256
+
+syntax enable
+  set background=dark
+  set t_Co=16
+  let g:solarized_termcolors=16
+  let g:solarized_contrast="high"
+  colorscheme solarized
+
+" number line
+set number
+set numberwidth=5"Highlight current line
+set cursorline
+
+" enable indent folding
+set foldenable
+"set fdm=indent
+
+" set space to toggle a fold
+nnoremap <space> za

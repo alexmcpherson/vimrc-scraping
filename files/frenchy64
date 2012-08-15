@@ -1,0 +1,124 @@
+set number
+
+syntax on
+
+set nocompatible               " be iMproved
+filetype off                   " required!
+
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+
+" let Vundle manage Vundle
+" required! 
+Bundle 'gmarik/vundle'
+
+" My Bundles here
+Bundle 'VimClojure'
+Bundle 'ack.vim'
+Bundle 'Command-T'
+Bundle 'L9'
+Bundle 'jcf/vim-latex'
+
+filetype plugin indent on     " required! 
+
+"
+" Brief help
+" :BundleList          - list configured bundles
+" :BundleInstall(!)    - install(update) bundles
+" :BundleSearch(!) foo - search(or refresh cache first) for foo
+" :BundleClean(!)      - confirm(or auto-approve) removal of unused bundles
+"
+" see :h vundle for more details or wiki for FAQ
+" NOTE: comments after Bundle command are not allowed..
+
+""""""""""""""""""""""""""""""""""""""""""""""
+" General configuration
+""""""""""""""""""""""""""""""""""""""""""""""
+
+set mouse=a
+set autoindent
+set smartindent
+
+" window switching
+map <C-k> <C-w><Up>
+map K     <C-w><Up>
+map <C-j> <C-w><Down>
+map <C-l> <C-w><Right>
+map <C-h> <C-w><Left>
+imap <C-k> <Esc><C-k>
+imap <C-j> <Esc><C-j>
+imap <C-l> <Esc><C-l>
+imap <C-h> <Esc><C-h>
+
+" get to console in insert mode
+imap <C-z> <C-z>
+
+"searching
+set hlsearch
+set incsearch
+
+" tabs n spaces
+set shiftwidth=2
+set tabstop=2
+set softtabstop=2
+
+" fast window resizing 
+if bufwinnr(1)
+  map + <C-W>+
+  map - <C-W>-
+endif
+
+set number
+set scrolloff=3
+
+set cursorline "highlight current line
+" Visual bell instead of beep
+set vb
+set expandtab
+
+" Allow hidden buffers
+set hidden
+
+" autocomplete in help
+set wildmenu
+set wildignore+=target,classes,lib,*.class
+
+" Y should yank til end of line
+map Y y$
+
+" Open VIMRC
+nmap <silent> ,ev :e $MYVIMRC<cr>
+" Source VIMRC
+nmap ,sv :source $MYVIMRC<cr>
+
+"command-t config
+nmap <silent> ,f :CommandT<CR>
+nmap ,cf :CommandTFlush<CR>
+"let g:CommandTDeleteMap=['<C-d>', '<Del>']
+"let g:CommandTCursorLeftMap=['<Left>', '<C-h>', '<C-b>']
+"let g:CommandTCursorRightMap=['<Right>', '<C-l>', '<C-f>']
+"let g:CommandTClearMap='<C-k>'
+
+" convenient nohl
+map <silent> ,m :nohl<cr>
+
+" Ack grep 
+map ,a :Ack 
+
+" Visual mode indenting (keep selected)
+vmap > >gv
+vmap < <gv
+
+" VimClojure config
+let vimclojure#WantNailgun = 1
+map ,cp :let vimclojure#NailgunPort = 
+
+" set clojure mode
+nmap ,tc :set ft=clojure<CR>
+
+let vimclojure#ParenRainbow = 1
+let vimclojure#HighlightBuiltins = 1
+
+" vim-latex config
+"let g:tex_flavor='latex'
+

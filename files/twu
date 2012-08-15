@@ -1,0 +1,711 @@
+"""
+"
+" File: Vim Runtime Configuration
+" Author: Thomas Wurmitzer <t.wurmitzer@student.tugraz.at>
+" Last Modified: 15/07/12 11:52:03
+"
+"""
+
+" {{{ Initialize Pathogen
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+" }}}
+" {{{ Options
+set shm=atI             " Disable intro screen
+set lazyredraw          " Don't redraw screen during macros
+set ttyfast             " Improves redrawing for newer computers
+set nocompatible        " we're running vim, not vi
+set fileformat=unix     " use unix eol format
+set encoding=utf-8      " set global encoding to utf-8
+set fileencoding=utf-8  " file encoding to utf-8
+set termencoding=utf-8  " terminal.app knows how to deal with utf-8
+set number              " display numbers
+set numberwidth=5       " set number display width
+set notitle             " disable window title
+set noicon              " disable window icon
+set incsearch           " do incremental searching
+set hlsearch            " highlight matches for the last used search pattern
+set showmatch           " show matching brackets
+set nobackup            " disable automatic backups
+set nowritebackup       " disable automatic backups
+set nospell             " highlight spelling mistakes
+set spelllang=en        " use english dictionary
+set showtabline=2       " always show the tabline
+set wrap                " wrap long lines
+set cursorline          " highlight the current line the cursor is on
+set mousehide           " hide the mouse pointer while typing
+set tabstop=2           " number of spaces a <tab> in the text stands for
+set shiftwidth=2        " number of spaces used for each step of (auto)indentation
+set smarttab            " a <tab> in an indent inserts 'shiftwidth' spaces
+set expandtab           " expand tab in insert mode
+set cmdheight=1         " command line height
+set ruler               " ruler display in status line
+set showmode            " show mode at bottom of screen
+set showcmd             " show command line
+set modeline            " show mode line
+set autoindent          " automatically set the indent of a new line
+set smartindent         " enable smart indenting (local to buffer)
+set grepprg=ack         " use ack for grepping
+set grepformat=%f:%l:%m " setup grep format
+set visualbell          " disable audible bell
+set noautochdir         " don't automatically `cd` into the directory the file is in
+set textwidth=78        " set the maximum text width to 78 characters per line
+set timeoutlen=500      " lower timeout for mappings
+set history=50          " only store past 50 commands
+set undolevels=150      " only undo up to 150 times
+set backspace=indent,eol,start   " make that backspace key work the way it should
+set shell=zsh           " setup a shell
+set noswapfile          " disable swap files
+set splitbelow          "
+set splitright          "
+set diffopt+=iwhite     " ignore whitespace when viewing diffs
+set autoread            " automatically read a file that has changed on disk
+set scrolloff=3         " maintain more context around the cursor
+set showbreak=↪         " put a ↪  at the start of lines that have been wrapped.
+set linespace=4         " set linespacing to 4 pixels.
+set noesckeys           " disable esckeys within insert mode.
+set tags+=TAGS          "
+" }}}
+" {{{ GTK Options
+if has("gui_gtk2")
+
+  set cursorline          " highlight the current cursorline
+  set colorcolumn=81      " highlight the column after textwidth
+
+  set guifont=Fixed:h20   " setup font
+
+  set guioptions-=m       " remove menu bar
+  set guioptions-=r       " remove right scrollbar
+  set guioptions-=l       " remove left scrollbar
+  set guioptions-=T       " remove toolbar
+  set guioptions-=L       " remove left scrollbar with multiple buffers
+  set guioptions-=R       " remove right scrollbar with multiple buffers
+
+  set background=dark     " set background
+  colorscheme vylight     " set colorscheme
+
+  set guitablabel=%t      " set guitab label
+  set guitabtooltip=%F    " set guitab tooltip
+" }}}
+" {{{ OSX Options
+elseif has("gui_macvim")
+
+  set cursorline          " highlight the current cursorline
+  set colorcolumn=81      " highlight the column after textwidth
+
+ "set guioptions-=r       " remove right scrollbar
+  set guioptions-=l       " remove left scrollbar
+  set guioptions-=T       " remove toolbar
+  set guioptions-=L       " remove left scrollbar with multiple buffers
+  set guioptions-=R       " remove right scrollbar with multiple buffers
+
+  set guitablabel=%t      " set guitab label
+  set guitabtooltip=%F    " set guitab tooltip
+
+  set fuoptions=maxvert,background:Normal
+
+  " Goodbye, <F1> key.
+  noremap  <F1>      :set invfullscreen<CR>
+  inoremap <F1> <ESC>:set invfullscreen<CR>a
+
+  set guifont=Ubuntu\ Mono:h20  " setup font
+  set antialias           " enable antialias
+ "set background=dark     " set background
+  colorscheme vylight     " set colorscheme
+
+  set lines=30            " mvim: set window lines
+  set columns=110         " mvim: set window columns
+  winpos 0 0              " mvim: set window position
+" }}}
+" {{{ Non-GUI Options
+else
+
+  set t_Co=256            " pretty please...
+
+  set colorcolumn=0       " don't highlight overlengthy text
+  set nocursorline        " don't highlight the current line the cursor is on
+  set nospell             " don't highlight spelling mistakes
+
+  syntax on               " ...with sugar on top.
+
+end
+" }}}
+" {{{ Completion Options
+" (only complete to the longest unambiguous match, and show a menu)
+set completeopt=longest,menu
+set wildmode=list:longest,list:full
+
+set wildignore+=.hg,.git,.svn                    " Version control folders
+set wildignore+=*.aux,*.out,*.toc                " LaTeX intermediate files
+set wildignore+=*.jpg,*.bmp,*.gif,*.png,*.jpe?g  " Binary images
+set wildignore+=*.o,*.obj,*.manifest,*.class,.so " Compiled object files
+set wildignore+=*.sw?                            " Swap files
+set wildignore+=*.pyc,*.luac                     " Byte code
+set wildignore+=*.DS_Store?                      " You know...
+
+" Suffixes that get lower priority when doing tab completion for filenames.
+" These are files we are not likely to want to edit or read.
+set suffixes=.bak,~,.svn,.git,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,
+set suffixes+=.cb,.ind,.idx,.ilg,.inx,.out,.toc
+" }}}
+" {{{ Display extra whitespace
+set list listchars=tab:▸\ ,eol:¬,trail:·,extends:❯,precedes:❮
+
+" Use lightgray to highlight it.
+highlight NonText    ctermfg=7 guifg=lightgray
+highlight SpecialKey ctermfg=7 guifg=lightgray
+" }}}
+" {{{ Show line numbers only in the current window/split.
+au WinEnter * :setlocal number
+au WinLeave * :setlocal nonumber
+au WinLeave * set nocursorline
+au WinEnter * set cursorline
+" }}}
+" {{{ Customize error format
+set errorformat=%A%f:%l:\ %m,%-Z%p^,%-C%.%#
+set errorformat=%f:%l:%c:%*\d:%*\d:%*\s%m
+" }}}
+" {{{ Set bracket matching and comment formats
+set matchpairs+=<:>
+set comments-=s1:/*,mb:*,ex:*/
+set comments+=s:/*,mb:**,ex:*/
+set comments+=fb:*
+set comments+=b:\"
+set comments+=n::
+" }}}
+" {{{ Folding
+if has("folding")
+  set foldenable
+  set foldcolumn=0
+  set foldlevel=0
+  set foldmethod=marker
+  set foldtext=FoldText()
+endif
+" }}}
+" {{{ Abbreviations
+source ~/.vim/misc/abbreviations.vim
+source ~/.vim/misc/secrets.vim
+" }}}
+" {{{ Save and return to normal mode on FocusLost.
+au FocusLost * :silent! wall                 " Save on FocusLost
+au FocusLost * call feedkeys("\<C-\>\<C-n>") " Return to normal mode on FocustLost
+" }}}
+" {{{ Resize splits when the window is resized
+au VimResized * :wincmd =
+" }}}
+" {{{ Mappings
+
+" Use ',' as <Leader> and <Localleader>.
+let mapleader = ','
+let maplocalleader = ','
+
+" Mappings (Normal)
+nmap <C-c><C-c> :!gcc -g -Wall % -o %:r.out<CR>
+nmap <C-c><C-x> :!./%:r.out<CR>
+
+" Copy & Paste to/from clipboard
+nmap <Leader>y "*y
+nmap <Leader>Y "*yy
+nmap <Leader>p "*p
+
+" Delete 'til the EOL by simply hitting D.
+nmap D d$
+
+" Keep search matches in the middle of the window and pulse the line when
+" moving to them.
+nnoremap n nzzzv
+nnoremap N Nzzzv
+
+" Allow HEX editing mode.
+map <Leader>hex   :%!xxd<CR>
+map <Leader>nohex :%!xxd -r<CR>
+
+" {{{ Use the arrow keys to navigate split-windows.
+nmap  <Up>    <C-w>k
+nmap  <Down>  <C-w>j
+nmap  <Left>  <C-w>h
+nmap  <Right> <C-w>l
+" }}}
+" {{{ Move lines and selection up and down using <D-j> and <D-k>.
+" From: http://vim.wikia.com/wiki/Moving_lines_up_or_down_in_a_file
+nnoremap <D-j> :m+<CR>==
+nnoremap <D-k> :m-2<CR>==
+inoremap <D-j> <Esc>:m+<CR>==gi
+inoremap <D-k> <Esc>:m-2<CR>==gi
+vnoremap <D-j> :m'>+<CR>gv=gv
+vnoremap <D-k> :m-2<CR>gv=gv
+" }}}
+
+" Hide search highlighting
+map <Leader>h :set invhls<CR>
+
+" Toggle dark/light default colour theme for shitty terms
+map <F2> :let &background = ( &background == "dark" ? "light" : "dark" )<CR>
+
+" {{{ Mappings for easy editing certain files in a new tab.
+map <Leader>ev :tabnew ~/.vimrc<CR>
+map <Leader>ep :tabnew ~/.pentadactylrc<CR>
+map <Leader>ez :tabnew ~/.zshrc<CR>
+map <Leader>em :tabnew ~/.muttrc<CR>
+map <Leader>et :tabnew ~/TODO.markdown<CR>
+map <Leader>es :tabnew ~/Scratchpad.markdown<CR>
+map <Leader>eg :tabnew ~/Desktop/tug.grades<CR>
+" }}}
+
+" Opens Command-T
+nmap <silent> <Leader><Leader> :CommandT<CR>
+nmap <silent> <Leader>b :CommandTBuffer<CR>
+
+" Use <Leader>. and <Leader>, to switch between tabs.
+map <Leader>. :tabprev<CR>
+map <Leader>- :tabnext<CR>
+
+" Open the Extradite window in a split view.
+map <Leader>l :Extradite!<CR>
+
+" Allow fast-saving using <Leader>W.
+nmap <Leader>W :w!<CR>
+
+" Clean trailing whitespace.
+nnoremap <Leader>cw :%s/\s\+$//<CR>:let @/=''<CR>
+
+" Save using sudo.
+map w!! w !sudo tee % >/dev/null
+
+" Tabs: Small mappings to open new tabs quicker.
+map <Leader>t :tabnew<CR>
+map <Leader>T :tabnew<CR>:CommandT<CR>
+
+" Tabs: Firefox style, open tabs with command-<tab number>
+map <silent> <D-1> :tabn 1<CR>
+map <silent> <D-2> :tabn 2<CR>
+map <silent> <D-3> :tabn 3<CR>
+map <silent> <D-4> :tabn 4<CR>
+map <silent> <D-5> :tabn 5<CR>
+map <silent> <D-6> :tabn 6<CR>
+map <silent> <D-7> :tabn 7<CR>
+map <silent> <D-8> :tabn 8<CR>
+map <silent> <D-9> :tabn 9<CR>
+
+" {{{ Disable Arrow Keys
+map  <Up>    <NOP>
+map  <Down>  <NOP>
+map  <Left>  <NOP>
+map  <Right> <NOP>
+" imap <Up>    <NOP>
+" imap <Down>  <NOP>
+" imap <Left>  <NOP>
+" imap <Right> <NOP>
+" }}}
+
+" Align text
+nnoremap <Leader>Al :left<CR>
+nnoremap <Leader>Ac :center<CR>
+nnoremap <Leader>Ar :right<CR>
+vnoremap <Leader>Al :left<CR>
+vnoremap <Leader>Ac :center<CR>
+vnoremap <Leader>Ar :right<CR>
+
+" Disable the 'man' key.
+nnoremap K <NOP>
+
+" Easier buffer navigation
+noremap <C-h> <C-w>h
+noremap <C-j> <C-w>j
+noremap <C-k> <C-w>k
+noremap <C-l> <C-w>l
+noremap <Leader>g <C-w>v
+
+" Hitting <Space> toggles folds.
+nnoremap <Space> za
+vnoremap <Space> za
+
+" Reselect visual block.
+vnoremap < <gv
+vnoremap > >gv
+
+" Make zO recursively open whatever top level fold we're in, no matter where the
+" cursor happens to be.
+nnoremap zO zCzO
+
+" Use <Leader><Space> to set focus on the current fold.
+nnoremap <Leader><Space> zMzvzz
+
+" Toggle Relative Line Numbering.
+noremap <Leader>n :call ToggleRelativeNumbers()<Enter>
+
+" Page down/up with +/-.
+noremap + <PageUp>
+noremap - <PageDown>
+
+" Select (charwise) the contents of the current line, excluding indentation.
+nnoremap vv ^vg_
+
+" Faster ESC
+inoremap jk <ESC>
+inoremap jj <ESC>
+
+" Hitting <F3> shows the contents of the Yankring.
+nnoremap <silent> <F3>      :YRShow<CR>
+inoremap <silent> <F3> <ESC>:YRShow<CR>
+
+" Jump to the beginning/end of the line in insert mode
+imap <C-A> <ESC>I
+imap <C-E> <ESC>A
+
+" Jump to the beginning/end of the line in normal mode
+nnoremap H ^
+nnoremap L g_
+
+" Clean trailing whitespace.
+nnoremap <leader>w mz:%s/\s\+$//<cr>:let @/=''<cr>`z
+
+" Open a Quickfix window for the last search.
+nnoremap <silent> <leader>? :execute 'vimgrep /'.@/.'/g %'<CR>:copen<CR>
+
+" Search the current file for what's currently in the search register and
+" display matches
+nmap <silent> ,gs :vimgrep /<C-r>// %<CR>:ccl<CR>:cwin<CR><C-W>J:nohls<CR>
+
+" Search the current file for the word under the cursor and display matches
+nmap <silent> ,gw :vimgrep /<C-r><C-w>/ %<CR>:ccl<CR>:cwin<CR><C-W>J:nohls<CR>
+
+" Search the current file for the WORD under the cursor and display matches
+nmap <silent> ,gW :vimgrep /<C-r><C-a>/ %<CR>:ccl<CR>:cwin<CR><C-W>J:nohls<CR>
+
+" Underline the current line with '='
+nmap <silent> ,ul :t.\|s/./=/g\|:nohls<CR>
+
+" Shrink the current window to fit the number of lines in the buffer.
+nmap <silent> ,sw :execute ":resize " . line('$')<CR>
+
+" Runs the script in the current buffer using <Leader>r
+au FileType ruby   map <Leader>r :!ruby %<CR>
+au FileType python map <Leader>r :!python %<CR>
+
+" Checks the ruby script in the current buffer for syntax errors
+map <Leader>R :!ruby -c %<CR>
+
+" Runs the prolog script in the current buffer using <Leader>r
+au FileType prolog map <Leader>r :!open -a Terminal --args 'swipl -f "%"'<CR>
+
+" Press ^F from insert mode to insert the current file name
+imap <C-F> <C-R>=expand("%")<CR>
+
+" Hit <ESC> twice to remove search highlighting.
+nmap <ESC><ESC> :nohlsearch<CR><ESC>
+
+if exists(":Tabularize")
+  nmap <Leader>a= :Tabularize /=<CR>
+  vmap <Leader>a= :Tabularize /=<CR>
+  nmap <Leader>a: :Tabularize /:\zs<CR>
+  vmap <Leader>a: :Tabularize /:\zs<CR>
+  nmap <Leader>a, :Tabularize /,\zs<CR>
+  vmap <Leader>a, :Tabularize /,\zs<CR>
+endif
+
+" }}}
+" {{{ Filetype settings
+filetype on           " enable filetype detection
+filetype indent on    " enable filetype-specific indenting
+filetype plugin on    " enable filetype-specific plugins
+
+" {{{ Make file specific options
+au FileType make  set noexpandtab
+" }}}
+" {{{ C file specific options
+au FileType c,cpp set cindent
+au FileType c,cpp set omnifunc=ccomplete#Complete
+" }}}
+" {{{ Python file specific options
+au FileType python setlocal sts=2 sw=2
+au FileType python set expandtab
+au FileType python set omnifunc=pythoncomplete#Complete
+" }}}
+" {{{ Ruby file specific options
+au FileType ruby,eruby setlocal sts=2 sw=2
+au FileType ruby,eruby set omnifunc=rubycomplete#Complete
+au FileType ruby,eruby let g:rubycomplete_buffer_loading = 1
+au FileType ruby,eruby let g:rubycomplete_rails = 1
+au FileType ruby,eruby let g:rubycomplete_classes_in_global = 1
+" }}}
+" {{{ Puppet file specific options
+au Filetype puppet setlocal foldmethod=marker
+au Filetype puppet setlocal foldmarker={,}
+" }}}
+" {{{ VIM file specific options
+au FileType vim  setlocal foldmethod=marker
+au FileType help setlocal textwidth=78
+" }}}
+" {{{ NGINX file specific options
+au BufRead,BufNewFile /etc/nginx/conf/*                      set ft=nginx
+au BufRead,BufNewFile /etc/nginx/sites-available/*           set ft=nginx
+au BufRead,BufNewFile /usr/local/etc/nginx/sites-available/* set ft=nginx
+au BufRead,BufNewFile vhost.nginx                            set ft=nginx
+" }}}
+" {{{ GRADES file specific options
+au BufRead,BufNewFile *.grades  set ft=grades nofoldenable
+" }}}
+" {{{ Markdown file specific options
+au! BufRead,BufNewFile *.mkd setfiletype pandoc
+au! BufRead *.mkd  set ai formatoptions=tcroqn2 comments=n:>
+
+" Use <Localleader>1/2/3 to add headings.
+au Filetype markdown nnoremap <Buffer> <Localleader>1 yypVr=
+au Filetype markdown nnoremap <Buffer> <Localleader>2 yypVr-
+au Filetype markdown nnoremap <Buffer> <Localleader>3 I### <ESC>
+
+" Use Marked to preview Markdown documents.
+au Filetype markdown nnoremap <Leader>m :silent !open -a Marked.app '%:p'<CR>
+" }}}
+
+" Automatically add/update Last-Modified: field.
+au BufWrite * call LastModified()
+
+" Returns to the same line when you reopen a file.
+au BufReadPost *
+    \ if line("'\"") > 0 && line("'\"") <= line("$") |
+    \     execute 'normal! g`"zvzz' |
+    \ endif
+
+" Highlight trailing whitespace when not in insert mode.
+au InsertEnter * :set listchars-=trail:⌴
+au InsertLeave * :set listchars+=trail:⌴
+
+" GPG file specific options
+au BufNewFile,BufReadPre *.gpg :set secure vimi= noswap noback nowriteback hist=0 binary
+au BufReadPost  *.gpg :%!gpg -d 2>/dev/null
+au BufWritePre  *.gpg :%!gpg -e -r 't.wurmitzer@student.tugraz.at' 2>/dev/null
+au BufWritePost *.gpg u
+
+" {{{ Compile, check and run mappings.
+au FileType php            map <F6> :!php %<CR>
+au FileType python         map <F6> :!python %<CR>
+au FileType perl           map <F6> :!perl %<CR>
+au FileType lua            map <F6> :!lua %<CR>
+au FileType html,xhtml,xml map <F6> :!open %<CR>
+au FileType ruby           map <F6> :!ruby %<CR>
+au FileType ruby           map <F5> :!ruby -c %<CR>
+" }}}
+
+au! BufRead,BufNewFile *pentadactylrc          set filetype=pentadactyl
+au! BufRead,BufNewFile Rakefile                set filetype=ruby
+au! BufRead,BufNewFile Gemfile                 set filetype=ruby
+au! BufRead,BufNewFile Guardfile               set filetype=ruby
+au! BufRead,BufNewFile Vagrantfile             set filetype=ruby
+au! BufRead,BufNewFile Capfile                 set filetype=ruby
+au! BufRead,BufNewFile config.ru               set filetype=ruby
+au! BufRead,BufNewFile *.rake                  set filetype=ruby
+au! BufRead,BufNewFile *.haml                  set filetype=haml
+au! BufRead,BufNewFile *.sass                  set filetype=sass
+au! BufRead,BufNewFile *.rdoc                  set filetype=rdoc
+au! BufRead,BufNewFile *.zsh                   set filetype=zsh
+au! BufRead,BufNewFile {*.md,*.mkd,*.markdown} set filetype=markdown
+
+" Highlight conflict markers
+match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
+
+" Reload .vimrc after we've edited it.
+au! BufWritePost .vimrc source %
+" }}}
+" {{{ Plugin: Gist
+let g:gist_detect_filetype = 1
+let g:gist_open_browser_after_post = 1
+
+if has("mac")
+  let g:gist_clip_command = 'pbcopy'
+elseif has("unix")
+  let g:gist_clip_command = 'xclip -selection clipboard'
+endif
+" }}}
+" {{{ Plugin: Syntastic
+let g:syntastic_enable_signs   = 1
+let g:syntastic_quiet_warnings = 1
+" }}}
+" {{{ Plugin: IndentGuides
+let g:indent_guides_guide_size           = 1
+let g:indent_guides_auto_colors          = 1
+let g:indent_guides_color_change_percent = 10
+" }}}
+" {{{ Plugin: Powerline
+"let g:Powerline_theme         = 'vylight'
+"let g:Powerline_colorscheme   = 'vylight'
+let g:Powerline_symbols       = 'fancy'
+let g:Powerline_cache_enabled = 0
+" }}}
+" {{{ Plugin: TagBar
+nnoremap <silent> <F7> :TagbarToggle<CR>
+let g:tagbar_left      = 0
+let g:tagbar_width     = 30
+let g:tagbar_autoclose = 1
+let g:tagbar_autofocus = 1
+let g:tagbar_compact   = 1
+" }}}
+" {{{ Plugin: Gundo
+nnoremap <F5> :GundoToggle<CR>
+let g:gundo_debug = 1
+let g:gundo_preview_bottom = 1
+" }}}
+" {{{ Align text by a given char using Tabularize.
+function! s:align()
+  let p = '^\s*|\s.*\s|\s*$'
+  if exists(':Tabularize') && getline('.') =~# '^\s*|' && (getline(line('.')-1) =~# p || getline(line('.')+1) =~# p)
+    let column = strlen(substitute(getline('.')[0:col('.')],'[^|]','','g'))
+    let position = strlen(matchstr(getline('.')[0:col('.')],'.*|\s*\zs.*'))
+    Tabularize/|/l1
+    normal! 0
+    call search(repeat('[^|]*|',column).'\s\{-\}'.repeat('.',position),'ce',line('.'))
+  endif
+endfunction
+" inoremap <silent> <Bar>   <Bar><Esc>:call <SID>align()<CR>a
+" }}}
+" {{{ Set up the status line
+function! <SID>SetStatusLine()
+  let l:s1="%-3.3n\\ %f\\ %h%m%r%w"
+  let l:s2="[%{strlen(&filetype)?&filetype:'?'},%{&encoding},%{&fileformat}]"
+  let l:s3="%=\\ 0x%-8B\\ \\ %-14.(%l,%c%V%)\\ %<%P"
+  let l:s4="\\ %{rvm#statusline()}"
+  let l:s5="\\ %{fugitive#statusline()}"
+  execute "set statusline=" . l:s1 . l:s2 . l:s3 . l:s4 . l:s5
+endfun
+set laststatus=2    " always display the status line
+call <SID>SetStatusLine()
+" }}}
+" {{{ Auto update last modified date
+function! LastModified()
+  if &modified
+    normal ms
+    let n = min([20, line("$")])
+    exe '1,' . n . 's#^\(.\{,10}Last Modified: \).*#\1' . strftime('%d/%m/%y %H:%M:%S') . '#e'
+    normal `s
+  endif
+endfun
+" }}}
+" {{{ Toggle relative numbers
+" Taken from https://github.com/kylefiedler/dotfiles/
+" Switches relative line numbering ON/OFF.
+function! ToggleRelativeNumbers()
+  if &number
+    echo "Relative Numbers ON"
+    set relativenumber
+  else
+    echo "Relative Numbers OFF"
+    set number
+  endif
+endfunction
+" }}}
+" {{{ Handle URLs
+" Taken from https://github.com/askedrelic/homedir/blob/master/.vimrc
+" OSX only: Open a web-browser with the URL in the current line
+function! HandleURI()
+  let s:uri = matchstr(getline("."), '[a-z]*:\/\/[^ >,;]*')
+  if s:uri != ""
+    exec "!open \"" . s:uri . "\""
+  else
+    echo "No URI found in line."
+  endif
+endfunction
+map <Leader>gu :call HandleURI()<CR><CR>
+" }}}
+" Universal FoldText function {{{
+function! FoldText(...)
+  " Taken from: https://github.com/Lokaltog/sync/blob/develop/vimfiles/viminit/50-foldtext.vim
+  " This function uses code from doy's vim-foldtext: https://github.com/doy/vim-foldtext
+  " Prepare fold variables {{{
+    " Use function argument as line text if provided
+    let l:line = a:0 > 0 ? a:1 : getline(v:foldstart)
+
+    let l:line_count = v:foldend - v:foldstart + 1
+    let l:indent = repeat(' ', indent(v:foldstart))
+
+    let l:w_win = winwidth(0)
+    let l:w_num = getwinvar(0, '&number') * getwinvar(0, '&numberwidth')
+    let l:w_fold = getwinvar(0, '&foldcolumn')
+  " }}}
+  " Handle diff foldmethod {{{
+    if &fdm == 'diff'
+      let l:text = printf('ǒ %s matching lines Ǔ', l:line_count)
+
+      " Center-align the foldtext
+      return repeat('Ć', (l:w_win - strchars(l:text) - l:w_num - l:w_fold) / 2) . l:text
+    endif
+  " }}}
+  " Handle other foldmethods {{{
+    let l:text = l:line
+    " Remove foldmarkers {{{
+      let l:foldmarkers = split(&foldmarker, ',')
+      let l:text = substitute(l:text, '\V' . l:foldmarkers[0] . '\%(\d\+\)\?\s\*', '', '')
+    " }}}
+    " Remove comments {{{
+      let l:comment = split(&commentstring, '%s')
+
+      if l:comment[0] != ''
+        let l:comment_begin = l:comment[0]
+        let l:comment_end = ''
+
+        if len(l:comment) > 1
+          let l:comment_end = l:comment[1]
+        endif
+
+        let l:pattern = '\V' . l:comment_begin . '\s\*' . l:comment_end . '\s\*\$'
+
+        if l:text =~ l:pattern
+          let l:text = substitute(l:text, l:pattern, ' ', '')
+        else
+          let l:text = substitute(l:text, '.*\V' . l:comment_begin, ' ', '')
+
+          if l:comment_end != ''
+            let l:text = substitute(l:text, '\V' . l:comment_end, ' ', '')
+          endif
+        endif
+      endif
+    " }}}
+    " Remove preceding non-word characters {{{
+      let l:text = substitute(l:text, '^\W*', '', '')
+    " }}}
+    " Remove surrounding whitespace {{{
+      let l:text = substitute(l:text, '^\s*\(.\{-}\)\s*$', '\1', '')
+    " }}}
+    " Make unmatched block delimiters prettier {{{
+      let l:text = substitute(l:text, '([^)]*$',   'Ę ĵ ę', '')
+      let l:text = substitute(l:text, '{[^}]*$',   'Ę ĵ ę', '')
+      let l:text = substitute(l:text, '\[[^\]]*$', 'Ę ĵ ę', '')
+    " }}}
+    " Add arrows when indent level > 2 spaces {{{
+      if indent(v:foldstart) > 2
+        let l:cline = substitute(l:line, '^\s*\(.\{-}\)\s*$', '\1', '')
+        let l:clen = strlen(matchstr(l:cline, '^\W*'))
+
+        let l:indent = repeat(' ', indent(v:foldstart) - 2)
+        let l:text = '> ' . l:text
+      endif
+    " }}}
+    " Prepare fold text {{{
+      let l:fnum = printf(' %s Lines ', l:line_count)
+      let l:ftext = printf('%s%s ', l:indent, l:text)
+      let l:ffill = repeat('.', l:w_win - strchars(l:fnum) - strchars(l:ftext) - l:w_num - l:w_fold)
+      " let l:fend = repeat(' ', l:w_rest - l:w_win)
+    " }}}
+    return l:ftext . l:ffill . l:fnum
+  " }}}
+endfunction
+" }}}
+" {{{ Shell
+function! s:ExecuteInShell(command)
+    let command = join(map(split(a:command), 'expand(v:val)'))
+    let winnr = bufwinnr('^' . command . '$')
+    silent! execute  winnr < 0 ? 'botright vnew ' . fnameescape(command) : winnr . 'wincmd w'
+    setlocal buftype=nowrite bufhidden=wipe nobuflisted noswapfile nowrap nonumber
+    echo 'Execute ' . command . '...'
+    silent! execute 'silent %!'. command
+    silent! redraw
+    silent! execute 'au BufUnload <buffer> execute bufwinnr(' . bufnr('#') . ') . ''wincmd w'''
+    silent! execute 'nnoremap <silent> <buffer> <LocalLeader>r :call <SID>ExecuteInShell(''' . command . ''')<CR>:AnsiEsc<CR>'
+    silent! execute 'nnoremap <silent> <buffer> q :q<CR>'
+    silent! execute 'AnsiEsc'
+    echo 'Shell command ' . command . ' executed.'
+endfunction
+command! -complete=shellcmd -nargs=+ Shell call s:ExecuteInShell(<q-args>)
+nnoremap <leader>! :Shell
+" }}}
+" vim:filetype=vim

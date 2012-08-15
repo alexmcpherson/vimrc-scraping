@@ -1,0 +1,56 @@
+colorscheme torte " setting torte as default color scheme
+
+set nu " enable line number
+set wrap " enable wrap
+syntax on " enable syntax highlight
+set smartindent
+set guifont=Monaco:h14
+
+" TAB setting
+set shiftwidth=2 " length of space for indent
+set softtabstop=2 " set <TAB>'s length = 2 space width
+set expandtab " replace <TAB> with spaces
+
+filetype on           " Enable filetype detection
+filetype indent on    " Enable filetype-specific indenting
+filetype plugin on    " Enable filetype-specific plugins
+
+" setting git-diff color
+hi DiffAdd term=reverse cterm=bold ctermbg=green ctermfg=white
+hi DiffChange term=reverse cterm=bold ctermbg=cyan ctermfg=black
+hi DiffText term=reverse cterm=bold ctermbg=gray ctermfg=black
+hi DiffDelete term=reverse cterm=bold ctermbg=red ctermfg=black
+
+" activate pathogen
+call pathogen#infect()
+
+" setting syntax for *markdown 
+autocmd BufNewFile,BufRead *.markdown setfiletype octopress
+
+" creating mappings for tabular
+" ref : http://vimcasts.org/episodes/aligning-text-with-tabular-vim/
+let mapleader=','
+if exists(":Tabularize")
+    nmap <Leader>a= :Tabularize /=<CR>
+    vmap <Leader>a= :Tabularize /=<CR>
+    nmap <Leader>a: :Tabularize /:\zs<CR>
+    vmap <Leader>a: :Tabularize /:\zs<CR>
+endif
+
+" setting syntax for *.coffee
+au BufWritePost *.coffee silent CoffeeMake! -b | cwindow | redraw!
+
+" open a NERDTree automatically when vim starts up
+" autocmd vimenter * NERDTree
+
+" set ctrl+n to open NERDTree
+nnoremap <silent> <C-n> :NERDTree<CR>
+
+" close vim if the only window left open is a NERDTree
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+
+" setting  syntax for jquery
+au BufRead,BufNewFile jquery.*.js set ft=javascript syntax=jquery
+
+" enable auto-complete JavaScript syntaxes
+:set omnifunc=javascriptcomplete#CompleteJS

@@ -1,0 +1,357 @@
+set nocompatible
+" GUI {
+"
+if has("gui_running")
+	"colorscheme molokai
+	set gfn=Consolas:h11
+	colorscheme molokai
+	"set gfn=Envy\ Code\ R\ 12.5
+	"set gfn=Liberation\ Mono\ 9.5
+	autocmd BufEnter * silent! lcd %:p:h
+else
+	if  &term == "linux"
+		colorscheme default
+	else
+		let molokai_original=1
+		set t_Co=256
+		"Some good colorscheme
+		" {
+		"colorscheme af
+		"colorscheme tir_black
+		"colorscheme busybee
+		"colorscheme rootwater
+		"colorscheme desertEx
+		"colorscheme lucius
+		"colorscheme darktango
+		"colorscheme darkerdesert
+		"colorscheme desertedocanburnt
+		"colorscheme rdark
+		"colorscheme Putty
+		"colorscheme molokai
+		"colorscheme mustang
+		"colorscheme sorcerer
+		"colorscheme vibrantink
+		"colorscheme liquidcarbon
+		"colorscheme pacific
+		"colorscheme desert256
+		"colorscheme tango2
+		"colorscheme candycode
+		"colorscheme two2tango
+		"colorscheme asu1dark
+		"colorscheme zenburn
+		"colorscheme railscasts
+		"colorscheme darkburn
+		"colorscheme wombat256
+		"colorscheme zmrok
+		"colorscheme blackboard
+		colorscheme Putty
+		"colorscheme herald
+		"colorscheme Tomorrow-Night
+		"colorscheme krtheme
+		"colorscheme upstream
+		" }
+
+		"
+		" reloads colorscheme
+		"
+
+		nnoremap <leader>c :colorscheme Putty<CR>
+	endif
+endif
+" end
+" gui opts no menu and toolbars
+set go=acegit
+" }
+
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+
+
+if $APPDATA != ''
+	let rootpath=$APPDATA . "/vim"
+	let undopath=rootpath . "/undo"
+	let swappath=rootpath . "/swap"
+
+	if !isdirectory(rootpath)
+		call mkdir(undopath, 'p')
+		call mkdir(swappath)
+	else
+		if !isdirectory(swappath)
+			call mkdir(swappath)
+		endif
+		if !isdirectory(undopath)
+			call mkdir(undopath)
+		endif
+	endif
+
+	let f=fnameescape(swappath)
+	exec "set directory=".f
+
+	let f=fnameescape(undopath)
+	exec "set undodir=".f
+
+else
+	set directory=~/tmp/swp
+	set undodir=~/tmp/undodir
+endif
+
+" VIM Settings  {
+" COMMON SETTINGS {
+syn on
+filetype plugin on
+
+set nobk
+set gdefault
+set backspace=indent,eol,start
+set nu
+set si
+set ai
+set hidden
+set lazyredraw
+set wildmenu
+set wildmode=longest:full,full
+set wildignore=*.dll,*.o,*.pyc,*.bak,*.exe,*.jpg,*.jpeg,*.png,*.gif,*$py.class,*.class
+set showbreak=>>>
+set showcmd
+set cot+=menuone
+set numberwidth=4
+set encoding=utf-8
+set termencoding=utf-8
+set backspace=indent,eol,start
+set undofile
+set scrolloff=3
+"set cursorlin
+set switchbuf=useopen
+set number
+
+runtime $VIMRUNTIME/macros/matchit.vim
+
+set ttyfast                     " smoother scrolling
+set shm+=I                      " no startup message
+set mat=1                       " how many 10ths of a second to blink matching brackets
+
+nnoremap / /\v
+vnoremap / /\v
+
+nnoremap j gj
+nnoremap k gk
+
+set wrap
+set textwidth=79
+set formatoptions=qrn1
+set laststatus=2
+
+" }
+" }
+" SEARCH {
+set smartcase
+set ignorecase
+set incsearch
+set hlsearch
+" }
+" AUTO COMMANDS {
+autocmd FileType html set spell
+autocmd FileType python set efm=%C\ %.%#,%A\ \ File\ \"%f\"\\,\ line\ %l%.%#,%Z%[%^\ ]%\\@=%m
+autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType python set omnifunc=pythoncomplete#Complete
+autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
+autocmd FileType phtml set omnifunc=htmlcomplete#CompleteTags
+autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
+set ts=4
+set sw=4
+
+" }
+" FUNCTIONS {
+"
+
+
+if !exists(":DiffOrig")
+    command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
+endif
+" }
+" FOLDING {{
+set foldenable " Turn on folding
+set foldmethod=syntax " Fold on the marker
+"set foldmarker={{,}} " Fold C style code (only use this as default if you use a high foldlevel)
+"set foldmethod=marker " Fold on the marker
+"set foldlevel=100 " Don't autofold anything (but I can still fold manually)
+"set foldopen=block,hor,mark,percent,quickfix,tag " what movements open folds
+"function! SimpleFoldText() " {
+"    return getline(v:foldstart).' '
+"endfunction " }
+"set foldtext=SimpleFoldText() " Custom fold text function (cleaner than default)"
+"}}
+" KEYBOARD MAPPINGS {
+"
+" show/hide trailling spaces
+nmap <silent> <leader>s :set nolist!<CR>
+
+" global copy/paste
+nmap <leader>y "+yy
+nmap <leader>p "+p
+nmap ,D "_dd " does not put into register
+
+
+
+" ========================================
+" We don't want to use the arrow keys to
+" navigate texts so map them to other
+" useful functionalities
+
+imap <left> <esc>
+imap <right> <esc>
+imap <up> <esc>
+imap <down> <esc>
+
+nnoremap <leader>S ?{<CR>jV/^\s*\}?$<CR>k:sort<CR>:noh<CR>
+nnoremap <leader>q gqip
+nnoremap <leader>v V`]
+
+" ,s - split horizontally
+nnoremap <silent> ,s :split<CR>
+"   " ,v - split vertically
+nnoremap <silent> ,v :vsplit<CR>
+
+" Quickfix navigation
+nmap cn :cnext<cr>
+nmap cp :cprev<cr>
+
+nmap bn <esc>:bn<cr>
+nmap bp <esc>:bp<cr>
+
+" Redraw screen and remove search highlights
+nnoremap <silent> <c-l> :nohl<cr><c-l>
+
+" Start search with word under cursor
+nmap ,z :%s/\<<c-r><c-w>\>/
+vmap ,z :<c-u>%s/\<<c-r>*\>/
+
+map <Leader>m :marks<cr>
+
+map ,w <esc>:w<cr>
+
+" configuration file
+map ,s :args ~/.vimrc<CR>
+map ,e :source ~/.vimrc<CR>
+
+" Fuzzy finder
+map ,f <esc>:FufFile<cr>
+map ,d <esc>:FufDir<cr>
+map ,g <esc>:FufBuffer<CR>
+map ,k <esc>:FufTagWithCursorWord<cr>
+map ,j <esc>:FufJumpList<cr>
+map ,c <esc>:FufChangeList<cr>
+map ,l <esc>:FufLine<cr>
+map ,b <esc>:FufBufferTag<cr>
+map ,ft <esc>:FufTag<cr>
+
+map \r <esc>:reg<cr>
+
+
+map ,u <esc>:GundoToggle<cr>
+map ,m <esc>:MRU<cr>
+
+
+map <C-F11> :!ctags -R --fields=+iaS --extra=+q .<CR>
+map ,bd <esc>:bd<cr>
+
+"Pressing ,ss will toggle and untoggle spell checking
+map ,ss :setlocal spell!<cr>
+
+"}
+" PLUGIN SETTINGS {
+
+"let MRU_Max_Entries = 1000
+
+let g:neocomplcache_enable_at_startup = 1
+let g:neocomplcache_enable_smart_case = 1
+let g:neocomplcache_enable_underbar_completion = 1
+let g:neocomplcache_enable_camel_case_completion = 1
+
+map \\w <esc>:VimWiki<cr>
+let g:vimwiki_list = [{'path': '~/Dropbox/vimwiki/'}]
+
+" }
+" Whitespaces {
+" Highlight unwanted spaces
+" http://vim.wikia.com/wiki/Highlight_unwanted_spaces
+highlight ExtraWhitespace ctermbg=red guibg=red
+autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
+
+" Show trailing whitespace
+match ExtraWhitespace /\s\+$/
+
+" Show trailing whitepace and spaces before a tab
+"match ExtraWhitespace /\s\+$\| \+\ze\t/
+"
+"" Show tabs that are not at the start of a line
+"match ExtraWhitespace /[^\t]\zs\t\+/
+
+" Show spaces used for indenting (so you use only tabs for indenting)
+"match ExtraWhitespace /^\t*\zs \+/
+
+" }
+"" Bring back old cursor position {
+autocmd BufReadPost *
+	  \ if ! exists("g:leave_my_cursor_position_alone") |
+	  \     if line("'\"") > 0 && line ("'\"") <= line("$") |
+	  \         exe "normal g'\"" |
+	  \     endif |
+	  \ endif
+"}
+"}
+"
+"
+
+nnoremap <leader>k :mak<CR>
+
+" // The switch of the Source Explorer
+nmap \t :TagbarOpen<CR>
+
+" neocompletecache
+let g:neocomplcache_enable_smart_case = 1
+let g:neocomplcache_enable_camel_case_completion = 1
+let g:neocomplcache_enable_underbar_completion = 1
+let g:neocomplcache_min_syntax_length = 3
+let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+
+imap <C-k>     <Plug>(neocomplcache_snippets_expand)
+smap <C-k>     <Plug>(neocomplcache_snippets_expand)
+inoremap <expr><C-g>     neocomplcache#undo_completion()
+inoremap <expr><C-l>     neocomplcache#complete_common_string()
+
+"Enable heavy omni completion.
+if !exists('g:neocomplcache_omni_patterns')
+  let g:neocomplcache_omni_patterns = {}
+endif
+let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
+autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
+
+let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
+let g:neocomplcache_omni_patterns.c = '\%(\.\|->\)\h\w*'
+let g:neocomplcache_omni_patterns.cpp = '\h\w*\%(\.\|->\)\h\w*\|\h\w*::'
+
+
+" show marks
+"
+
+let g:showmarks_enable=1
+let g:showmarks_textlower = "\t "
+let g:showmarks_textupper = "\t "
+let g:showmarks_textother = "\t "
+
+highlight ShowMarksHLl ctermbg=0 ctermfg=white guifg=red guibg=green
+highlight ShowMarksHLu ctermbg=0 ctermfg=white guifg=red guibg=green
+highlight ShowMarksHLo ctermbg=0 ctermfg=white guifg=red guibg=green
+highlight ShowMarksHLm ctermbg=0 ctermfg=white guifg=red guibg=green
+
+let g:indent_guides_enable_on_vim_startup = 1
+if !has("gui_running")
+let g:indent_guides_auto_colors = 0
+	autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  guibg=black   ctermbg=234
+	autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg=darkgrey ctermbg=236
+endif
+
+
+

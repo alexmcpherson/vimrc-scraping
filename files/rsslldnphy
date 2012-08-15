@@ -1,0 +1,169 @@
+call pathogen#infect()          " load pathogen
+set nocompatible                " choose no compatibility with legacy vi
+set encoding=utf-8              " sensible encoding
+set showcmd                     " display incomplete commands
+filetype plugin indent on       " load file type plugins + indentation
+set number                      " need those line numbers
+set ruler                       " show the line/column number of the cursor position
+set shell=sh                    " hack for rvm
+
+"" Whitespace
+set nowrap                      " wrap lines, switch with set wrap/nowrap
+set linebreak                   " break line for wrapping at end of a word
+set tabstop=2 shiftwidth=2      " a tab is two spaces
+set expandtab                   " use spaces
+set backspace=indent,eol,start  " backspace through everything in insert mode
+set scrolloff=3                 " Minimum number of screen lines to keep above/below the cursor
+
+
+"" Colors
+syntax enable
+set term=xterm-256color
+set background=dark " or light
+let g:solarized_visibility = "high"
+let g:solarized_contrast = "high"
+colorscheme solarized
+highlight LineNr ctermfg=darkgrey
+set cursorline                
+
+" Store temporary files in a central spot
+set backupdir=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
+set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
+
+" remember more commands and search history
+set history=10000
+
+augroup vimrcEx
+  " Clear all autocmds in the group
+  autocmd!
+  autocmd FileType text setlocal textwidth=78
+  " Jump to last cursor position unless it's invalid or in an event handler
+  autocmd BufReadPost *
+    \ if line("'\"") > 0 && line("'\"") <= line("$") |
+    \   exe "normal g`\"" |
+    \ endif
+
+  "for ruby, autoindent with two spaces, always expand tabs
+  autocmd FileType ruby,haml,eruby,yaml,html,javascript,sass,cucumber set ai sw=2 sts=2 et
+  autocmd FileType python set sw=4 sts=4 et
+
+  autocmd! BufRead,BufNewFile *.sass setfiletype sass 
+
+  autocmd BufRead *.mkd  set ai formatoptions=tcroqn2 comments=n:&gt;
+  autocmd BufRead *.markdown  set ai formatoptions=tcroqn2 comments=n:&gt;
+
+  " Indent p tags
+  "autocmd FileType html,eruby if g:html_indent_tags !~ '\\|p\>' | let g:html_indent_tags .= '\|p\|li\|dt\|dd' | endif
+augroup END
+
+"" Searching
+set hlsearch                    " highlight matches
+set incsearch                   " incremental searching
+set ignorecase                  " searches are case insensitive...
+set smartcase                   " ... unless they contain at least one capital letter
+set wildmenu                    " enhanced command line completion
+set wildignore+=*.o,*.obj,.bundle,coverage,.DS_Store,_html,.git,*.rbc,*.class,.svn,vendor/gems/*,vendor/rails/*
+set complete=.,w,b,u,t          " don't complete with included files (i)
+set foldmethod=manual           " for super fast autocomplete
+
+" Window
+set cmdheight=2                 " number of lines for the command line
+set laststatus=2                " always have a status line
+set statusline=%<%f\ (%{&ft})\ %-4(%m%)%=%-19(%3l,%02c%03V%)
+set showtabline=2               " always show tab bar
+set winwidth=84                 " 
+set colorcolumn=80              " highlight at 80 characters
+set mouse=a
+
+" Mappings
+ "let mapleader=","               " use , as leader instead of backslash
+map <Leader>\ :CommandT<cr>
+map <Leader>/ :call NERDComment(0, "toggle")<cr>j
+
+" replace :ruby => 'syntax' with ruby: 'syntax'
+map <leader>pp :%s/:\([^ ]*\)\(\s*\)=>/\1:/g<cr>
+
+"" CommandT
+let g:CommandTMaxHeight=10
+if &term =~ "xterm" || &term =~ "screen"
+  let g:CommandTCancelMap     = ['<ESC>', '<C-c>']
+  let g:CommandTSelectNextMap = ['<C-n>', '<C-j>', '<ESC>OB']
+  let g:CommandTSelectPrevMap = ['<C-p>', '<C-k>', '<ESC>OA']
+endif
+
+"" CTags
+map <Leader>rt :!ctags --exclude=public --exclude=_html --exclude=tmp --exclude=log --exclude=coverage --exclude=*.js --exclude=*.yml --extra=+f -R .<CR><CR>
+map <C-\> :tnext<CR>
+map <F4> :TlistToggle<cr>
+
+" easier navigation between split windows
+nnoremap <c-j> <c-w>j
+nnoremap <c-k> <c-w>k
+nnoremap <c-h> <c-w>h
+nnoremap <c-l> <c-w>l
+
+"" NERDTree
+"autocmd vimenter * NERDTree | wincmd l
+"autocmd vimenter * if !argc() | NERDTree | endif
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+
+" Running tests
+function! RunTests(filename)
+    " Write the file and run tests for the given filename
+    :w
+    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+    if match(a:filename, '\.feature$') != -1
+        exec ":!bundle exec cucumber --require features --format progress " . a:filename
+    else
+        if filereadable("script/test")
+            exec ":!script/test " . a:filename
+        elseif filereadable("Gemfile")
+            exec ":!bundle exec rspec --color " . a:filename
+        else
+            exec ":!rspec --color " . a:filename
+        end
+    end
+endfunction
+
+function! SetTestFile()
+    " Set the spec file that tests will be run for.
+    let t:grb_test_file=@%
+endfunction
+
+function! RunTestFile(...)
+    if a:0
+        let command_suffix = a:1
+    else
+        let command_suffix = ""
+    endif
+
+    " Run the tests for the previously-marked file.
+    let in_test_file = match(expand("%"), '\(.feature\|_spec.rb\)$') != -1
+    if in_test_file
+        call SetTestFile()
+    elseif !exists("t:grb_test_file")
+        return
+    end
+    call RunTests(t:grb_test_file . command_suffix)
+endfunction
+
+function! RunNearestTest()
+    let spec_line_number = line('.')
+    call RunTestFile(":" . spec_line_number)
+endfunction
+
+map <leader>t :call RunTestFile()<cr>
+map <leader>T :call RunNearestTest()<cr>
+map <leader>a :call RunTests('')<cr>
+
+" Remap shift key failure
+command! W :w
+command! Wq :wq
+command! E :e
+
+" Plugin mappings
+" Fugutive shortcuts
+map :gs :Gstatus<cr>
+map :gb :Gblame<cr>
+map :gd :Gdiff<cr>
+

@@ -1,0 +1,157 @@
+" autoload .vimrc
+autocmd! bufwritepost .vimrc source %
+
+" disable VI's compatible mode...
+set nocompatible
+
+"检测文件编码
+set fileencodings=utf-8
+
+"TAG
+"设置编码
+set encoding=utf-8
+
+"使用中文帮助
+set helplang=cn
+
+"设置右下角未完成的命令
+set showcmd
+
+"标尺
+set ruler
+
+"设置配色
+colorscheme desert 
+
+"高亮显示当前列
+"set cursorcolumn
+set cursorline
+
+"设置菜单中文
+set langmenu=zh_CN.UTF-8
+
+"设置字体
+if has("gui_running")
+  set guifont=Monaco:h14
+endif
+
+"语法高亮
+syntax enable
+
+"显示行号
+set nu
+
+"显示匹配括号
+set showmatch
+
+"基本的编辑选项
+set expandtab
+set shiftwidth=4
+set tabstop=4
+
+""au FileType html,python,vim,javascript setl shiftwidth=4
+""au FileType html,python,vim,javascript setl tabstop=4
+""au FileType java,php setl shiftwidth=4
+""au FileType java,php setl tabstop=4
+
+set smarttab
+set lbr
+set tw=0
+
+"自动缩进
+"set ai
+
+"智能缩进
+"set si
+
+"c风格的缩进
+"set cindent
+
+"wrap lines
+""set wrap
+
+"set how many lines of history vim har to remember
+set history=400
+
+"set to auto read when a file is changed from the outside
+set autoread
+
+"Have the mouse enabled all the time:
+set mouse=a
+
+"Do not redraw, when runing macros...lazyredraw
+set lz
+
+"set 7 lines to the curors - when moving vertical...
+set so=7
+
+"The cmmandbar is 2 heigh
+set cmdheight=2
+
+"Change buffer - without saving
+set hid
+
+"Ignore case when searching
+"set ignorecase
+set incsearch
+
+"set magic on 
+set magic
+
+"No sound on errors
+"set noerrorbells
+"set novisualbell
+"set t_vb=
+
+"How many tenths of a second to blink
+set mat=4
+
+"Highlight search things
+set hlsearch
+
+"Turn backup off
+set nobackup
+set wb
+set noswapfile
+
+"semart backspace
+set backspace=start,indent,eol
+
+"switch buffers with Tab
+map <C-Tab> :bn<CR>
+map <S-Tab> :bp<CR>
+
+"NERDTre
+map <F5> :NERDTreeToggle<CR>
+
+"设置大小
+set lines=50
+set columns=180
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Plugin configuration
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" taglist
+" let Tlist_Ctags_Cmd = '/usr/local/bin/ctags'
+" let Tlist_Show_One_File = 1
+" let Tlist_Exit_OnlyWindow = 1
+" let Tlist_Use_Right_Window = 1
+" let Tlist_php_settings = 'php;c:class;i:interfaces;d:constant;f:function'
+"let Tlist_Auto_Highlight_Tag = 1
+"let Tlist_Auto_Open = 0
+"let Tlist_Auto_Update = 1
+"let Tlist_Close_On_Select = 0
+"let Tlist_WinWidth = 40
+
+"au FileType php setlocal dict+=$VIM/dict/php_function.txt
+"set dictionary-=./.vim/dict/php_function.txt dictionary+=./.vim/dict/php_function.txt
+"set complete-=k complete+=k
+
+"括弧自动补全
+"autocmd FileType javascript set omnifunc=javascrīptcomplete#CompleteJS
+"autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+"autocmd FileType php set omnifunc=phpcomplete#CompletePHP
+" shift tab pages
+map <S-H> :tabp<CR>
+map <S-K> :tabn<CR>
+set pastetoggle=<F6>

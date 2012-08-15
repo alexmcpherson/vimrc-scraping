@@ -1,0 +1,387 @@
+set nocompatible
+filetype off
+
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+
+"let g:ctags_path='/usr/local/Cellar/ctags/5.8/bin/ctags'
+if has('macunix')
+    let g:easytags_cmp='/usr/local/Cellar/ctags/5.8/bin/ctags'
+    let g:tagbar_ctags_bin='/usr/local/Cellar/ctags/5.8/bin/ctags'
+endif
+
+" let Vundle manage Vundle
+Bundle 'gmarik/vundle'
+" silent! Bundle 'mbadran/headlights'
+
+" git
+Bundle 'tpope/vim-fugitive'
+" Bundle 'Lokaltog/vim-easymotion'
+
+" colourscheme
+Bundle 'altercation/vim-colors-solarized'
+" tags
+Bundle 'bitc/lushtags'
+Bundle 'xolox/vim-easytags'
+Bundle 'majutsushi/tagbar'
+" undo
+Bundle 'vim-scripts/Gundo'
+" shell
+" Bundle 'rson/vim-conque'
+Bundle 'file-line'
+" status line
+Bundle 'Lokaltog/vim-powerline'
+" file opening
+Bundle 'wincent/Command-T'
+" tab management
+Bundle 'kien/tabman.vim'
+" session management
+Bundle 'xolox/vim-session'
+"folding
+" Bundle 'nathanaelkane/vim-indent-guides'
+
+" syntax
+Bundle 'kchmck/vim-coffee-script'
+Bundle 'DrTom/fsharp-vim'
+
+" commenting
+Bundle 'tpope/vim-commentary'
+
+Bundle 'tpope/vim-repeat'
+
+Bundle 'tpope/vim-markdown'
+
+" haskell
+Bundle 'Twinside/vim-hoogle'
+Bundle 'vim-scripts/Superior-Haskell-Interaction-Mode-SHIM'
+Bundle 'frerich/unicode-haskell'
+
+Bundle 'ervandew/supertab'
+Bundle 'vim-scripts/YankRing.vim'
+Bundle 'vim-scripts/TaskList.vim'
+
+Bundle 'scrooloose/syntastic'
+
+" Bundle 'mikewest/vimroom'
+" vim scripts repos
+"Bundle 'ctags.vim'
+"Bundle 'AutomaticLatexPlugin'
+Bundle 'vim-scripts/LaTeX-Box'
+" Bundle 'rainbow_parentheses.vim'
+Bundle 'surround.vim'
+Bundle 'vim-pandoc/vim-pandoc'
+Bundle 'godlygeek/tabular'
+Bundle 'vim-scripts/RST-Tables'
+
+filetype plugin indent on
+
+syntax enable
+
+" Yanks go on the clipboard
+set clipboard+=unnamed
+
+" Backup
+"set nowritebackup
+"set nobackup
+"set noswapfile
+set swapfile
+set backupdir=~/.vim/tmp
+
+set ruler
+set shortmess=atI
+
+set cursorline
+set cursorcolumn
+
+let mapleader=","
+
+nmap <silent> <leader>ev :vsplit ~/.vim/vimrc<CR>
+nmap <silent> <leader>sv :so $MYVIMRC<CR>
+map <leader>f :CommandTFlush<cr>\|:CommandT<cr>
+"nmap <silent> <leader>ll :Latexmk<CR>
+
+vmap <silent> <leader>z ! python -m json.tool
+
+set hidden
+
+set nowrap " don't wrap lines
+autocmd Filetype latex setlocal wrap texttwidth=72
+
+set tabstop=4
+set softtabstop=4
+
+set shiftwidth=4
+set shiftround
+
+set expandtab
+set smarttab
+
+set backspace=indent,eol,start
+
+set autoindent
+set copyindent
+
+set number
+
+:au WinEnter * setlocal number cursorline cursorcolumn
+:au WinLeave * setlocal nonumber nocursorline nocursorcolumn
+
+" :au GUIEnter * :RainbowParenthesesToggle
+" :au BufRead * :GundoToggle
+" :au BufRead * :TagbarOpen
+" :au BufRead * :YRShow
+
+":au WinEnter * :set winfixheight
+":au WinEnter * :wincmd =
+
+au BufWritePost *.coffee silent CoffeeMake!
+au BufWritePost *.md silent make!
+
+au BufRead,BufNewFile *.md setlocal wrap linebreak nolist textwidth=99999999999
+
+:set listchars=tab:▸\ 
+:set list
+
+set showmatch
+
+set ignorecase
+set smartcase
+
+set hlsearch
+set incsearch
+
+set history=1000
+set undolevels=1000
+
+set wildmenu
+set wildignore=*.aux,*.bbl
+
+set wildmode=longest,list
+
+set title
+set visualbell
+set noerrorbells
+
+set encoding=utf-8
+
+set foldenable
+set foldmethod=marker
+set foldopen=block,hor,percent,quickfix,tag
+
+set splitbelow
+set splitright
+
+"set transparency=0
+
+inoremap jk <esc>
+
+" Turn off toolbar in MacVim
+set guioptions-=T
+
+" Use Q for formatting the current paragraph (or selection)
+vmap Q gq
+nmap Q qgap
+
+" Make j and k do the right thing, i.e. move by line, not row
+nnoremap j gj
+nnoremap k gk
+
+nnoremap J }
+nnoremap K {
+
+" Easy window navigation
+map <C-h> <C-w>h
+map <C-j> <C-w>j
+map <C-k> <C-w>k
+map <C-l> <C-w>l
+
+function! WinMove(key)
+    let t:curwin = winnr()
+    exec "wincmd ".a:key
+    if (t:curwin == winnr())
+        if (match(a:key,'[jk]'))
+            wincmd v
+        else
+            wincmd s
+        endif
+        exec "wincmd ".a:key
+    endif
+endfunction
+
+map <leader>h :call WinMove('h')<cr>
+map <leader>k :call WinMove('k')<cr>
+map <leader>l :call WinMove('l')<cr>
+map <leader>j :call WinMove('j')<cr>
+
+map <leader>wc :wincmd q<cr>
+map <leader>wr <C-W>r
+
+map <leader>H :wincmd H<cr>
+map <leader>K :wincmd K<cr>
+map <leader>L :wincmd L<cr>
+map <leader>J :wincmd J<cr>
+
+nmap <left> :3wincmd <<cr>
+nmap <right> :3wincmd ><cr>
+nmap <up> :3wincmd +<cr>
+nmap <down> :3wincmd -<cr>
+
+" Clear highlighted searches
+nmap <silent> ,/ :nohlsearch<CR>
+
+"  In visual mode when you press * or # to search for the current selection
+vnoremap <silent> * :call VisualSearch('f')<CR>
+vnoremap <silent> # :call VisualSearch('b')<CR>
+
+" Tabs
+nnoremap <silent> <leader>[ :tabprev<CR>
+nnoremap <silent> <leader>] :tabnext<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Spell checking
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"Pressing ,ss will toggle and untoggle spell checking
+map <leader>ss :setlocal spell!<cr>
+
+"Shortcuts using <leader>
+"map <leader>sn ]s
+"map <leader>sp [s
+"map <leader>sa zg
+"map <leader>s? z=
+
+""""""""""""""""""""""""""""""
+" => Command-T
+""""""""""""""""""""""""""""""
+let g:CommandTMaxHeight = 15
+set wildignore+=*.pdf,*.aux,*.toc,*.log,*.fdb_latexmk,*.otf,*.gz,*.out,*.o,*.obj,.git,*.pyc
+
+" Set font
+if has('macunix')
+    set gfn=Menlo:h13
+elseif has('linux')
+    set gfn=Liberation\ Mono\ 10
+endif
+"set gfn=Andale\ Mono:h13
+
+"let b:atp_TexCompiler = 'xelatex'
+"let b:atp_TexOptions = '-synctex=1'
+"let b:atp_Viewer='skim'
+"let b:atp_Latexmk_Options='-pvc'
+if has('macunix')
+    let g:LatexBox_viewer = 'skim'
+    let g:LatexBox_latexmk_options = '-pvc'
+endif
+
+" show trailing whitespace, turn off solarized menu
+let g:solarized_hitrail = '1'
+let g:solarized_menu = '0'
+let g:solarized_termcolors = '16'
+let g:solarized_termtrans = '1'
+
+set background=dark
+colorscheme solarized
+
+let g:EasyMotion_leader_key = '<Leader>m'
+
+
+let g:ConqueTerm_Color=1
+
+let g:session_autosave=1
+let g:session_autoload=1
+
+let g:Powerline_symbols='fancy'
+
+set laststatus=2
+
+if executable('lushtags')
+    let g:tagbar_type_haskell = {
+                \ 'ctagsbin' : 'lushtags',
+                \ 'ctagsargs' : '--ignore-parse-error --',
+                \ 'kinds' : [
+                \ 'm:module:0',
+                \ 'e:exports:1',
+                \ 'i:imports:1',
+                \ 't:declarations:0',
+                \ 'd:declarations:1',
+                \ 'n:declarations:1',
+                \ 'f:functions:0',
+                \ 'c:constructors:0'
+                \ ],
+                \ 'sro' : '.',
+                \ 'kind2scope' : {
+                \ 'd' : 'data',
+                \ 'n' : 'newtype',
+                \ 'c' : 'constructor',
+                \ 't' : 'type'
+                \ },
+                \ 'scope2kind' : {
+                \ 'data' : 'd',
+                \ 'newtype' : 'n',
+                \ 'constructor' : 'c',
+                \ 'type' : 't'
+                \ }
+                \ }
+endif
+
+" set completeopt=longest,menuone
+" inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+" inoremap <expr> <C-n> pumvisible() ? '<C-n>' :
+"     \ '<C-n><C-r>=pumvisible() ?  "\<lt>Down>" : ""<CR>'
+" inoremap <expr> <M-,> pumvisible() ? '<C-n>' :
+"     \ '<C-x><C-o><C-n><C-p><C-r>=pumvisible() ? "\<lt>Down>" : ""<CR>'
+
+let g:indent_guides_start_level=2
+let g:indent_guides_guide_size=1
+
+" Keep search matches in the middle of the window and pulse
+" the line when moving to them.
+nnoremap n nzzzv
+nnoremap N Nzzzv
+
+nnoremap <C-left> 5<C-w>>
+nnoremap <C-right> 5<C-w><
+
+nmap <F8> :TagbarToggle<CR>
+nnoremap <F9> :GundoToggle<CR>
+nmap <F7> :YRShow<CR>
+
+"let g:SuperTabDefaultCompletionType = "<C-X><C-O>"
+" Add this type definition to your vimrc
+" or do
+" coffeetags --vim-conf >> <PATH TO YOUR VIMRC>
+" if you want your tags to include vars/objects do:
+" coffeetags --vim-conf --include-vars
+let g:tagbar_type_coffee = {
+  \ 'kinds' : [
+  \   'f:functions',
+  \   'o:object'
+  \ ],
+  \ 'kind2scope' : {
+  \  'f' : 'object',
+  \   'o' : 'object'
+  \},
+  \ 'sro' : ".",
+  \ 'ctagsbin' : 'coffeetags',
+  \ 'ctagsargs' : '--include-vars ',
+  \}
+
+" enter cmdline-window by default
+nnoremap ; q:i
+vnoremap ; q:i
+" use Very magic regexps
+nnoremap / q/i\v
+vnoremap / q/i\v
+nnoremap ? q?i
+vnoremap ? q?i
+
+" allow leaving cmdline-window with <jk>
+au CmdwinEnter * nnoremap <buffer> jk :q<cr>
+
+" automatically re-indent on paste
+" (http://www.reddit.com/r/vim/comments/pkwkm/awesome_little_tweak_automatically_reindent_on/c3q7srv)
+let g:yankring_paste_n_bkey = ''
+let g:yankring_paste_n_akey = ''
+nnoremap p :<C-U>YRPaste 'p'<CR>'[v']=
+nnoremap P :<C-U>YRPaste 'P'<CR>'[v']=
+
+let g:syntastic_enable_balloons = 1

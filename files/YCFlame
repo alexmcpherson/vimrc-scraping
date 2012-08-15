@@ -1,0 +1,438 @@
+" Last Change: 2010-04-29 12:19.
+"
+" === Todo ===
+" 1. How to set two windows equal height? How to map "<C-W>="?
+" 2. I want to preserve the format of quoted text! How to set fo/comments?
+" End of Todo
+" === Tips ===
+" H, M, L to navigate within a page.
+" F/f to search within a line.
+" "cvs diff -u FILE | vi -" is very convenient to view diff's.
+" :vert diffsplit TO-BE-DIFFED-FILE
+" quickfix is very useful.
+" :ju      The jump history list.
+" CTRL-O/I Jump backword/forward in jump list.
+" q: in normal mode to open ex comand window
+" :<CRTL-F> in command mode to open ex command window
+"  cat two_array.txt | while read; do aa=`echo $REPLY | cut -d' ' -f1`;bb=`echo $REPLY | cut -d' ' -f2`; echo "$aa - $bb = `echo "$aa - $bb" | bc` "; done >>two_array.txt
+"\[^\x00-xFF] 找非ASCII的字符，比如汉字。
+" :%!sed G    Double-space a file.
+" :%!sed 'n;d' Un-double-space a file.
+
+" Use Vim settings, rather then Vi settings (much better!).
+set nocompatible
+" Visual Effect {{{
+
+" Switch syntax highlighting on, when the terminal has colors
+" Also switch on highlighting the last used search pattern.
+if &t_Co > 2 || has("gui_running")
+  syntax on
+  set hlsearch
+  colorscheme darkblue
+  set guifont=Bitstream\ Vera\ Sans\ Mono\ 13
+  "set guifont=Courier\ 13
+endif
+
+set tabstop=4
+set shiftwidth=4
+set splitbelow
+set showmatch
+set matchtime=1
+set linebreak
+set showbreak=""
+set breakat=" ^I!@*-+;:,./?！，。"
+
+" OPTIONAL: This enables automatic indentation as you type.
+filetype indent on
+set autoindent		" always set autoindenting on
+set smartindent		" When cindent, which is more strict, is on, 
+                    " setting si has no effect.
+"set softtabstop=4 "It will be disabled when :set paste
+set ruler		" show the cursor position all the time
+set ls=2        " A white bar, the ruler, appeated, on top of cmd win.
+set statusline=%<%f%h%m%r%=%l,%c\ \ \ \ %P\ \ [%{strftime('%H:%M')}]
+"set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [ASCII=\%03.3b]\ [HEX=\%02.2B]\ [POS=%04l,%04v][%p%%]\ [LEN=%L] 
+set showcmd		" display incomplete commands
+
+" allow backspacing over everything in insert mode
+set backspace=indent,eol,start
+
+hi Comment term=bold ctermfg=3 guifg=SlateBlue
+hi StatusLineNC ctermfg=0  ctermbg=7
+hi StatusLine   cterm=reverse ctermfg=4  ctermbg=7
+
+set incsearch
+set ignorecase
+set smartcase
+set display=lastline,uhex
+set wmh=0
+
+" zR : open all folder!
+"set foldlevel=0
+set foldmethod=marker
+"set foldminlines=4
+"set foldcolumn=1
+"Foldtext is the string displayed on the line indicating a closed folder.
+"The following defination displays:
+set foldtext=v:folddashes.substitute(getline(v:foldstart),'/\\*\\\|\\*/\\\|{{{\\d\\=','','g')
+" }}}
+hi Folded  cterm=bold ctermfg=4  ctermbg=black
+hi FoldColumn cterm=bold ctermfg=white  ctermbg=4
+set history=50	" keep 50 lines of command line history
+
+set fileencodings=euc-cn,prc,utf-8,latin1
+if $LANG == "zh_CN.UTF-8"
+    set enc=utf-8
+elseif $LANG == "zh_CN.GB*"
+    set enc=prc
+endif
+
+" End of Visual Effect }}}
+" Autocommand - mail, cprog {{{
+" Only do this part when compiled with support for autocommands.
+if has("autocmd")
+
+ " In text files, always limit the width of text to 78 characters
+ autocmd BufRead,BufNewFile *.txt set tw=72
+ autocmd BufRead,BufNewFile *.txt  set fo=tqnl21mM
+ autocmd FileType python source ~/.vim/ftplugin/python.vim
+ autocmd FileType perl nmap K :!perldoc -f <cword><CR>
+" autocmd BufRead *.pdf !acroread <afile> 
+" autocmd BufLeave *.pdf :q
+
+ augroup mail
+	au!
+  autocmd BufRead,BufNewFile mutt*  set comments=nb:>
+  autocmd BufRead,BufNewFile mutt*  set ai
+  autocmd BufRead,BufNewFile mutt*  set fo=tqnl21mM
+  autocmd BufRead,BufNewFile mutt*  set tw=66
+  autocmd BufRead,BufNewFile mutt*  set fileencoding=utf-8
+  autocmd FileType mail   map mbp gqap
+  autocmd FileType mail   set expandtab
+  autocmd FileType mail   map mba gggq/^--<CR>
+  autocmd FileType mail   map mse  /^--<CR>jdG:r ~/.mutt/en-signature<CR>
+  autocmd FileType mail   map msc  /^--<CR>jdG:r ~/.mutt/signature<CR>
+  autocmd FileType mail   map mde :lan tim en_US<CR>a<C-R>=strftime("%b %e, %Y")<CR><ESC>
+  autocmd FileType mail   map mdn a<C-R>霍志刚<CR><ESC>
+  autocmd FileType mail   map mdc a<C-R>=strftime("%Y年%b月%e日")<CR><ESC>
+ augroup END
+"  autocmd FileType mail   map mde :lan tim en_US<CR>:call setline(".", getline(".").strftime("%b %e, %Y"))<CR>
+
+ augroup cprog
+  " Remove all cprog autocommands
+  au!
+
+  " When starting to edit a file:
+  "   For C and C++ files set formatting of comments and set C-indenting on.
+  "   For other files switch it off.
+  "   Don't change the order, it's important that the line with * comes first.
+  autocmd FileType *      set formatoptions=tcql nocindent comments&
+  autocmd FileType c,cpp  set formatoptions=croql cindent comments=sr:/*,mb:*,el:*/,://
+  autocmd BufNewFile,BufRead * map <C-j> <C-W>j<C-W>_
+  autocmd BufNewFile,BufRead * map <C-k> <C-W>k<C-W>_
+  autocmd BufNewFile,BufRead * map <C-n> <C-W>n
+  autocmd FileType c,cpp,h,hpp  cs add /tmp/.cscopeDB/cscope.out 
+ augroup END
+
+ augroup makefile
+   autocmd FileType make source /usr/share/vim/vim72/macros/matchit.vim
+   "autocmd FileType make source /usr/local/share/vim/vim70/macros/matchit.vim
+   autocmd FileType make let b:match_words = '\<ifeq\>\|\<ifneq\>\|\<ifdef\>\|\<ifndef\>:\<else\>:\<endif\>,\<define\>:\<endef\>,\<if\>:\<fi\>'
+ augroup END
+
+ " This is disabled, because it changes the jumplist.  Can't use CTRL-O to go
+ augroup shell
+   "autocmd FileType sh source /usr/local/share/vim/vim70/macros/matchit.vim
+   autocmd FileType sh source /usr/share/vim/vim72/macros/matchit.vim
+   autocmd FileType sh let b:match_words = '\<for\>:\<do\>:\<done\>,\<while\>:\<done\>,\<if\>:\<else\>:\<fi\>'
+ augroup END
+    " vim -b : edit binary using xxd-format!  
+	"Watch out! 1) No wrong characters!!   2) Donot overflow a line.
+    augroup Binary
+      au!
+      au BufReadPre  *.bin let &bin=1
+      au BufReadPost *.bin if &bin | %!xxd
+      au BufReadPost *.bin set ft=xxd | endif
+      au BufWritePre *.bin if &bin | %!xxd -r
+      au BufWritePre *.bin endif
+      au BufWritePost *.bin if &bin | %!xxd
+      au BufWritePost *.bin set nomod | endif
+    augroup END
+
+ " This is disabled, because it changes the jumplist.  Can't use CTRL-O to go
+ " back to positions in previous files more than once.
+ if 0
+  " When editing a file, always jump to the last cursor position.
+  " This must be after the uncompress commands.
+   autocmd BufReadPost * if line("'\"") && line("'\"") <= line("$") | exe "normal `\"" | endif
+ endif
+
+endif " has("autocmd")
+
+" End of Autocommand }}}
+" Maps {{{
+
+map <UP> gk
+map <DOWN> gj
+" In Insert mode, switch to SubstituteMode.
+noremap <Insert> :set paste<CR>i
+imap <UP> <C-o>gk
+imap <DOWN> <C-o>gj
+
+" It's guaranteed that Useful characters shall not be deleted. 
+" F1: help
+
+" F2: Menu!!!
+"set wildmenu
+"source $VIMRUNTIME/menu.vim
+"map <F2> :emenu <C-Z>
+map <F2> :Calendar<CR>
+
+" F3: Find & Goto
+map <F3> [I:let nr = input("Which one: ")<Bar>exe "normal " . nr ."[\t"<CR>
+
+" Two maps for comment/uncomment a line in C syntax.
+" F4: Comment.
+map <F4>  0i/*<ESC>$a*/<ESC>j
+" F5: Uncomment.
+" If search fails (e.g. doule F5 in s single line), the search pattern persists.
+"map <F5>  0:.s/^\/\*//<CR>:let @/=""<CR>:.s/*\/$/<CR>:let @/=""<CR>j
+map <F5>  0:.s/^\/\*//<CR>:.s/*\/$/<CR>:let @/=""<CR>j
+
+" F6: Add the NCIC mark at the very beginning.
+map <F6>  1GO/**********************************************************************<CR> Copyright(C) 2009 by NCIC.<CR>National Research Center for Intelligent Computing Systems<CR>All rights reserved.<CR>Author: hzg<CR>*********************************************************************/<CR><ESC>kk10l
+"map <F6>  OCopyright(C) 2007 by Institute of Computing Technology, CAS.<ESC>
+
+" F7: Delete to the end of this func, "}" included.
+"map <F7> ma][d'a<CR>
+map <F7> :set spell<CR>
+
+" F8: Count Line and char num.
+map <F8> g<C-G>
+
+" F9: Tlist
+"  - === zc   : Type folder close
+"  + === zo   : Type folder open
+"  x          : T-win  maximize/minimize
+"  o          : Open in a new win.
+map <F9> :Tlist<CR>
+
+" F10: macro defination beautification
+map <F10> :call Back_slash_align()<CR>j
+
+"to get the character under the cursor: :let c = getline(".")[col(".") - 1]
+    fun! NumberIt()
+        if !exists("s:counter")
+          let s:counter = 0
+        endif
+        let s:counter = s:counter + 1
+		call setline(".", s:counter.getline("."))
+	endfun
+map <F12> :call NumberIt()<CR>j
+
+"map <F10> :%!xxd<CR>
+"map <F11> :%!xxd -r<CR>
+"map <F11> :!man  <C-R>=expand("<cword>")<CR><CR><Tab>
+
+" F12: Lookup the dict!
+"map <F12> :Lookup  <C-R>=expand("<cword>")<CR><CR><Tab>
+
+" To attach an English signature.2004  4月 04/08/04
+"    --> Changed to take effect only for mail filetype.
+"map  mse  /^--<CR>jdG:r ~/.mutt/en-signature<CR>\'\'
+map mate :lan tim en_US<CR>a<C-R>=strftime("%b%e,%Y")<CR><ESC>
+map mat a<C-R>=strftime("%Y年%m月%d日 %A %H:%M")<CR><ESC>
+map mbp gqap
+map mba gggq/^--<CR>
+
+" End of Maps }}}
+" Misc {{{
+"diff mode is very useful when patching. vi -d file1 file2
+" Then use  Ctrl+w,| to maxmize the width of current window.
+"      use  Ctrl+w,= to equalize the height of the two windows.
+"      use  Ctrl+w,</> to adjust the width of the current window.
+set diffopt=filler,iwhite
+
+"
+"set expandtab  "Do not set it!"
+" Using zc, zo to close, open a folder.
+" You may use [z, ]z, zk, zj to move around in a folder 
+" or a file containing folders.
+"set paste			It will kill 'ai'
+
+"=====HEX edit!! =====================
+" vim -b : edit binary using xxd-format!
+"augroup Binary  Use hte instead!
+"  au!
+"augroup END
+
+" IMPORTANT: grep will sometimes skip displaying the file name if you
+" search in a singe file. This will confuse latex-suite. Set your grep
+" program to alway generate a file-name.
+set grepprg=grep\ --color=always\ -nH\ $*
+
+"if &term =~ "xterm"
+"  if has("terminfo")
+"    set t_Co=8
+"    set t_Sf=<ESC>[3%p1%dm
+"    set t_Sb=<ESC>[4%p1%dm
+"  else
+"    set t_Co=8
+"    set t_Sf=<ESC>[3%dm
+"    set t_Sb=<ESC>[4%dm
+"  endif
+"endif
+
+if &term == "xterm-color"
+	set t_kb=
+	fixdel
+endif
+set nobackup
+set wildignore=*.o,*.obj
+
+" End of Misc }}}
+" Plugin Configuration {{{
+
+"Plugin: latex-suite
+" REQUIRED. This makes vim invoke latex-suite when you open a tex file.
+filetype plugin on
+
+"Plugin: engspchk
+hi BadWord term=reverse cterm=bold ctermbg=1
+hi RareWord term=bold ctermfg=4
+let g:spchksilent=1
+
+"Plugin: autodate.vim
+let autodate_keyword_pre='\cLast Change *:'
+let autodate_format='%Y-%m-%d %H:%M'
+let autodate_lines=30
+
+" End of Plugin Config }}}
+" Source Reading and Searching - ctags, cscope {{{
+" ctags
+set tags=./tags,../tags,../../tags,../../../tags
+" set tags=~/tags,~/tags-gm,~/tags-bcl,~/tags-linux,tags-mpi10,tags
+" cscope
+if has("cscope")
+	set csprg=/usr/bin/cscope
+	set csto=0
+	set cst
+    set nocsverb
+	" add any database in current directory
+	"if filereadable("/tmp/.cscopeDB/cscope.out")
+	"	cs add /tmp/.cscopeDB/cscope.out 
+	" else add database pointed to by environment
+	"elseif $CSCOPE_DB != ""
+	"	cs add $CSCOPE_DB
+	"endif
+endif
+" Open a quickfix window for cscope query results.
+"set cscopequickfix=s-,c-,d-,i-,t-,e-
+" Remember to :copen
+
+	" Ctl+\ *(the following char's):
+    "   's'   symbol: find all references to the token under cursor
+    "   'g'   global: find global definition(s) of the token under cursor
+    "   'c'   calls:  find all calls to the function name under cursor
+    "   't'   text:   find all instances of the text under cursor
+    "   'e'   egrep:  egrep search for the word under cursor
+    "   'f'   file:   open the filename under cursor
+    "   'i'   includes: find files that include the filename under cursor
+    "   'd'   called: find functions that function under cursor calls
+						
+" :cs show to see which cscope DBs are used.
+
+" }}}
+" Functions {{{
+
+"Function Defination
+	fun! Back_slash_align()
+		call cursor(0,70)
+		while wincol() < 70
+			call setline(".", getline(".")." ")
+			call cursor(0,70)
+		endwhile
+		call setline(".", getline(".")."\\")
+	endfun
+
+" End of Functions }}}
+" Test Area {{{
+" Learn from kernel janitor.
+let c_space_errors=1
+"highlight PmenuSel term=reverse ctermbg=2
+highlight WhitespaceEOL ctermbg=red guibg=red
+match WhitespaceEOL /\s\+$/
+			
+"set virtualedit=all
+"  You can move the cursor anywhere in the display.
+"=============================================== 
+set cpo-=<
+set wcm=<C-Z>
+map noc :%s/\%u1b.*1m\(.*\)\%u1b\[0m/\1 /<CR>
+
+" set viminfo=%,'50,\"100,:500,n~/.vim/viminfo
+" read/write a .viminfo file, don't store more
+" than 100 lines of registers
+" From ejoy's vimrc
+set whichwrap=<,>,h,l,[,]
+iab ()1 (1)
+iab ()2 (2)
+iab ()3 (3)
+iab ()4 (4)
+iab ()5 (5)
+iab ()6 (6)
+iab ()7 (7)
+iab ()8 (8)
+iab ()9 (9)
+iab （）1 （1）
+iab （）2 （2）
+iab （）3 （3）
+iab （）4 （4）
+iab （）5 （5）
+iab （）6 （6）
+iab （）7 （7）
+iab （）8 （8）
+iab （）9 （9）
+
+set complete=""
+set completeopt=menuone,preview
+
+if version >= 700
+	set cursorline
+	hi CursorLine cterm=bold ctermbg=darkgray
+	
+	set spl=en_us
+" tabe FILE		Edit FILE in a new tab.
+" C-PgDn, C-PgUp	Next/Prev tab.
+endif
+"set number
+hi LineNr cterm=underline ctermfg=darkgray ctermbg=7
+hi PaperTitle cterm=bold ctermbg=0 ctermfg=1
+syn match PaperTitle display "<<\_.*>>"
+
+"Screen Scroll up/down.
+map <C-UP> <C-Y>
+map <C-DOWN> <C-E>
+
+" For Diary.
+hi DiaryDate cterm=bold ctermbg=DarkGreen
+syn match DiaryDate display "^20..年..月..日 星期.*$"
+
+let g:calendar_monday = 1
+"let g:calendar_weeknm = 2
+let g:calendar_wruler = '日 一 二 三 四 五 六'
+let g:calendar_mruler = '一月,二月,三月,四月,五月,六月,七月,八月,九月,十月,十一月,十二月'
+"let g:calendar_navi = 'top'
+
+"Ctrl+K: In Insert mode, tell the code of a Key stroke.
+"set spell
+" Visual mode is very useful.
+" CTRL-V    Block-wise visual editing.
+" gq        Format a visual block.
+" ga		Show the ASCII value.
+" \%u970d   Search pattern of a Chinese char in hex.
+" :%s/\%u00/\r/g 把environ里的<00>都变成换行。
+
+" End of Test Area }}}
+" In Linux Reg "+ and "* is the system clipboard.
+"# vi:ts=4:sw=4:readonly:

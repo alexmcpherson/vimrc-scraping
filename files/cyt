@@ -1,0 +1,144 @@
+"###############################################################################
+"# Cyt's vimrc
+"#
+"# First of all, I use Pathogen to management plugins.
+"# https://github.com/tpope/vim-pathogen
+"#
+"# Function keys defined:
+"#  . F1 : calendar
+"#  . F2 : QuickBuf
+"#  . F3 : TagbarToggle
+"#  . F4 : NERDTreeToggle
+"#  . F5 : NERDTreeFind
+"#  . F6 : UpdateTags
+"#  . F7 : NONE
+"#  . F8 : NONE
+"#
+"###############################################################################
+call pathogen#infect()
+syntax on
+filetype plugin indent on
+
+"###############################################################################
+"#
+"# Basic Configuration 
+"#
+"###############################################################################
+set nocompatible
+set autoread
+set nobackup
+set noswapfile
+set number
+set showmatch     
+set cursorline
+set novisualbell
+set noerrorbells
+set backspace=2
+set showcmd
+set hidden
+set laststatus=2
+syntax enable
+"colorscheme desert
+colorscheme jellybeans
+
+"###############################################################################
+"#
+"# File format
+"#
+"###############################################################################
+set fileformat=unix
+set fileformats=unix,dos
+
+"###############################################################################
+"#
+"# Ignores
+"#
+"###############################################################################
+set wildignore+=*.o,*.obj,*.pyc " output objects
+set wildignore+=*.png,*.jpg,*.gif,*.ico " image format
+set wildignore+=*.swf,*.fla " image format
+set wildignore+=*.mp3,*.mp4,*.avi,*.mkv " media format
+set wildignore+=*.git*,*.hg*,*.svn* " version control system
+set wildignore+=*sass-cache*,*.swp
+set wildignore+=*.DS_Store
+"set wildignore+=log/**
+"set wildignore+=tmp/**
+set wildignore+=*.exe,*.so,*.dll
+set wildignore+=*.zip,*.gz,*.bz2
+set wildignore+=*.rom
+
+"###############################################################################
+"#
+"# Unicode support
+"#
+"###############################################################################
+set fileencodings=utf-8,big5,cp950,euc-jp,gbk,euc-kr,utf-bom,iso8859-1
+set encoding=utf-8
+"set tenc=utf8
+
+"###############################################################################
+"#
+"# Search
+"#
+"###############################################################################
+set hlsearch    " highlight matches
+set incsearch   " incremental searching
+set ignorecase  " searches are case insensitive...
+set smartcase   " ... unless they contain at least one capital letter
+
+"###############################################################################
+"#
+"# Key Binding
+"#
+"###############################################################################
+let mapleader="," " default leader is \
+
+"###############################################################################
+"# Easy window navigation
+"###############################################################################
+map <C-h> <C-w>h
+map <C-j> <C-w>j
+map <C-k> <C-w>k
+map <C-l> <C-w>l
+
+"###############################################################################
+"# Clearing highlighted searches
+"###############################################################################
+nmap <silent> ,/ :nohlsearch<CR>
+
+"###############################################################################
+"# Use Ctrl-a to quickly select whole file contents
+"###############################################################################
+"map <C-A> ggVG<CR>
+
+"###############################################################################
+"# Use Ctrl-s to quickly save current buffer
+"###############################################################################
+map <C-S> :w<CR>
+map! <C-S> <ESC>:w<CR>
+
+"###############################################################################
+"# QuickFix
+"###############################################################################
+map <M-n> :cn<CR>
+map <M-p> :cp<CR>
+
+"###############################################################################
+"# Mapping for quick directory change
+"###############################################################################
+"map \cd :cd %:p:h<CR>
+map ,cd :cd %:p:h<CR>
+"map <F6> :cd %:p:h<CR>
+"map! <F6> <ESC>:cd %:p:h<CR>
+
+"###############################################################################
+" Next and prev tab
+"###############################################################################
+"noremap <F7> gT
+"noremap <F8> gt
+
+
+"###############################################################################
+"# END OF FILE
+"###############################################################################
+

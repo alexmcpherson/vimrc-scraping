@@ -1,0 +1,83 @@
+" Wenjun Jiao (bitboy90@gmail.com)'s vimrc file
+
+" Settings for pathogen plugin{{{
+call pathogen#infect()
+" }}}
+
+" Settings for taglist plugin{{{
+" Add settings to support tex files
+let tlist_tex_settings   = 'latex;s:sections;g:graphics;l:labels'
+let tlist_make_settings  = 'make;m:makros;t:targets'
+" }}}
+
+" Basic global settings {{{
+set showmatch
+set laststatus=2
+set nocompatible
+syntax on
+set hlsearch incsearch
+set showcmd
+
+if has("autocmd")
+  filetype plugin indent on
+else
+  set autoindent
+endif " has("autocmd")
+" }}}
+
+" Leader and localleader for mappings {{{
+let mapleader="-"
+let maplocalleader="\\"
+" }}}
+
+" Vimscript file settings {{{
+augroup filetype_vim
+	autocmd!
+	autocmd FileType vim setlocal foldmethod=marker
+	autocmd FileType vim iabbrev <buffer> nmap nnoremap
+	autocmd FileType vim iabbrev <buffer> imap inoremap
+	autocmd FileType vim iabbrev <buffer> vmap vnoremap
+	autocmd FileType vim iabbrev <buffer> normal normal!
+	autocmd FileType vim iabbrev <buffer> ag augroup
+	autocmd FileType vim iabbrev <buffer> fu function
+	autocmd FileType vim iabbrev <buffer> efu endfunction
+	autocmd FileType vim iabbrev <buffer> efo endfor
+augroup END
+" }}}
+
+" Global mappings in normal mode {{{
+" Mappings that facilate editing of vimrc
+nnoremap <leader>ev :vsplit $MYVIMRC<cr>G
+nnoremap <leader>sv :source $MYVIMRC<cr>:echo "vimrc sourced."<cr>
+nnoremap <leader>sf :source %<cr>:echo "file sourced."<cr>
+
+" Mappings that facilate movings
+nnoremap H 0
+nnoremap L $
+nnoremap 0 <nop>
+nnoremap $ <nop>
+
+" Mappings that insert line above or append line below
+nnoremap <a-i> mqO<esc>`q
+nnoremap <a-a> mqo<esc>`q
+" }}}
+
+" Global mappings in insert mode {{{
+" Mappings that facilate mode changing
+inoremap jk <esc>
+inoremap <esc> <nop>
+
+" Mappings that insert line above or append line below
+inoremap <a-i> <esc>mqO<esc>`qi
+inoremap <a-a> <esc>mqo<esc>`qi
+" }}}
+
+" Statusline settings {{{
+set statusline=%.20F					" Full path to the file
+set statusline+=\ \ \ \ 				"
+set statusline+=%y					" File type
+set statusline+=\ \ \ \ 				"
+set statusline+=%{strftime(\"%m/%d/%y\ -\ %H:%M\")} 	" Date - time
+set statusline+=%=					" Align to the right
+set statusline+=%4l/%-4L				" Line/total
+" }}}

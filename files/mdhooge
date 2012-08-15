@@ -1,0 +1,442 @@
+" Debug	{{{1
+" :verbose set isk
+
+" Pathogen	{{{1
+filetype off
+let g:pathogen_disabled = [ 'GVColors' ]
+
+call pathogen#runtime_append_all_bundles()
+call pathogen#runtime_append_all_bundles('bundle_ft')
+
+"helptags $HOME/.vim/doc | call pathogen#helptags()
+
+" win32	{{{1
+if has('win32')
+  cd $HOME
+" Lors de l'installation, il faut charger le fichier au format utf-8 et l'enregistrer en latin1 :
+" :e ++enc=utf-8
+" :set fenc=latin1
+" :w
+" Il faut aussi créer un fichier _vimrc dans $HOME qui charge ce fichier :
+" :e $HOME/_vimrc
+" source $HOME/vimfiles/vimrc
+endif
+
+" Vim options	{{{1
+" Same order than the :options window
+
+" 1 - important	{{{2
+set nocompatible
+
+" 2 - moving around, searching and patterns	{{{2
+set nowrapscan
+set incsearch
+set ignorecase
+set smartcase
+
+" 3 - tags	{{{2
+" 4 - displaying text	{{{2
+set scrolloff=1
+set nowrap
+set sidescroll=10
+set sidescrolloff=4
+"set lazyredraw
+set list
+if has('win32')
+  set listchars=tab:¬\ ,trail:·
+  " C-V u 00AC 00B7"
+else
+  set listchars=tab:→\ ,trail:·
+endif
+if v:version >= 703
+  set relativenumber
+endif
+set numberwidth=2
+
+" 5 - syntax, highlighting and spelling	{{{2
+set hlsearch
+set spelllang=en_gb
+
+" 6 - multiple windows	{{{2
+set laststatus=2
+set hidden
+set splitright
+
+"  7 - multiple tab pages	{{{2
+set showtabline=2
+"  8 - terminal	{{{2
+set scrolljump=3
+
+"  9 - using the mouse	{{{2
+set mouse=a
+
+" 10 - GUI	{{{2
+set guioptions-=e
+set guioptions-=m
+set guioptions-=T
+set guioptions-=L
+set guioptions+=l
+
+" 11 - printing	{{{2
+" 12 - messages and info	{{{2
+set showcmd
+set ruler
+set confirm
+
+" 13 - selecting text	{{{2
+" 14 - editing text	{{{2
+set textwidth=0
+set backspace=indent,eol,start
+set completeopt=menu,preview
+set notildeop
+set showmatch
+set nrformats=hex,alpha
+
+" 15 - tabs and indenting	{{{2
+set tabstop=8
+set expandtab
+set shiftwidth=2
+"set softtabstop=2
+set autoindent
+
+" 16 - folding	{{{2
+"set foldmethod=syntax
+
+" 17 - diff mode	{{{2
+set diffopt=filler,context:3
+
+" 18 - mapping	{{{2
+
+" 19 - reading and writing files	{{{2
+set nomodeline " See also the secure_modelines plugin
+set modelines=0
+set fileformats=unix,dos
+if v:version < 703
+  set backup
+  set patchmode=.orig
+else
+  set undofile
+  set cryptmethod=blowfish
+endif
+
+" 20 - the swap file	{{{2
+" 21 - command line editing	{{{2
+set history=40
+set wildmode=list:longest,full
+if v:version < 703
+  set suffixes+=*.orig
+endif
+set wildmenu
+
+" 22 - executing external commands	{{{2
+" 23 - running make and jumping to errors	{{{2
+if has('win32')
+  set makeprg=C:/Qt/2010.05/mingw/bin/mingw32-make
+endif
+
+" 24 - language specific	{{{2
+" 25 - multi-byte characters	{{{2
+if has('win32')
+  set encoding=latin1
+  set fileencodings=ucs-bom,utf-8,default,latin1
+else
+  set encoding=utf-8
+endif
+
+" 26 - various	{{{2
+set gdefault
+if has("win32")
+  set viminfo='20,<50,s10,h,rA:,rB:
+  set shellslash
+else
+  set viminfo='100,<50,s10,h,r/media
+endif
+
+
+" FileType	{{{1
+"
+filetype plugin indent on
+syntax enable
+
+" Load Sensitive Data (passwords, …)	{{{1
+if filereadable( $HOME . '/.vimrc.sensitive' )
+  source $HOME/.vimrc.sensitive
+endif
+
+" Key Mapping	{{{1
+"
+let mapleader="²"
+let maplocalleader="²"
+
+noremap <silent> <leader><leader> :<c-u>noh<CR>
+
+" Moving	{{{2
+noremap   <space>       <C-F>
+
+inoremap  <c-h>         <left>
+inoremap  <c-j>         <down>
+inoremap  <c-k>         <up>
+inoremap  <c-l>         <right>
+noremap   j             gj
+noremap   k             gk
+
+noremap   <c-w>w        <c-w>W
+
+" Easier access with an AZERTY keyboard
+noremap   è             `
+noremap   èè            ``
+noremap   è(            `[
+noremap   è)            `]
+noremap   (             [
+noremap   )             ]
+" è( → `[ → beginning of last yank/change
+" (( remaps to [(  previous opening bracket
+" )) remaps to ])  next closing bracket
+
+" vim	{{{2
+map       Y             y$
+cnoremap  <c-f>         <c-f>A
+
+" Function keys	{{{2
+noremap   <F1>          :<c-u>vert h<space>
+noremap!  <F1>          <esc>:vert h<space>
+if has('win32')
+  nnoremap <C-S-F1>     :edit ~/vimfiles/vimrc<CR>
+  nnoremap <S-F1>       :NERDTree ~/vimfiles<CR>
+else
+  nnoremap <C-S-F1>     :edit ~/.vim/vimrc<CR>
+  nnoremap <S-F1>       :NERDTree ~/.vim<CR>
+endif
+
+nnoremap  <C-S-F4>      :!ctags -R .<CR>
+
+nnoremap  <F5>          :GundoToggle<CR>
+
+noremap   <F6>          :<c-u>cn<CR>
+noremap!  <F6>          <esc>:cn<CR>
+noremap   <S-F6>        :<c-u>cp<CR>
+noremap!  <S-F6>        <esc>:cp<CR>
+noremap   <C-S-F6>      :<c-u>cnf<CR>
+noremap!  <C-S-F6>      <esc>:cnf<CR>
+
+nmap <silent> <F7>      :NERDTreeToggle<CR>
+nmap <silent> <S-F7>    :NERDTreeFind<CR>
+nmap <silent> <C-S-F7>  :NERDTreeMirror<CR>
+
+nnoremap <silent> <F9>   :tabnew<CR>
+nnoremap <silent> <S-F9> :tabclose<CR>
+nnoremap <silent> <C-F9> :if &go=~#'m'<Bar>set go-=m<Bar>else<Bar>set go+=m<Bar>endif<CR>
+
+noremap  <silent> <F11> :<c-u>TlistToggle<CR>
+noremap! <silent> <F11> <C-o>:TlistToggle<CR>
+
+nnoremap <silent> <S-F11>   :setl wrap!<CR>:set wrap?<CR>
+nnoremap <silent> <C-S-F11> :setl spell!<CR>:set spell?<CR>
+
+" Plugins	{{{2
+nmap     <c-w>o         <Plug>ZoomWin
+nmap     <c-w><c-o>     <Plug>ZoomWin
+
+" Color	{{{1
+"
+if has('gui_running')
+  set background=dark
+  let g:solarized_termcolors=256
+  let g:solarized_contrast="high"
+  let g:solarized_visibility="low"
+  colorscheme solarized
+  hi Cursor   guifg=#000000 guibg=#FF0058
+  hi WildMenu guifg=#FFD800 guibg=#073642 gui=reverse
+else
+  "set t_Co=256
+  colorscheme desert
+endif
+" Use SCROLLCOLOR plugin to try other schemes
+" Use HiColors to visually change current scheme
+
+" Miscellaneous	{{{1
+"
+" Easy edit of files in the same directory
+" http://vim.wikia.com/wiki/VimTip2
+cabbr <expr> %% expand('%:p:h')
+
+" Maximize (workaround for KDE's strange behaviour)
+command MAX set lines=56 columns=189
+function! My_sf1_init(bookmark)
+  let &columns = 221
+  let &lines = 54
+  let &tags .= ",".$HOME."/.vim/tags/symfony1"
+  let NT_chdm = g:NERDTreeChDirMode
+  let g:NERDTreeChDirMode = 2
+  exec 'NERDTreeFromBookmark' a:bookmark
+  let g:NERDTreeChDirMode = NT_chdm
+  wincmd t
+endfunction
+function! My_sf2_init(bookmark)
+  MAX
+  let &tags .= ",vendor/tags"
+  " Used by Command-T and NERDTree
+  let &wildignore = 'cache,doc/output,build,vendor,vendor2'
+  let NT_chdm = g:NERDTreeChDirMode
+  let g:NERDTreeChDirMode = 2
+  exec 'NERDTreeFromBookmark' a:bookmark
+  let g:NERDTreeChDirMode = NT_chdm
+  wincmd t
+endfunction
+"command SF1_Proj call My_sf1_init('NERDtree bookmark')
+command Phebus call My_sf2_init('phebus')
+
+" Plugins	{{{1
+" bufexplorer	{{{2
+"let g:bufExplorerDetailedHelp=1
+
+" command-t	{{{2
+" See wildignore to filter files
+nmap <silent> þ :CommandT<CR>
+"             þ AltGr-T
+nmap <silent> ↓ :CommandTBuffer<CR>
+"             ↓ AltGr-B
+let g:CommandTMaxHeight=10
+let g:CommandTMatchWindowReverse=1
+
+" dbext	{{{2
+let g:dbext_default_type='MYSQL'
+
+" EasyMotion	{{{2
+"let g:EasyMotion_keys = 'abcdefghijklmnopqrstuvwxyz'
+let g:EasyMotion_leader_key='é'
+let  g:EasyMotion_mapping_w='éé'
+let  g:EasyMotion_mapping_f='é/'
+let  g:EasyMotion_mapping_F='é?'
+
+" Jinja / twig	{{{2
+autocmd BufNewFile,BufReadPost *.html.twig set ft=htmljinja
+
+" LatexBox	{{{2
+" okular config: vi --servername GVIM --remote +%l
+let g:vim_program = v:progname
+let g:LatexBox_completion_close_braces = 0
+let g:LatexBox_latexmk_options = '-pvc'
+let g:LatexBox_ref_pattern = '\C\m\\\a*ref\*\?\s*{'
+
+" NERDCommenter	{{{2
+let g:NERDCustomDelimiters = {
+      \ 'htmljinja': { 'left': '{#', 'right': '#}' }
+      \ }
+
+" NERDTree	{{{2
+let NERDTreeAutoCenter=1
+let NERDTreeChDirMode=0
+"let NERDTreeDirArrows=1
+let NERDTreeIgnore=['\.orig$', '\~$']
+let NERDTreeMinimalUI=1
+let NERDTreeQuitOnOpen=1
+let NERDTreeWinPos = 'right'
+let NERDTreeWinSize=35
+
+" Mark
+let g:mwAutoSaveMarks = 0
+"nmap <Leader>M <Plug>MarkToggle
+"nmap <Leader>N <Plug>MarkAllClear
+
+" Mark	{{{2
+nmap <Leader>M <Plug>MarkToggle
+nmap <Leader>N <Plug>MarkAllClear
+
+" Markdown	{{{2
+autocmd BufNewFile,BufReadPost *.mkd,*.markdown set ft=markdown
+
+" Secure Modelines	{{{2
+let g:secure_modelines_verbose=1
+let g:secure_modelines_allowed_items = [
+      \ "expandtab",   "et",   "noexpandtab", "noet",
+      \ "filetype",    "ft",
+      \ "foldcolumn",  "fdc",
+      \ "foldignore",  "fdi",
+      \ "foldlevel",   "fdl",
+      \ "foldmethod",  "fdm",
+      \ "formatoptions","fo",
+      \ "readonly",    "ro",   "noreadonly", "noro",
+      \ "rightleft",   "rl",   "norightleft", "norl",
+      \ "shiftwidth",  "sw",
+      \ "softtabstop", "sts",
+      \ "spell", "nospell",
+      \ "spelllang",   "spl",
+      \ "tabstop",     "ts",
+      \ "textwidth",   "tw",
+      \ ]
+
+" taglist	{{{2
+let Tlist_Close_On_Select = 1
+let Tlist_Ctags_Cmd = "ctags"
+let Tlist_Enable_Fold_Column = 0
+let Tlist_File_Fold_Auto_Close = 1
+let Tlist_Sort_Type = "name"
+let tlist_php_settings = 'php;c:class;d:constant;f:function'
+
+" UltiSnips	{{{2
+let g:UltiSnipsEditSplit = "vertical"
+let g:UltiSnipsJumpForwardTrigger="ü"
+let g:UltiSnipsJumpBackwardTrigger="ï"
+let g:UltiSnipsSnippetDirectories = ["snippets"]
+
+" vimwiki	{{{2
+let wiki = {}
+let wiki.nested_syntaxes = {
+      \ 'js': 'javascript',
+      \ 'php': 'php',
+      \ 'sh': 'zsh',
+      \ 'vim': 'vim',
+      \ 'xml': 'xml',
+      \ 'yml': 'yaml',
+      \ }
+if has('win32')
+  let wiki.path = 'L:/michel/vimwiki'
+else
+  let wiki.path = '~/vimwiki'
+endif
+let g:vimwiki_list = [wiki]
+
+let g:vimwiki_folding=1
+
+if has('unix')
+  function VimwikiWeblinkHandler(weblink)
+    for browser in g:vimwiki_browsers
+      if executable(browser)
+        execute '!'. browser ." '". a:weblink ."'"
+        return
+      endif
+    endfor
+  endfunction
+endif
+
+" zencoding	{{{2
+let g:use_zen_complete_tag = 1
+let g:user_zen_leader_key = '¿'
+let g:user_zen_settings={
+\ 'indentation': "  ",
+\ 'css': {
+\   'extends': 'html',
+\   'filters': 'fc',
+\ },
+\ 'html': {
+\   'filters': 'c',
+\   'snippets': {
+\     'php':      '<?php | ?>',
+\     'phpc':     '<?php /*|*/ ?>',
+\     'phpe':     '<?php echo | ?>',
+\     'phpfore':  "<?php foreach (|): ?>\n<?php endforeach; ?>",
+\     'phpif':    "<?php if (|): ?>\n<?php else: ?>\n<?php endif; ?>",
+\   },
+\ },
+\ 'php': {
+\   'extends': 'html',
+\ },
+\}
+
+" zoomwin	{{{2
+let g:zoomwin_preserve_nerd_tree = 1
+let g:zoomwin_preserve_taglist = 1
+
+" Modeline	{{{1
+" vim:ts=50:fdl=0:fdm=marker:fdc=3

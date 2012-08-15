@@ -1,0 +1,90 @@
+" Use Vim settings, rather then Vi settings (much better!).
+" This must be first, because it changes other options as a side effect.
+set nocompatible
+
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+
+set number
+set numberwidth=5
+let mapleader="\\"
+set ruler		" show the cursor position all the time
+let loaded_matchparent = 1
+syntax on
+
+" Default Whitespace
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+set expandtab
+
+" Wrapping text by default
+set wrap
+set linebreak
+
+" Searching and highlights
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+
+" Keep more context when scrolling off the end of a buffer
+set scrolloff=3
+
+" Highlight cursor line
+" set cursorline
+
+" Tab Completion
+set wildmenu
+
+set backspace=indent,eol,start
+
+filetype plugin indent on
+
+set backupdir=~/qvim/vim_backups//
+set directory=~/qvim/vim_backups//
+set viewdir=~/qvim/vim_backups//
+set noswapfile
+set fencs=utf-8,cp1251,koi8-r,default
+
+set showcmd		" display incomplete commands
+
+set hidden
+
+set history=1000
+
+set statusline=%{fugitive#statusline()}\ %<\ %n:%f\ %m%r%y%=%-35.(line:\ %l\ of\ %L,\ col:\ %c%V\ (%P)%)
+set laststatus=2
+
+
+let g:miniBufExplCheckDupeBufs = 0
+
+" ============================================================
+"                           mappings
+" ============================================================
+"
+
+" GRB: clear the search buffer when hitting return
+:nnoremap <CR> :nohlsearch<CR>/<BS>
+" map <leader>t :FuzzyFinderTextMate<cr>
+noremap <leader>t <Esc>:CommandT<CR>
+noremap <leader>0 <Esc>:CommandTFlush<CR>
+noremap <leader>m <Esc>:CommandTBuffer<CR>
+
+let g:tagbar_usearrows = 1
+nnoremap <leader>l :TagbarToggle<CR>
+map <leader>p :NERDTree<cr>
+
+let g:NERDSnippets_key = '<c-h>'
+
+" ============================================================
+"                          vim terminal 
+" ============================================================
+"
+
+set t_Co=256
+
+" set background=light
+" molokai mayansmoke peaksea* vividchalk railscasts jellybeans slate torte
+set background=dark
+color molokai 

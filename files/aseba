@@ -1,0 +1,72 @@
+set guioptions-=m  "remove menu bar
+set guioptions-=T  "remove toolbar
+set guioptions-=r  "remove right-hand scroll bar
+set background=dark
+set encoding=utf8
+set undofile
+filetype plugin on
+filetype indent on
+syntax on
+au BufNewFile,BufRead *.tpl set filetype=html
+set ruler
+set ignorecase
+set smartcase
+set hlsearch
+set incsearch
+set showmatch
+set number
+set cursorline
+set colorcolumn=80
+
+"set fdm=indent
+
+set noexpandtab
+set softtabstop=0
+set shiftwidth=4
+set tabstop=4
+set smarttab
+
+let mapleader=","
+let SessionLoad = 1
+map <C-j>  :NERDTreeToggle<CR>
+map <C-k> :BufExplorer<CR>
+map <C-K> :BufExplorerVerticalSplit<CR>
+map <C-L> :BufExplorerHorizontalSplit<CR>
+map <leader>ev :e ~/.vimrc<CR>
+map <C-n> :noh<CR>
+
+set listchars=eol:¬,tab:›\ ,trail:¬
+set list
+
+if has('unix') || has('mac')
+    set backupdir=/tmp
+    set directory=/tmp
+end
+
+let NERDTreeIgnore=['\.pyc']
+colorscheme tomorrow
+
+function! FixOwnCode()
+	let oldLine=line('.')
+	normal gg=G
+	:silent! g/^\s*$/d
+	:silent! %s/){$/) {/g
+	:silent! %s/\}$/\}\r/g
+	:silent! %s/<?php$/<?php\r/g
+	:silent! %s/\s\+$//
+	execute ':' . oldLine
+endfunction
+map -- :call FixOwnCode()<CR>
+
+"puppet
+set fo=tcq
+set nocompatible
+set modeline
+au BufRead,BufNewFile *.pp
+  \ set filetype=puppet
+au BufRead,BufNewFile *_spec.rb
+  \ nmap <F8> :!rspec --color %<CR>
+filetype plugin indent on
+
+" Go to file
+nmap <leader>ff :FufFile **/<CR>

@@ -1,0 +1,101 @@
+"""""""""""""""""""
+" General
+"""""""""""""""""""
+
+" Sets how many lines of history vim has to remember
+set history=700
+
+" Enable filetype plugin
+filetype plugin on
+filetype indent on
+
+" Set to auto read when a file is changed from the outside
+set autoread
+
+" When vimrc is edited, reload it
+autocmd! bufwritepost vimrc source ~/.vimrc
+
+" Allow backspacing over autoindent, lines, and inserts
+set backspace=indent,eol,start
+
+" Allow using the mouse
+set mouse=a
+
+" Enable fast switching between splits
+map <C-k> <C-w><Up>
+map <C-j> <C-w><Down>
+map <C-l> <C-w><Right>
+map <C-h> <C-w><Left>
+
+"""""""""""""""""""
+" UI
+"""""""""""""""""""
+
+" Display line numbers
+set number
+
+" Set 10 lines to the cursor - vertical movement
+set so=10
+
+" Always show current position
+set ruler
+
+" Ignore case when searching
+set ignorecase
+set smartcase
+
+" Highlight search results
+set hlsearch
+
+" Make search act like modern browser
+set incsearch
+
+" Show matching braces
+set showmatch
+hi MatchParen cterm=underline ctermbg=none ctermfg=none
+
+" No sound on errors
+set noerrorbells
+set visualbell
+
+" Do not wrap lines
+set nowrap
+
+"""""""""""""""""""
+" Colors and Fonts
+"""""""""""""""""""
+
+"Enable syntax
+syntax enable
+
+" Choose colorscheme
+colorscheme desert
+
+"""""""""""""""""""
+" Files
+"""""""""""""""""""
+
+" Turn off backup
+set nobackup
+set nowb
+set noswapfile
+
+"""""""""""""""""""
+" Text and Indentation
+"""""""""""""""""""
+
+set expandtab
+set shiftwidth=2
+set tabstop=2
+set smarttab
+
+" Auto indent, smart indent
+set ai
+set si
+
+"  In visual mode when you press * or # to search for the current selection
+vnoremap <silent> * :call VisualSearch('f')<CR>
+vnoremap <silent> # :call VisualSearch('b')<CR>
+
+" Ctrl P working path fix
+let g:ctrlp_working_path_mode = 0

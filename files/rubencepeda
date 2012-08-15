@@ -1,0 +1,64 @@
+" Use vim settings, rather then vi settings (much better!)
+" This must be first, because it changes other options as a side effect.
+set nocompatible
+
+set autoindent
+set cindent
+set number
+set showmatch
+set history=1000                " remember more commands and search history
+set undolevels=1000             " use many muchos levels of undo
+set ruler                       " show the cursor position all the time
+set hlsearch                    " search highlighting
+set showmatch                   " Cursor shows matching ) and }
+set showmode                    " Show current mode
+
+syntax on
+set hlsearch
+
+" Tabs are two spaces unless otherwise defined
+set softtabstop=2
+set tabstop=8
+set shiftwidth=2
+set expandtab
+
+" Use magic regexes (much less faffy escaping)
+set magic
+
+" Show me those sneaky tabs and trailing spaces
+set list listchars=tab:»·,trail:·
+
+" Make search case-insensitive when search string is all lowercase
+set ignorecase
+set smartcase
+
+let g:Powerline_symbols = 'fancy'
+
+" Editor layout {{{
+set termencoding=utf-8
+set encoding=utf-8
+set lazyredraw                  " don't update the display while executing macros
+set cmdheight=2                 " use a status bar that is 2 rows high
+" }}}
+
+"Restore cursor to file position in previous editing session
+set viminfo='10,\"100,:20,%,n~/.viminfo
+au BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
+
+if has('statusline')
+  set laststatus=2
+
+  " Broken down into easily includeable segments
+  set statusline=%<%f\   " Filename
+  set statusline+=%w%h%m%r " Options
+  set statusline+=\ [%{&ff}/%Y]            " filetype
+  set statusline+=\ [%{getcwd()}]          " current dir
+  set statusline+=%=%-14.(%l,%c%V%)\ %p%%  " Right aligned file nav info
+endif
+
+" Thanks to Steve Losh for this liberating tip
+" See http://stevelosh.com/blog/2010/09/coming-home-to-vim
+nnoremap / /\v
+vnoremap / /\v
+
+set modelines=0

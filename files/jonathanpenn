@@ -1,0 +1,411 @@
+" Use Vim settings, rather then Vi settings (much better!).
+" " This must be first, because it changes other options as a side effect.
+set nocompatible
+
+" Load pathogen and all the bundles
+call pathogen#runtime_append_all_bundles()
+
+" WinWidth
+set winwidth=84
+" We have to have a winheight bigger than we want to set winminheight. But if
+" we set winheight to be huge before winminheight, the winminheight set will
+" fail.
+set winheight=5
+set winminheight=5
+set winheight=999
+
+" Allow backgrounding buffers without writing them, and remember marks/undo
+" for backgrounded buffers
+set hidden
+
+" Turn on syntax hilighting
+syntax enable
+
+" Remember more commands and search history
+set history=2000
+
+let g:solarized_termcolors=256
+set background=dark
+colorscheme solarized
+
+" Seriously, guys. It's not like :W is bound to anything anyway.
+command! W :w
+command! Q :q
+command! WQ :wq
+command! Wq :wq
+
+" Quick and easy soft wrapping, just use :Wrap
+command! -nargs=* Wrap set wrap linebreak nolist
+
+" Quick ability to run a command silently and redraw the screen
+
+command! -nargs=1 Silent | execute ':silent !'.<q-args> | execute ':redraw!'
+
+" Whitespace stuff
+set wrap                            " Wrap lines
+set tabstop=2
+set shiftwidth=2
+set expandtab
+set list listchars=tab:\ \ ,trail:·
+
+" Searching
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+
+" Make tab completion for files/buffers act like bash
+set wildmode=longest,list
+set wildignore+=*.o,*.obj,.git,*.rbc
+set wildmenu
+
+" Status bar
+set laststatus=2
+:set statusline=%<%f\ (%{&ft})\ %-4(%m%)%=%-19(%3l,%02c%03V%)
+:hi User1 term=inverse,bold cterm=inverse,bold ctermfg=red
+
+" Insert a date log header
+map <leader>d i------------------------------<ESC>:r ! date<CR>A<CR><CR><ESC>i
+
+" Edit and Resource the vim rc files
+map <leader>vr :e ~/.vim/vimrc<CR>
+map <leader>gvr :e ~/.vim/gvimrc<CR>
+nmap <leader>s :source $HOME/.vimrc<CR>:source $HOME/.gvimrc<CR>
+
+" Turn of highlighting after search
+map <C-l> :noh<CR>
+
+set switchbuf=useopen           " Reuse open buffers when opening a file that's already open
+set cmdheight=2                 " Set the command window height to be 2
+
+" Turn on line numbers
+set number
+
+" Key to toggle line numbers
+map <leader>ln :set number!<CR>
+
+" Status line setup
+set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
+
+" allow backspacing over everything in insert mode
+set backspace=indent,eol,start
+
+set cursorline                " show a line at the row of the cursor
+set cursorcolumn              " show a line at the column of the cursor
+set directory=/tmp      " Where temporary files will go.
+set splitright
+set splitbelow
+
+cnoremap %% <C-R>=expand('%:h').'/'<cr>
+
+" Opens an edit command with the path of the currently edited file filled in
+" Normal mode: <Leader>e
+map <Leader>ee :edit %%
+
+" Opens a tab edit command with the path of the currently edited file filled in
+" Normal mode: <Leader>t
+map <Leader>et :tabe %%
+
+" Inserts the path of the currently edited file into a command
+" Command mode: Ctrl+P
+" cmap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
+
+" Use modeline overrides
+set modeline
+set modelines=10
+
+" Remember last location in file
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
+    \| exe "normal g'\"" | endif
+endif
+
+" Keep more context when scrolling at the end or beginning of the buffer
+set scrolloff=5
+
+" Set ctrl-a and ctrl-e to jump to beginning and end of line respectively
+imap <C-a> <C-o>^
+imap <C-e> <C-o>$
+nmap <C-a> ^
+nmap <C-e> $
+
+" Repeat the last colon command in normal mode
+nnoremap ,. :<UP><CR>
+
+" Setup quick keys for virtual editing
+map <leader>ve :call VirtualEditToggle()<CR>
+function! VirtualEditToggle()
+  if &ve != ""
+    set ve=
+    echo "virtual edit off"
+  else
+    set ve=all
+    echo "virtual edit on"
+  endif
+endfunction
+
+" <leader><leader> switches to the last buffer used
+map <leader><leader> <C-^>
+
+" Make '<leader>r' (in normal mode) give a prompt for renaming files
+" in the same dir as the current buffer's file.
+map <leader>r :Rename <C-R>=expand("%:h/")<cr>/
+
+"Vertical split then hop to new buffer
+noremap <leader>v :vsp<CR>
+noremap <leader>h :split<CR>
+"
+"Make current window the only one
+noremap <leader>O :only<CR>:tabo<CR>
+noremap <leader>o :only<CR>
+
+" Show invisible characters
+set list listchars=tab:\ \ ,trail:·,nbsp:%,extends:>,precedes:<
+map <F6> :set nolist!<CR>:set nolist?<CR>
+imap <F6> <ESC>:set nolist!<CR>:set nolist?<CR>a
+
+" Clear all trailing spaces
+map <leader>c :%s/\s\+$//<CR><c-o>
+
+" visual shifting (builtin-repeat)
+vnoremap < <gv
+vnoremap > >gv
+
+" Setup vimwiki to store in dropbox
+let g:vimwiki_list = [{'path': '~/Dropbox/vimwiki/'}]
+
+
+" Show highlighting groups for current word
+nmap <C-S-P> :call <SID>SynStack()<CR>
+function! <SID>SynStack()
+  if !exists("*synstack")
+    return
+  endif
+  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+endfunction
+
+
+""""""""""""""""""""""""""""""""""""""""""""
+" Filetype specific configs
+
+" load the plugin and indent settings for the detected filetype
+filetype plugin indent on
+
+" make and python use real tabs
+au FileType make                                     set noexpandtab
+au FileType python                                   set noexpandtab
+
+" Thorfile, Rakefile and Gemfile are Ruby
+au BufRead,BufNewFile {Gemfile,Rakefile,Thorfile,config.ru}    set ft=ruby
+
+" Automatically turn on soft wrapping for these text files
+au BufRead,BufNewFile *.{txt,markdown} :Wrap<cr>
+
+
+
+""""""""""""""""""""""""""""""""""""""""""""
+" vimwiki
+
+" Turn on folding for vimwiki
+map <leader>wf :call VimWikiFoldingToggle()<CR>
+function! VimWikiFoldingToggle()
+  if g:vimwiki_folding == 1
+    let g:vimwiki_folding=0
+  else
+    let g:vimwiki_folding=1
+  endif
+endfunction
+
+" Change key for toggling list items in vimwiki
+map <C-S-Space> :VimwikiToggleListItem<CR>
+
+
+""""""""""""""""""""""""""""""""""""""""""""
+" NERDTree configuration
+
+let NERDTreeIgnore=['\.rbc$', '\~$']
+map <Leader>n :NERDTreeToggle<CR>
+
+
+""""""""""""""""""""""""""""""""""""""""""""
+" Command-T configuration
+
+let g:CommandTMaxHeight=20
+let g:CommandTCancelMap=['<esc>', '<C-c>']
+nmap <silent> <Leader>td :CommandT<CR>
+
+
+
+""""""""""""""""""""""""""""""""""""""""""""
+" CTags
+
+map <Leader>rt :!ctags --extra=+f -R *<CR><CR>
+
+
+""""""""""""""""""""""""""""""""""""""""""""
+" tabular
+
+function! s:align()
+  let p = '^\s*|\s.*\s|\s*$'
+  if exists(':Tabularize') && getline('.') =~# '^\s*|' && (getline(line('.')-1) =~# p || getline(line('.')+1) =~# p)
+    let column = strlen(substitute(getline('.')[0:col('.')],'[^|]','','g'))
+    let position = strlen(matchstr(getline('.')[0:col('.')],'.*|\s*\zs.*'))
+    Tabularize/|/l1
+    normal! 0
+    call search(repeat('[^|]*|',column).'\s\{-\}'.repeat('.',position),'ce',line('.'))
+  endif
+endfunction
+
+""""""""""""""""""""""""""""""""""""""""""""
+" Greenbar
+
+map <Leader>] <Plug>MakeGreen " change from <Leader>t to <Leader>]
+
+
+""""""""""""""""""""""""""""""""""""""""""""
+" StatusBar
+"
+" Functions {{{
+" Statusline updater {{{
+" Inspired by StatusLineHighlight by Ingo Karkat
+function! s:StatusLine(new_stl, type, current)
+  let current = (a:current ? "" : "NC")
+  let type = a:type
+  let new_stl = a:new_stl
+
+  " Prepare current buffer specific text
+  " Syntax: <CUR> ... </CUR>
+  let new_stl = substitute(new_stl, '<CUR>\(.\{-,}\)</CUR>', (a:current ? '\1' : ''), 'g')
+
+  " Prepare statusline colors
+  " Syntax: #[ ... ]
+  let new_stl = substitute(new_stl, '#\[\(\w\+\)\]', '%#StatusLine'.type.'\1'.current.'#', 'g')
+
+  " Prepare statusline arrows
+  " Syntax: [>] [>>] [<] [<<]
+  if s:round_stl
+    let new_stl = substitute(new_stl, '\[>\]',  'ǳ', 'g')
+    let new_stl = substitute(new_stl, '\[>>\]', 'ǵ', 'g')
+    let new_stl = substitute(new_stl, '\[<\]',  'ǲ', 'g')
+    let new_stl = substitute(new_stl, '\[<<\]', 'Ǵ', 'g')
+  else
+    let new_stl = substitute(new_stl, '\[>\]',  'ǣ', 'g')
+    let new_stl = substitute(new_stl, '\[>>\]', 'ǥ', 'g')
+    let new_stl = substitute(new_stl, '\[<\]',  'Ǣ', 'g')
+    let new_stl = substitute(new_stl, '\[<<\]', 'Ǥ', 'g')
+  endif
+
+  if &l:statusline ==# new_stl
+    " Statusline already set, nothing to do
+    return
+  endif
+
+  if empty(&l:statusline)
+    " No statusline is set, use my_stl
+    let &l:statusline = new_stl
+  else
+    " Check if a custom statusline is set
+    let plain_stl = substitute(&l:statusline, '%#StatusLine\w\+#', '', 'g')
+
+    if &l:statusline ==# plain_stl
+      " A custom statusline is set, don't modify
+      return
+    endif
+
+    " No custom statusline is set, use my_stl
+    let &l:statusline = new_stl
+  endif
+endfunction
+" }}}
+" Color dict parser {{{
+function! s:StatusLineColors(colors)
+  for type in keys(a:colors)
+    for name in keys(a:colors[type])
+      let colors = {'c': a:colors[type][name][0], 'nc': a:colors[type][name][1]}
+      let type = (type == 'NONE' ? '' : type)
+      let name = (name == 'NONE' ? '' : name)
+
+      if exists("colors['c'][0]")
+        exec 'hi StatusLine'.type.name.' ctermbg='.colors['c'][0].' ctermfg='.colors['c'][1].' cterm='.colors['c'][2]
+      endif
+
+      if exists("colors['nc'][0]")
+        exec 'hi StatusLine'.type.name.'NC ctermbg='.colors['nc'][0].' ctermfg='.colors['nc'][1].' cterm='.colors['nc'][2]
+      endif
+    endfor
+  endfor
+endfunction
+" }}}
+" }}}
+" Default statusline {{{
+let g:default_stl  = ""
+let g:default_stl .= "<CUR>#[Mode] %{&paste ? 'PASTE [>] ' : ''}%{substitute(mode(), '', '^V', 'g')} #[ModeS][>>]</CUR>"
+let g:default_stl .= "#[Branch] %(%{substitute(fugitive#statusline(), 'GIT(\\([a-z0-9\\-_\\./:]\\+\\))', 'Đ \\1', 'gi')}#[BranchS] [>] %)" " Git branch
+let g:default_stl .= "#[ModFlag]%{&readonly ? 'Ĥ ' : ''}" " RO flag
+let g:default_stl .= "#[FileName]%t " " File name
+let g:default_stl .= "<CUR>#[Error]%(%{substitute(SyntasticStatuslineFlag(), '\\[Syntax: line:\\(\\d\\+\\) \\((\\(\\d\\+\\))\\)\\?\\]', '[>][>][>] SYNTAX đ \\1 \\2 [>][>][>]', 'i')} %)</CUR>" " Syntastic error flag
+let g:default_stl .= "#[ModFlag]%(%M %)" " Modified flag
+let g:default_stl .= "#[BufFlag]%(%H%W %)" " HLP,PRV flags
+let g:default_stl .= "#[FileNameS][>>]" " Separator
+let g:default_stl .= "#[FunctionName] " " Padding/HL group
+let g:default_stl .= "%<" " Truncate right
+let g:default_stl .= "<CUR>%(%{cfi#format('%s', '')} %)</CUR>" " Function name
+let g:default_stl .= "%= " " Right align
+let g:default_stl .= "<CUR>#[FileFormat]%{&fileformat} </CUR>" " File format
+let g:default_stl .= "<CUR>#[FileEncoding]%{(&fenc == '' ? &enc : &fenc)} </CUR>" " File encoding
+let g:default_stl .= "<CUR>#[Separator][<] Ġġ #[FileType]%{strlen(&ft) ? &ft : 'n/a'} </CUR>" " File type
+let g:default_stl .= "#[LinePercentS][<<]#[LinePercent] %p%% " " Line/column/virtual column, Line percentage
+let g:default_stl .= "#[LineNumberS][<<]#[LineNumber] đ %l#[LineColumn]:%c%V " " Line/column/virtual column, Line percentage
+let g:default_stl .= "%{exists('g:synid') && g:synid ? '[<] '.synIDattr(synID(line('.'), col('.'), 1), 'name').' ' : ''}" " Current syntax group
+" }}}
+" Color dict {{{
+let s:statuscolors = {
+      \   'NONE': {
+      \   'NONE'         : [[ 236, 231, 'bold'], [ 232, 244, 'none']]
+      \ }
+      \ , 'Normal': {
+      \   'Mode'         : [[ 214, 235, 'bold'], [                 ]]
+      \ , 'ModeS'        : [[ 214, 240, 'bold'], [                 ]]
+      \ , 'Branch'       : [[ 240, 250, 'none'], [ 234, 239, 'none']]
+      \ , 'BranchS'      : [[ 240, 246, 'none'], [ 234, 239, 'none']]
+      \ , 'FileName'     : [[ 240, 231, 'bold'], [ 234, 244, 'none']]
+      \ , 'FileNameS'    : [[ 240, 236, 'bold'], [ 234, 232, 'none']]
+      \ , 'Error'        : [[ 240, 202, 'bold'], [ 234, 239, 'none']]
+      \ , 'ModFlag'      : [[ 240, 196, 'bold'], [ 234, 239, 'none']]
+      \ , 'BufFlag'      : [[ 240, 250, 'none'], [ 234, 239, 'none']]
+      \ , 'FunctionName' : [[ 236, 247, 'none'], [ 232, 239, 'none']]
+      \ , 'FileFormat'   : [[ 236, 244, 'none'], [ 232, 239, 'none']]
+      \ , 'FileEncoding' : [[ 236, 244, 'none'], [ 232, 239, 'none']]
+      \ , 'Separator'    : [[ 236, 242, 'none'], [ 232, 239, 'none']]
+      \ , 'FileType'     : [[ 236, 248, 'none'], [ 232, 239, 'none']]
+      \ , 'LinePercentS' : [[ 240, 236, 'none'], [ 234, 232, 'none']]
+      \ , 'LinePercent'  : [[ 240, 250, 'none'], [ 234, 239, 'none']]
+      \ , 'LineNumberS'  : [[ 252, 240, 'bold'], [ 234, 234, 'none']]
+      \ , 'LineNumber'   : [[ 252, 236, 'bold'], [ 234, 244, 'none']]
+      \ , 'LineColumn'   : [[ 252, 240, 'none'], [ 234, 239, 'none']]
+      \ }
+      \ , 'Insert': {
+      \   'Mode'         : [[ 153,  23, 'bold'], [                 ]]
+      \ , 'ModeS'        : [[ 153,  31, 'bold'], [                 ]]
+      \ , 'Branch'       : [[  31, 117, 'none'], [                 ]]
+      \ , 'BranchS'      : [[  31, 117, 'none'], [                 ]]
+      \ , 'FileName'     : [[  31, 231, 'bold'], [                 ]]
+      \ , 'FileNameS'    : [[  31,  24, 'bold'], [                 ]]
+      \ , 'Error'        : [[  31, 202, 'bold'], [                 ]]
+      \ , 'ModFlag'      : [[  31, 196, 'bold'], [                 ]]
+      \ , 'BufFlag'      : [[  31,  75, 'none'], [                 ]]
+      \ , 'FunctionName' : [[  24, 117, 'none'], [                 ]]
+      \ , 'FileFormat'   : [[  24,  75, 'none'], [                 ]]
+      \ , 'FileEncoding' : [[  24,  75, 'none'], [                 ]]
+      \ , 'Separator'    : [[  24,  37, 'none'], [                 ]]
+      \ , 'FileType'     : [[  24,  81, 'none'], [                 ]]
+      \ , 'LinePercentS' : [[  31,  24, 'none'], [                 ]]
+      \ , 'LinePercent'  : [[  31, 117, 'none'], [                 ]]
+      \ , 'LineNumberS'  : [[ 117,  31, 'bold'], [                 ]]
+      \ , 'LineNumber'   : [[ 117,  23, 'bold'], [                 ]]
+      \ , 'LineColumn'   : [[ 117,  31, 'none'], [                 ]]
+      \ }
+      \ }
+" }}}
+" }}}
+

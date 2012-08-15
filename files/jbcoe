@@ -1,0 +1,128 @@
+filetype on
+filetype plugin on
+filetype indent on
+
+set nocompatible
+syntax on
+set history=500
+set nowrap
+set tabstop=2
+"set expandtab
+set shiftwidth=2
+set showmatch
+set showmode
+set autoindent
+set smartindent
+set number
+map <silent> ,ln :set number!<cr>
+map <silent> ,ss :set list!<cr>
+
+colorscheme jellybeans
+
+
+" set the search scan so that it ignores case when the search is all lower
+" case but recognizes uppercase if it's specified
+set ignorecase
+set smartcase
+
+" Note, perl automatically sets foldmethod in the syntax file
+autocmd Syntax c,cpp,vim,xml,html,xhtml setlocal foldmethod=syntax
+autocmd Syntax c,cpp,vim,xml,html,xhtml,perl normal zR
+
+" Make sure that unsaved buffers that are to be put in the background are
+" allowed to go in there (ie. the "must save first" error doesn't come up)
+set hidden
+
+"Add dollar sign to end of replacement region
+set cpoptions+=$
+
+set virtualedit=all
+
+" Set the status line the way i like it
+set stl=%f\ %m\ %r\ Line:%l/%L[%p%%]\ Col:%c\ Buf:%n\ [%b][0x%B]
+
+" tell VIM to always put a status line in, even if there is only one window
+set laststatus=2
+
+" Disable encryption (:X)
+set key=
+
+" Make the command-line completion better
+set wildmenu
+
+" Enable search highlighting
+set hlsearch
+
+" Incrementally match the search
+set incsearch
+
+" Syntax coloring lines that are too long just slows down the world
+set synmaxcol=2048
+
+" allow command line editing like emacs
+cnoremap <C-A>      <Home>
+cnoremap <C-B>      <Left>
+cnoremap <C-E>      <End>
+cnoremap <C-F>      <Right>
+cnoremap <C-N>      <End>
+cnoremap <C-P>      <Up>
+cnoremap <ESC>b     <S-Left>
+cnoremap <ESC><C-B> <S-Left>
+cnoremap <ESC>f     <S-Right>
+cnoremap <ESC><C-F> <S-Right>
+cnoremap <ESC><C-H> <C-W>
+
+" Let's make it easy to edit this file (mnemonic for the key sequence is
+" 'e'dit 'v'imrc)
+nmap <silent> ,ev :e ~/.vimrc<cr>
+
+" And to source this file as well (mnemonic for the key sequence is
+" 's'ource 'v'imrc)
+nmap <silent> ,sv :so ~/.vimrc<cr>
+
+nmap <silent> > : bn<cr>
+nmap <silent> < : bp<cr>
+
+" Turn off that stupid highlight search
+nmap <silent> ,n :set invhls<cr>:set hls?<cr>
+
+" Set the search scan to wrap around the file
+set wrapscan
+
+" Make command line two lines high
+"set ch=2
+
+" set visual bell
+set vb
+
+" Allow backspacing over indent, eol, and the start of an insert
+set backspace=2
+
+" The GUI (i.e. the 'g' in 'gvim') is fantastic, but let's not be
+" silly about it :)  The GUI is fantastic, but it's fantastic for
+" its fonts and its colours, not for its toolbar and its menus -
+" those just steal screen real estate
+set guioptions=ac
+
+"Create and switch tabs
+"nmap <silent> ( :tabp<cr>
+"nmap <silent> ) :tabn<cr>
+"nmap <silent> - :tabc<cr>
+"nmap <silent> + :tabnew<cr>
+
+" If you prefer the Omni-Completion tip window to close when a selection is
+" made, these lines close it on movement in insert mode or when leaving
+" insert mode
+autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
+autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+
+"let b:clang_parameters = ''
+"let b:clang_user_options = ''
+"let b:my_changedtick = 0
+let g:clang_complete_auto = 0
+"let g:clang_use_library = 1
+let g:clang_exec = '/opt/local/bin/clang-mp-3.1'
+let g:clang_periodic_quickfix = 1
+let g:clang_user_options = '-std=c++0x -stdlib=libc++ -I/opt/local/include'
+"let g:clang_complete_copen = 1
+

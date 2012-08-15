@@ -1,0 +1,257 @@
+filetype off
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+
+set nocp
+set hidden
+filetype plugin on
+
+" When started as "evim", evim.vim will already have done these settings.
+if v:progname =~? "evim"
+  finish
+endif
+
+" Don't use Ex mode, use Q for formatting
+map Q gq
+
+" Switch syntax highlighting on, when the terminal has colors
+" Also switch on highlighting the last used search pattern.
+if &t_Co > 2 || has("gui_running")
+  syntax on
+  set hlsearch
+endif
+
+" Only do this part when compiled with support for autocommands.
+if has("autocmd")
+
+  " Enable file type detection.
+  " Use the default filetype settings, so that mail gets 'tw' set to 72,
+  " 'cindent' is on in C files, etc.
+  " Also load indent files, to automatically do language-dependent indenting.
+  filetype plugin indent on
+
+  " Put these in an autocmd group, so that we can delete them easily.
+  augroup vimrcEx
+  au!
+
+  " For all text files set 'textwidth' to 78 characters.
+  autocmd FileType text setlocal textwidth=78
+
+  " When editing a file, always jump to the last known cursor position.
+  " Don't do it when the position is invalid or when inside an event handler
+  " (happens when dropping a file on gvim).
+  autocmd BufReadPost *
+    \ if line("'\"") > 0 && line("'\"") <= line("$") |
+    \   exe "normal g`\"" |
+    \ endif
+
+  augroup END
+
+else
+
+  set autoindent		" always set autoindenting on
+
+endif " has("autocmd")
+
+" Set up tabbing through tags a bit easier
+nm <C-Tab> :tn<CR>
+nm <C-S-Tab> :tp<CR>
+
+set tags+=tags;
+
+" Load the tags 
+source ~/.vimrc_tags
+
+set scrolloff=3
+set ruler
+set shortmess=atI
+
+"Sets how many lines of history VIM har to remember
+set history=400
+
+"Set mapleader
+let mapleader = ","
+let g:mapleader = ","
+let maplocalleader = ","
+let g:maplocalleader = ","
+
+"" Set up SuperTab
+" see help ins-completion for more
+let g:SuperTabDefaultCompletionType = "context"
+
+" Set git ft to do diffs
+let g:git_diff_spawn_mode = 1
+
+" XAML files are Xml, really!
+autocmd BufNewFile,BufRead *.xaml set ft=xml
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Colors and Fonts
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+if has("gui_running")
+  set guioptions-=T
+  let psc_style='cool'
+  colorscheme ps_color
+else
+  set background=dark
+  colorscheme koehler
+endif
+
+"Omni menu colors
+hi Pmenu guibg=#333333
+hi PmenuSel guibg=#555555 guifg=#ffffff
+
+"Pattern matching
+hi MatchParen guifg=#000000 guibg=#D0D090 
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Fileformats
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"Favorite filetypes
+set ffs=unix,dos,mac
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => VIM userinterface
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"Set 7 lines to the curors - when moving vertical..
+set so=7
+
+"Turn on WiLd menu
+set wildmenu
+
+"The commandbar is 2 high
+set cmdheight=1
+
+"Do not redraw, when running macros.. lazyredraw
+set lz
+
+"Change buffer - without saving
+set hid
+
+"Set backspace
+set backspace=eol,start,indent
+
+"Bbackspace and cursor keys wrap to
+set whichwrap+=<,>,h,l
+
+"Set magic on
+set magic
+
+"No sound on errors.
+set noerrorbells
+set novisualbell
+set t_vb=
+
+"show matching bracets
+set showmatch
+
+"How many tenths of a second to blink
+set mat=2
+
+"Highlight search things
+set hlsearch
+
+""""""""""""""""""""""""""""""
+" => Statusline
+""""""""""""""""""""""""""""""
+"Always hide the statusline
+set laststatus=2
+
+"Format the statusline
+set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Moving around and tabs
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"Map space to / and c-space to ?
+"map <space> /
+"map <c-space> ?
+
+"Smart way to move btw. windows
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Files and backups
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"Turn backup off
+"set nobackup
+"set nowb
+set noswapfile
+set noar
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Folding
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set fen
+set fdl=0
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Text options
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set smarttab autoindent
+set lbr
+set tw=120
+
+""""""""""""""""""""""""""""""
+" => Indent
+""""""""""""""""""""""""""""""
+"Auto indent
+set ai
+
+"Smart indet
+set si
+
+"C-style indeting
+set cindent
+
+"Wrap lines
+set wrap
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => MISC
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Close the damn preview window
+noremap <Leader>z :pc!<cr>
+
+" Move to next, prev buffer
+nnoremap <c-n> :next<Enter>
+nnoremap <c-p> :prev<Enter>
+set confirm
+
+autocmd Filetype ruby setlocal ts=2 sw=2 et
+
+" ,f launches Ack search
+map <leader>f :Ack<space>
+
+" ,l toggles TagList
+nnoremap <leader>l :TlistToggle<CR>
+
+" ,y toggles YankRing
+nnoremap <leader>y :YRShow<CR>
+
+" Clojure Section
+let vimclojure#WantNailgun = 1
+let vimclojure#NailgunClient = "/usr/local/bin/ng"
+let g:vimclojure#ParenRainbow = 1
+let g:vimclojure#HighlightBuiltins = 1
+let g:vimclojure#DynamicHighlighting = 1
+
+" Haskell Section
+au Bufenter *.hs compiler ghc
+let g:haddock_browser = "/usr/bin/open"
+
+nmap <leader>t CommandT<CR>
+
+" Load our local file
+source ~/.vimrc_local

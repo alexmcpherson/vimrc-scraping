@@ -1,0 +1,44 @@
+set nocompatible               " be iMproved
+filetype off                   " required!
+
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+
+" let Vundle manage Vundle
+" required! 
+Bundle 'gmarik/vundle'
+
+Bundle 'kchmck/vim-coffee-script'
+Bundle 'mileszs/ack.vim'
+Bundle 'wincent/Command-T'
+Bundle 'vim-scripts/molokai' 
+Bundle 'scrooloose/nerdcommenter'
+Bundle 'scrooloose/nerdtree'
+Bundle 'altercation/vim-colors-solarized'
+Bundle 'tpope/vim-cucumber'
+Bundle 'tpope/vim-endwise'
+Bundle 'tpope/vim-fugitive'
+Bundle 'Peeja/vim-git-pair'
+Bundle 'tpope/vim-haml'
+Bundle 'wgibbs/vim-irblack'
+Bundle 'plasticboy/vim-markdown'
+Bundle 'tpope/vim-rails'
+Bundle 'tpope/vim-repeat'
+Bundle 'ecomba/vim-ruby-refactoring'
+Bundle 'tpope/vim-surround'
+Bundle 'nelstrom/vim-textobj-rubyblock'
+Bundle 'kana/vim-textobj-user'
+Bundle 'tpope/vim-unimpaired'
+Bundle 'tpope/vim-vividchalk'
+
+syntax on
+filetype plugin indent on     " required! 
+
+" Source initialization files
+" ---------------------------
+
+runtime! init/**.vim
+
+" Machine-local vim settings - keep this at the end
+" --------------------------
+silent! source ~/.vimrc.local

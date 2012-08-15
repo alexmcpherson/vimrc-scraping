@@ -1,0 +1,122 @@
+set nocompatible
+
+source ~/.vim/vundle.vim
+
+" command history/undo settings
+set history=1000
+set undolevels=1000
+
+" custom keymap activator
+let mapleader=","
+
+" hide buffers instead of closing
+set hidden
+
+" visual
+syntax on		" syntax highlighting
+set background=dark
+color wombat256mod
+set title		" change window title
+set number		" line numbers
+set cursorline	" hightlight line where cursor is
+set laststatus=2	" max 2 status lines
+set showmode		" display edit mode
+set guioptions-=T	" hide toolbar in gVim
+set showmatch		" hightlight matching paranthesis
+
+" indent settings
+set cin			" c-style indention
+set autoindent
+set smartindent
+set tabstop=4
+set shiftwidth=4
+
+" search settings
+set ignorecase		" case intensive search
+set smartcase		" ignore case only when pattern is all lowercase
+set hlsearch		" highlight search results
+set incsearch		" search while typing
+
+filetype plugin indent on
+
+
+" Plugins
+""""""
+
+" BufExplorer
+let g:bufExplorerSortBy='fullpath'	" sort by full path name
+let g:bufExplorerShowRelativePath=1	" show relative paths
+
+" TagList
+"set tags+=/.vim/tags/cpp
+let Tlist_Exit_OnlyWindow=1		" exit when taglist is last window
+let Tlist_Show_One_file=0		" show tags for all buffers
+let Tlist_Use_Right_Window=1		" open window on right side
+let Tlist_Enable_Fold_Column=1		" show fold column
+let Tlist_File_Fold_Auto_Close=1	" automatically fold hidden buffers
+let Tlist_Auto_Open=0			" don't open automatically
+
+" XMLEdit
+let xml_use_xhtml=1
+
+"NERDTree
+let g:NERDTreeWinPos="right"
+" automatically open NERDTree when no file is opened
+autocmd vimenter * if !argc() | NERDTree | endif
+
+
+" KEYBINDINGS
+""""""
+" Build local TagList
+map <F7> <C-O>:!ctags -R --sort=1 --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
+
+" Toggle TagList
+map <F8> <C-O>:TlistToggle<CR>
+
+" Show bufExplorer
+map <F9> <C-O>:BufExplorer<CR>
+
+" Toggle NERDTree
+map <F10> <C-O>:NERDTreeToggle<CR>
+
+" Toggle search result highlighting
+map <silent> <C-H> :se invhlsearch<CR>
+
+" Switch windows + maximize
+map <C-J> <C-W>j<C-W>_
+map <C-K> <C-W>k<C-W>_
+
+" CTRL-S to save. Needs in .zshrc:
+"	setopt no_flow_control
+"	stty -ixon -ixoff
+inoremap <C-S> <C-O>:update<CR>
+
+" CTRL-R to reload file
+inoremap <C-R> <C-O>:e!<CR>
+
+" CTRL-Q to quit
+inoremap <C-Q> <C-O>:q<CR>
+
+" CTRL-n to new tab
+map <C-n> :tabnew<CR>
+
+" CTRL-y to switch to alternate buffer
+map <C-y> :b#<CR>
+
+" Quickly edit/reload vimrc file
+nmap <silent> <leader>cfg :e $MYVIMRC<CR>
+nmap <silent> <leader>rl :so $MYVIMRC<CR>
+
+" map . to : for fast commands
+nnoremap . :
+
+" disable arrow keys to get used to hjkl
+map <up> <nop>
+map <down> <nop>
+map <left> <nop>
+map <right> <nop>
+
+" don't step over wrapped lines
+nnoremap j gj
+nnoremap k gk
+

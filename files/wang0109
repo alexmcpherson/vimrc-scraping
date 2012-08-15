@@ -1,0 +1,156 @@
+" .vimrc @2012 by Wang Wei < wei.wang@gdc-tech.com >
+" vim: fdm=marker
+" vim: foldmarker=///,\\\
+
+" --------- Fold: zM - Close All, zR - Open All -------///
+set nocompatible
+syntax enable
+nnoremap ! :set nofoldenable<CR>
+" \\\
+
+" --------- Standard formatting -----///
+" modern drive does not need .swp etc
+set hidden
+set nobackup
+set noswapfile
+" indent
+set smartindent
+set autoindent
+set expandtab
+set shiftwidth=2
+set ts=2
+set bs=2
+" search
+set ignorecase
+set smartcase
+set incsearch
+set showmatch
+set hls
+" line format
+set nowrap
+set number
+set laststatus=2
+"set cursorline
+" tab complete
+set wildmode=full
+set wildmenu
+" cursor movement
+set virtualedit=onemore
+set cinkeys=0{,0},:,0#,!<Tab>,!^F,o,O,e
+" ctrl-n/p complete
+set completeopt-=preview
+" .: current buffer, w: across open buffers
+set complete=.
+set complete+=w
+" \\\
+
+" --------- Ctags -----------///
+set tags=tags;
+set formatprg=w-indent
+" \\\
+
+" --------- Key mapping  -----------///
+" split movement
+nnoremap <C-h> <c-w>h
+nnoremap <C-l> <c-w>l
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+inoremap <silent> <C-l> <ESC>:noh<CR>
+
+" Function keys mapping
+nnoremap <silent> <F2> :PromptVimTmuxCommand<CR>make<CR>
+nnoremap <silent> <F3> :NumbersToggle<CR>
+nnoremap <silent> <F4> :vs %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
+nnoremap <silent> <F7> :PromptVimTmuxCommand<CR>
+"nnoremap <silent> <F8> :RunLastVimTmuxCommand<CR>
+nnoremap <silent> <F8> :vertical wincmd F<CR>
+
+" leader
+let mapleader="'"
+nnoremap <Leader>q oprintf(":\e[1;33m '' \e[0;34m in '%s';vim \e[0;32m %s +%d\e[0m\n", __PRETTY_FUNCTION__, __FILE__,__LINE__);<Esc>==7wli
+
+" for printf
+inoremap <C-j> <ESC>f"a, 
+"inoremap <C-k> <ESC>f"a, 
+inoremap <C-o> .c_str()<ESC>
+" more ad-hoc
+
+" vimdiff,Gdiff
+nnoremap <silent> M ]cdo
+nnoremap <silent> Z :CVSVimDiff<cr><C-w>hzz<C-w>=
+nnoremap <silent> X :Gdiff<CR>
+nnoremap <silent> Q :Gdiff master<CR>
+nnoremap <silent> < :colorscheme Tomorrow<CR>:Gdiff HEAD<CR>
+
+" filesystem completion
+inoremap <C-f> <C-x><C-f>
+
+" indentation
+nnoremap <silent> - :.!w-indent<CR>==
+vnoremap <silent> - gq={<C-o>==
+
+" editing
+"inoremap <C-j> <ESC>A;<ESC>
+inoremap <C-h> <ESC>o{<CR>}<ESC>ko
+nnoremap C c$
+" \\\
+
+" --------- Plugins -----------///
+let b:surround_indent = 1
+let OmniCpp_MayCompleteScope = 1
+call pathogen#infect()
+map <C-e> :NERDTreeToggle<CR>:NERDTreeMirror<CR>
+let NERDTreeShowBookmarks=1
+"  \\\
+
+" --------- Color scheme -----------///
+set t_Co=256
+" depends on pathogen
+set background=dark
+"set background=light
+"colorscheme solarized
+let g:solarized_termcolors=256
+let g:Powerline_symbols = 'fancy'
+call togglebg#map("<F5>")
+":colorscheme wangwei
+":colorscheme ir_ben
+":colorscheme ir_ben_mac
+:colorscheme Tomorrow-Night
+" b for bright
+nnoremap <silent> <Leader>b :colorscheme Tomorrow<CR>
+" d for dark
+nnoremap <silent> <Leader>d :colorscheme Tomorrow-Night<CR>
+syntax on
+filetype plugin indent on
+"  \\\
+
+" --------- Syntax -----------///
+au FileType c,cpp,h,sh syn sync fromstart
+au BufRead,BufNewFile *.pro  set filetype=pro
+au BufRead,BufNewFile *.pro  set syntax=qmake
+au FileType c,cpp,h,sh set cindent
+" Hide C++ foldmarks
+au BufRead,BufNewFile *.cpp set conceallevel=3 | 
+      \ set concealcursor=nvic | 
+      \ highlight ShitMarks ctermbg=NONE ctermfg=NONE |
+      \ syn match ShitMarks /\/\*}}}\*\// conceal |
+      \ syn match ShitMarks /\/\*{{{\*\// conceal
+au BufRead,BufNewFile *.h set conceallevel=3 | 
+      \ set concealcursor=nvic | 
+      \ highlight ShitMarks ctermbg=NONE ctermfg=NONE |
+      \ syn match ShitMarks /\/\*}}}\*\// conceal |
+      \ syn match ShitMarks /\/\*{{{\*\// conceal
+" \\\
+
+" --------- Persistant undo, view -----///
+set history=1000
+set undofile
+set undolevels=1000
+set undoreload=10000
+let myhome = $HOME
+exec "set undodir=" . myhome . "/.vim/undo"
+exec "set viewdir=" . myhome . "/.vim/views"
+au BufWinLeave * silent! mkview
+au BufWinEnter * silent! loadview
+" \\\
+set complete+=w

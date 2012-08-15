@@ -1,0 +1,154 @@
+"" 1. Pathogen
+"" 2. General
+"" 3. Interface
+"" 4. Visual Mode
+"" 5. Insert Mode
+"" 6. Command Mode
+"" 7. Plugins
+"" 8. Syntax
+"" 9. Keyboard Mappings
+
+"""""""""""""""""""""""""""
+"" Pathogen Settings
+
+filetype off
+runtime bundle/vim-pathogen/autoload/pathogen.vim
+call pathogen#infect()
+
+"" Add Pathogen bundle names to the list to disable them temporarily
+let g:pathogen_disabled = []
+
+"" File type settings
+filetype plugin indent on
+
+
+"""""""""""""""""""""""""""
+"" General Settings
+
+"" Character encoding
+set encoding=utf-8
+
+"" Do not use swap files
+set nobackup
+set nowritebackup
+set noswapfile
+
+"" Show invisible characters as dots
+set list
+set listchars=tab:··,trail:·
+
+"" Use four-spaces-equivalent hard tabs
+set noexpandtab
+set shiftwidth=4
+set tabstop=4
+
+"" Auto-indent
+set smartindent
+set autoindent
+
+" Do not notify on errors
+set noerrorbells
+set novisualbell
+set t_vb=
+set tm=500
+
+"" Reload .vimrc immediately when edited
+autocmd! bufwritepost vimrc source ~/.vimrc
+
+
+"""""""""""""""""""""""""""
+"" Interface Settings
+
+set number			" Display line numbers
+set ls=2			" Display the status line
+set ruler			" Display the cursor position
+set title			" Display the filename in console title bar
+set scrolloff=3		" Keep padding when moving visually
+syntax on			" Enable syntax highlighing
+
+"" GUI config
+if has('gui_running')
+	set guifont=Monaco:h10
+	colorscheme wombat		" See: http://www.vim.org/scripts/script.php?script_id=2465
+	set background=dark		" Use the dark scheme
+	set tabpagemax=100		" Prevent files from opening in new windows
+	set antialias			" Anti-alias fonts
+	set guitablabel=%t		" Display full filenames in window tabs
+	set showtabline=2		" Display the tab bar
+	set guioptions-=T		" Disable toolbar icons
+else
+	colorscheme desert
+endif
+
+
+"""""""""""""""""""""""""""
+"" Visual Mode
+
+"" Matching
+set showmatch					" Show matching brackets and parentheses
+
+" Searching
+set ignorecase		" Use case-insensitive searches...
+set smartcase		" ... Unless a capital letter is used
+set incsearch		" Do incremental searching
+set hlsearch		" Highlight searches
+
+
+"""""""""""""""""""""""""""
+"" Insert Mode
+
+set backspace=indent,eol,start	" Improved backspace
+
+"" Editing
+set showmode					" Always indicate insert mode
+
+
+"""""""""""""""""""""""""""
+"" Command Mode
+
+set history=0					" Don't store command history
+set wildmenu					" Use tab completion
+
+
+"""""""""""""""""""""""""""
+"" Plugins
+
+"" Taglist plugin (ctags binary required)
+let Tlist_Ctags_Cmd='/usr/local/bin/ctags'						" Set path to ctags
+let Tlist_Exit_OnlyWindow = 1									" Allow Vim to exit if taglist plugin is the only thing open
+let tlist_php_settings = 'php;c:class;d:constant;f:function'	" Don't show variables in PHP
+highlight MyTagListTagName guifg=green ctermfg=green			" Set colors to use
+
+
+"""""""""""""""""""""""""""
+"" Syntax
+
+"" Use Jinja syntax highlighting for .twig files
+au BufRead,BufNewFile *.twig set filetype=htmljinja
+
+
+"""""""""""""""""""""""""""
+"" Keyboard Mappings
+
+"" Remap F1 to replace indenting spaces with tabs
+function! SpacesToTabs()
+	set noexpandtab
+	retab!
+endfunction
+nnoremap <silent> <F1> :call SpacesToTabs()<CR>
+
+"" Remap F2 to replace indenting tabs with spaces
+function! TabsToSpaces()
+	set expandtab
+	retab!
+endfunction
+nnoremap <silent> <F2> :call TabsToSpaces()<CR>
+
+"" Remap F3 to remove whitespace at the end of each line
+nnoremap <silent> <F3> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar>:nohl<CR>
+
+"" Remap F4 to toggle the Taglist sidebar
+nnoremap <silent> <F4> :TlistToggle<CR>
+
+"" Remap F5 to toggle the Gundo sidebar
+nnoremap <F5> :GundoToggle<CR>

@@ -1,0 +1,27 @@
+set tabstop=4
+set shiftwidth=4
+set smarttab
+set expandtab
+set softtabstop=4
+set autoindent
+set number
+
+filetype plugin on
+filetype indent on
+set undolevels=100
+syntax on
+set showcmd
+set ruler
+set history=500
+
+iab djangotpl {% extends 'base.html' %}<CR><CR>{% block content %}<CR>{% endblock %}<ESC>
+iab codingutf # -*- coding: utf-8 -*-<ESC>
+iab superinit def __init__(self, *args, **kwargs):<CR>super(, self).__init__(*args, **kwargs)
+iab pdb import pdb; pdb.set_trace()
+
+map <F5> :TlistToggle<CR>
+map <F3> :NERDTreeToggle<CR>
+nmap <F2> :w <CR>
+nmap <F10> :q <CR>
+
+colo koehler

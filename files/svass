@@ -1,0 +1,306 @@
+" vim: set expandtab sw=2 sts=2 foldmethod=indent:
+
+" notes
+  " insert mode <C-v>uXXXX for unicode characters
+
+" _vundle
+  set nocompatible
+  filetype off 
+  set rtp+=~/.vim/bundle/vundle
+  call vundle#rc() 
+  Bundle 'gmarik/vundle'
+
+" _bundles
+  " tpope
+  Bundle 'tpope/vim-fugitive'
+  Bundle 'tpope/vim-git'
+  Bundle 'tpope/vim-unimpaired'
+  Bundle 'tpope/vim-surround'
+
+  " scrooloose
+  Bundle 'scrooloose/nerdcommenter'
+  Bundle 'scrooloose/nerdtree'
+
+  " xolox
+  Bundle 'xolox/vim-session'
+  Bundle 'xolox/vim-shell'
+
+  " python plugins
+  Bundle 'klen/python-mode'
+
+  " text objects
+  Bundle 'michaeljsmith/vim-indent-object'
+  Bundle 'vim-scripts/argtextobj.vim'
+  
+  " colors
+  Bundle 'altercation/vim-colors-solarized'
+  Bundle 'vim-scripts/Color-Sampler-Pack'
+  Bundle 'vim-scripts/ScrollColors'
+
+  " various
+  Bundle 'Lokaltog/vim-powerline'
+  Bundle 'sjl/gundo.vim'
+  Bundle 'vim-scripts/YankRing.vim'
+  Bundle 'vim-scripts/taglist.vim'
+  Bundle 'msanders/snipmate.vim'
+  Bundle 'vim-scripts/matchit.zip'
+  Bundle 'gregsexton/MatchTag'
+  Bundle 'nathanaelkane/vim-indent-guides'
+  Bundle 'kana/vim-smartinput'
+
+  Bundle 'vim-scripts/VimClojure'
+  Bundle 'kien/ctrlp.vim'
+  Bundle 'kana/vim-smartinput'
+
+" _init
+  filetype on
+  filetype plugin on
+  filetype indent on
+  let mapleader=","
+  syntax enable
+  set backspace=indent,eol,start
+
+  set backup
+  set undodir=$HOME/.vim_undo,/tmp
+  set backupdir=$HOME/.vim_bak,/tmp
+  set directory=$HOME/.vim_tmp,/tmp
+
+  set foldcolumn=4
+  set completeopt=menu,menuone,longest,preview
+  set updatetime=1000
+  set mousehide
+
+  set cursorline
+  set incsearch
+
+  set wmh=1
+  set wmw=1
+  set showtabline=1 " show non-GUI tabs
+  set cmdheight=1
+
+  set laststatus=2
+    " 0: Never show status line
+    " 1: only show status line if there is more than 1 window
+    " 2: always show status line
+
+  set history=1000
+  set undolevels=1000
+
+" _plugins
+  " clojure-vim
+  let g:vimclojure#ParenRainbow = 1
+
+  " vim indent guides
+  let g:indent_guides_guide_size = 0
+  let g:indent_guides_color_change_percent = 8
+
+  " yankring
+
+  " gundo
+  let g:gundo_preview_bottom=1
+
+  " nerdtree
+  let NERDTreeWinPos="right"
+
+  " Tlist
+  let Tlist_Compact_Format=1
+  let Tlist_Enable_Fold_Column=0
+  let Tlist_Exit_OnlyWindow=1
+  let Tlist_File_Fold_Auto_Close=1
+  let Tlist_Show_One_File=1
+  let Tlist_WinWidth=25
+
+  " shell 
+  let g:shell_fullscreen_items="m,t"
+
+  " sessions
+  let g:session_autoload=0
+  let g:session_autosave=0
+
+  " pyclewn
+
+  " snipMate
+  let g:snips_author='Steven Vass'
+
+" _text formatting
+  set number " enable line numbers
+  set relativenumber
+  set linespace=0 " space between lines
+  set autoindent " C-indentation
+
+  set nowrap
+  set nolbr
+  set expandtab
+  set tabstop=4
+  set shiftwidth=4
+  set textwidth=78
+  set softtabstop=4
+
+  set hls
+  set ignorecase
+  set smartcase
+
+  "set list
+  "set listchars=tab:┠─,precedes:◀,extends:▶
+
+" _font
+  if has("gui_running")
+    if has("gui_gtk2")
+      set guifont=DejaVu\ Sans\ Mono\ 11
+    elseif has("gui_photon")
+      set guifont=Courier\ New:s11
+    elseif has("gui_kde")
+      set guifont=Courier\ New/11/-1/5/50/0/0/0/1/0
+    elseif has("x11")
+      set guifont=-*-courier-medium-r-normal-*-*-180-*-*-m-*-*
+    elseif has("gui_win32")
+      set guifont=DejaVu_Sans_Mono:h11,peep_Regular,Consolas:h11
+    else
+      set guifont=Courier_New
+    endif
+  endif
+
+" _colors
+  colorscheme lucius
+  set background=dark
+
+" _bindings
+  " _leader mappings
+    let mapleader=","
+
+    " NERDCommenter uses <leader>c_
+    " pyclewn uses <leader>d_
+
+    let pymode_run_key = '<leader>rr'
+    let pymode_breakpoint_key = '<leader>rb'
+    map <leader>rg :RopeGotoDefinition<CR>
+    map <leader>rd :RopeShowDoc<CR>
+    map <leader>rf :RopeFindOccurrences<CR>
+
+    map <leader>tt :TlistToggle<CR>
+    map <leader>tn :NERDTreeToggle<CR>
+    map <leader>ty :YRShow<CR>
+    map <leader>tg :GundoToggle<CR>
+    map <leader>ti :IndentGuidesToggle<CR>
+
+    map <leader>vg :tabe $MYGVIMRC<CR>
+    map <leader>vv :tabe $MYVIMRC<CR>
+    map <leader>vs :source $MYVIMRC<CR>
+
+    " vundle bindings
+    map <leader>bi :BundleInstall<CR>
+    map <leader>bl :Bundles<CR>
+    map <leader>bs :BundleSeach<CR>
+
+    " python bindings
+    "map <leader>pp :pep8
+    "map <leader>pl :pylint
+    "map <leader>pf :pyflakes
+
+    " fugitive.vim bindings
+    map <leader>gd :Gdiff
+    map <leader>gs :Gstatus<CR>
+    map <leader>gc :Gcommit<CR>
+    map <leader>gw :Gwrite<CR>
+
+    " sessions.vim bindings
+    map <leader>ss :SaveSession<CR>
+    map <leader>so :OpenSession<CR>
+    map <leader>sd :DeleteSession<CR>
+    map <leader>sc :CloseSession<CR>
+
+  " _important mappings
+    inoremap jk <Esc>
+    inoremap JK <Esc>
+    inoremap jK <Esc>
+    inoremap Jk <Esc>
+    nnoremap <Space> :
+    vnoremap <Space> :
+    cmap <Esc> <C-c>
+
+    " _fkey bindings
+    "nmap <F1>
+    "nmap <F2>
+    "nmap <F3>
+    "imap <F3>
+    "nmap <F4>
+    "imap <F4>
+    " <F5> filetype specific open
+    " <F6> :Open from shell.vim
+    "nmap <F7> 
+    "nmap <F8>
+    "nmap <F9>
+    "nmap <F10>
+    nmap <F11> :Fullscreen " from shell.vim
+    "nmap <F12> strftime
+
+  " _normal mappings
+    " switch tabs, doesn't work in terminal, set in .gvimrc
+    "nmap <C-Tab> gt
+    "nmap <C-S-Tab> gT
+
+    " move between split buffers
+    nmap <C-h> <C-w>h
+    nmap <C-j> <C-w>j
+    nmap <C-k> <C-w>k
+    nmap <C-l> <C-w>l
+
+    " change size of split buffers
+    nmap <S-Up> <C-w>-
+    nmap <S-Down> <C-w>+
+    nmap <S-Right> <C-w>>
+    nmap <S-Left> <C-w><
+
+    " extensions to unimpaired.vim
+    nmap [d yyP
+    nmap ]d yyp
+
+    " scroll properly
+    nnoremap <C-e> <C-e>j
+    nnoremap <C-y> <C-y>k
+    nnoremap <Down> <C-e>j
+    nnoremap <Up> <C-y>k
+
+    " jump between folds properly
+    nmap zj zjzz
+    nmap zk zkzz
+
+    " utility keys
+    nmap <silent> \ :nohlsearch<CR>
+    "nmap <A-r> :registers<CR>
+    "nmap <A-m> :marks<CR>
+
+    " easier navigation
+    nnoremap W b
+    nnoremap H ^
+    nnoremap L $
+    vnoremap W b
+    vnoremap H ^
+    vnoremap L $
+
+  " _insert mappings
+
+  " _visual mappings
+
+  " _command mappings
+
+" _functions
+  nnoremap <F12> "=strftime("%x %X")<CR>P
+  " _strftime format examples
+    "Format String              Example output
+    "-------------              --------------
+    "%c                         Thu 27 Sep 2007 07:37:42 AM EDT (depends on locale)
+    "%a %d %b %Y                Thu 27 Sep 2007
+    "%b %d, %Y                  Sep 27, 2007
+    "%d/%m/%y %H:%M:%S          27/09/07 07:36:32
+    "%H:%M:%S                   07:36:44
+    "%T                         07:38:09
+    "%m/%d/%y                   09/27/07
+    "%y%m%d                     070927
+    "%x %X (%Z)                 09/27/2007 08:00:59 AM (EDT)
+    "
+    "RFC822 format:
+    "%a, %d %b %Y %H:%M:%S %z   Wed, 29 Aug 2007 02:37:15 -0400
+    "
+    "ISO8601/W3C format (http://www.w3.org/TR/NOTE-datetime):
+    "%FT%T%z                    2007-08-29T02:37:13-0400

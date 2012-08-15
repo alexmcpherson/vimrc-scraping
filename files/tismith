@@ -1,0 +1,149 @@
+" Toby Smith's <toby@tismith.id.au> .vimrc file
+" vim: set sts=4 ts=4 sw=4 noet: 
+
+"light background colorscheme.
+set bg=dark
+
+"tab stop (for displaying tab-characters).
+set ts=8
+"shift width (for >> and the like).
+set sw=8
+"soft-tab stop (for Insert-mode tabs).
+set sts=8
+"dont expand my tabs into spaces.
+set noet
+"set et
+
+set autoindent
+
+"read upto 5 modelines from a source file.
+set modeline
+set modelines=5
+
+"disable mouse.
+set mouse=
+
+"turn on syntax colouring
+syntax enable
+"and make sure that filetype detection is enabled
+filetype on
+filetype plugin on
+filetype indent on
+"colorscheme toby
+
+"Enable syntax based code completion
+set omnifunc=syntaxcomplete#Complete
+
+"For the a.vim plugin:
+"Dont create new files if no alternative file (.hpp etc) exists
+let g:alternateNoDefaultAlternate=1
+
+"Run the .sh syntax file in bash mode
+let g:is_bash=1
+
+"If I write to a symbolically linked file, it
+"will break the link and only change a
+"copy in the local directory.
+"NECESSARY for linked source trees.
+"set backupcopy=no
+"set writebackup
+
+"--------------------------------------------------
+" Autocommands
+"--------------------------------------------------
+if !exists("autocommands_loaded")
+	let autocommands_loaded = 1
+	"only use folds where they might be useful.
+	"--------------------------------------------------
+	" autocmd FileType c,cpp,tcl,expect,perl :set foldmethod=indent 
+	" "but only use top-level folds
+	" set fdn=1
+	"--------------------------------------------------	
+
+	"Obj-C syntax needs to be loaded after the exisiting one
+	au FileType objc :runtime after/syntax/objc_enhanced.vim
+
+	"Use arduino coloring for *.pde
+	autocmd! BufNewFile,BufRead *.pde setlocal ft=arduino
+	
+	"Use xml coloring for *.def
+	autocmd! BufNewFile,BufRead *.frm setlocal ft=html
+
+	"Use rbxml coloring for *.pde
+	autocmd! BufNewFile,BufRead *.rb.xml setlocal ft=rbxml
+	"
+	"Use make coloring form *.make
+	autocmd! BufNewFile,BufRead *.make setlocal ft=make
+endif
+
+"--------------------------------------------------
+" Abbreviations
+"-------------------------------------------------- 
+"ab mdln vim: set sts=4 ts=4 sw=4 noet:
+
+"--------------------------------------------------
+" Keymappings
+"-------------------------------------------------- 
+"map <F8> to toggle small/normal tabs
+noremap <F8> :call Toggle_tabs() <CR>
+"map <F9> to toggle mouse support.
+"noremap <F9> :call Toggle_mouse() <CR>
+"Or rather - pastetoggle - much nicer!
+set pastetoggle=<F9>
+"map <F10> to load a tags file from the directory tree.
+noremap <F10> :set tags=tags;/ <CR>
+"map <F11> to cycle BACK through matching tags.
+noremap <F11> :tp <CR>
+"map <F12> to cycle FORWARD through matching tags.
+noremap <F12> :tn <CR>
+
+"--------------------------------------------------
+" Functions
+"-------------------------------------------------- 
+"Toggles mouse support - not *really* needed since 
+"holding down shift lets the terminal control the mouse
+function Toggle_mouse  ()
+	if &mouse == "a" 
+		set mouse=
+		set noai
+	elseif &mouse == "" 
+		set mouse=a
+		set ai
+	endif
+endfunction
+
+"Toggles tab size from 2 to 8 and vice-versa
+let g:tabs_toggler_large = 1
+function Toggle_tabs  ()
+	if g:tabs_toggler_large == 0 
+		let g:tabs_toggler_large = 1	
+		let &ts = g:tab_toggler_ts
+		let &sw = g:tab_toggler_sw
+		let &sts = g:tab_toggler_sts
+	else
+		"save the previous tab settings
+		let g:tabs_toggler_large = 0
+		let g:tab_toggler_ts = &ts
+		let g:tab_toggler_sw = &sw
+		let g:tab_toggler_sts = &sts
+		let &ts = 2
+		let &sw = 2
+		let &sts = 2
+	endif
+endfunction
+
+"--------------------------------------------------
+" set wildmode=list:longest:full "make cmdline tab completion similar to bash
+" set wildmenu "enable ctrl-n and ctrl-p to scroll thru matches
+" "stuff to ignore when tab completing and CommandT
+" set wildignore=*.o,*.obj,*~,*.sassc,*.png,*.PNG,*.JPG,*.jpg,*.GIF,*.gif,*.doc,*.DOC,*.pdf,*.PDF,*.ppt,*.docx,*.pptx,*.wpd,*.rtf,*.eps,*.psd,*.ttf,*.otf,*.eot,*.svg,*.woff,*.mp3,*.mp4,*.m4a,*.wav,"log/**","vendor/**","coverage/**","tmp/**"
+"-------------------------------------------------- 
+
+nnoremap \cd :silent call <SID>CVSDiff()<Enter>
+function! s:CVSDiff()
+	new
+	setlocal buftype=nofile
+	r ! cvs diff #
+	1 delete
+	filetype detect
+endfunction

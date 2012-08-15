@@ -1,0 +1,109 @@
+" Enable pathogen
+" https://github.com/tpope/vim-pathogen
+filetype off
+call pathogen#infect()
+"call pathogen#runtime_append_all_bundles()
+
+" Enable color theme: solarized
+" https://github.com/altercation/vim-colors-solarized
+syntax enable
+set background=dark
+colorscheme solarized 
+
+"
+filetype plugin indent on
+
+" Set screen size
+set lines=40 columns=145
+
+" Set font and its size
+set guifont=Monaco:h12
+
+" Lots of these come from:
+" http://stevelosh.com/blog/2010/09/coming-home-to-vim/#important-vimrc-lines
+" Gets rid of all crap that Vim does to be vi compatible
+set nocompatible
+
+" Set window transparency
+" This line must be put under set nocompatible, otherwise it won't work in .vimrc
+" http://vim.1045645.n5.nabble.com/transparency-not-working-in-gvimrc-td1215129.html
+set transparency=2
+
+" Prevents some security exploits
+set modelines=0
+
+" Tab settings
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+set expandtab
+
+" Get rid of annoying toolbar in GUI mode by default
+" http://jonatkinson.co.uk/removing-toolbar-macvim/
+if has("gui_running")
+    set guioptions=egmrt
+endif
+
+" Even more
+" -----------------------
+set encoding=utf-8
+set scrolloff=3
+set autoindent
+set showmode
+set showcmd
+set hidden
+set wildmenu
+set wildmode=list:longest
+set visualbell
+set cursorline
+set ttyfast
+set ruler
+set backspace=indent,eol,start
+set laststatus=2
+" Changes Vim’s line number column to display how far away each line is from
+" the current one, instead of showing the absolute line number.
+"set relativenumber
+set number
+" Generate unfo files as <FILENAME>.un~
+set undofile
+set undodir=~/.vimundo
+set undolevels=1000
+
+" Tame searching / moving
+" ------------------------
+" Make Vim deal with case-sensitive search intelligently
+set ignorecase
+set smartcase
+" Highlight search results as you type
+set incsearch
+set showmatch
+set hlsearch
+
+" Handle long lines
+" -----------------------
+set wrap
+set textwidth=137
+set formatoptions=qrn1
+" Show a colored column at 85 characters
+set colorcolumn=140
+
+" Disable arrow keys while in normal mode
+"nnoremap <up> <nop>
+"nnoremap <down> <nop>
+"nnoremap <left> <nop>
+"nnoremap <right> <nop>
+"inoremap <up> <nop>
+"inoremap <down> <nop>
+"inoremap <left> <nop>
+"inoremap <right> <nop>
+
+" Movement by file line instead of screen line
+nnoremap j gj
+nnoremap k gk
+
+" Switch tab quickly using Ctrl Tab
+" http://ilessendata.blogspot.com/2011/05/vimrc-switching-tabs-in-macvim.html
+noremap <c-tab> :tabnext<cr>
+
+" TextMate feature: save on losing focus
+" au FocusLost * :wa

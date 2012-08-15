@@ -1,0 +1,165 @@
+call pathogen#infect()
+set nocompatible
+
+" User interaction
+colorscheme mustang
+set hidden
+if has('gui_running')
+  set guifont=Terminus\ 12
+  set guioptions-=m  "remove menu bar
+  set guioptions-=T  "remove toolbar
+  set guioptions-=r  "remove right-hand scroll bar
+  set lines=39
+  set columns=110
+endif
+set colorcolumn=81
+nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
+nnoremap <leader>r :NumbersToggle<CR>
+nmap <silent> <leader>p :NERDTreeToggle<CR>
+nmap <silent> <leader>t :TagbarToggle<CR>
+nmap <C-j> <C-w>j
+nmap <C-k> <C-w>k
+nmap <C-h> <C-w>h
+nmap <C-l> <C-w>l
+
+" Syntax related options
+syntax on
+set t_Co=256
+set showmatch       " show matching braces
+set autoindent
+set smartindent
+set number
+
+" Disable sounds
+set noerrorbells
+set novisualbell
+set t_vb=
+set tm=500
+
+" Disable backups
+set nobackup
+set nowb
+set noswapfile
+
+" Statusline related options
+set laststatus=2
+
+" Tabulation related options
+set expandtab
+set shiftwidth=4
+set tabstop=4
+set softtabstop=4
+set smarttab
+
+" Use Q for formatting the current paragraph (or selection)
+vmap Q gq
+nmap Q gqap
+
+" Filetype related options
+filetype on
+filetype plugin on
+filetype indent on
+
+" Don't expand tabs in Makefiles
+au Filetype Makefile set noexpandtab
+
+" Menu related options
+set wildmenu        " enable wild menu
+set wildchar=<TAB>  " scroll through wild menu on tab
+
+" Search related options
+set ignorecase      " case-insensetive search
+set smartcase
+set hlsearch        " highlight matched results
+set incsearch       " search while typing
+nmap <silent> ,/ :nohlsearch<CR>
+
+" Misc options
+set autoread        " autoreload file, when it is modified from outside
+
+" Powerline trailing segment
+call Pl#Theme#InsertSegment('ws_marker', 'after', 'lineinfo')
+
+" Close vim if only NERDTree is left
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+
+" Autoremove trailing spaces
+autocmd BufWritePre * :%s/\s\+$//e
+
+" Russian keymap
+map ё `
+map й q
+map ц w
+map у e
+map к r
+map е t
+map н y
+map г u
+map ш i
+map щ o
+map з p
+map х [
+map ъ ]
+map ф a
+map ы s
+map в d
+map а f
+map п g
+map р h
+map о j
+map л k
+map д l
+map ж ;
+map э '
+map я z
+map ч x
+map с c
+map м v
+map и b
+map т n
+map ь m
+map б ,
+map ю .
+map Ё ~
+map Й Q
+map Ц W
+map У E
+map К R
+map Е T
+map Н Y
+map Г U
+map Ш I
+map Щ O
+map З P
+map Х {
+map Ъ }
+map Ф A
+map Ы S
+map В D
+map А F
+map П G
+map Р H
+map О J
+map Л K
+map Д L
+map Ж :
+map Э "
+map Я Z
+map Ч X
+map С C
+map М V
+map И B
+map Т N
+map Ь M
+map Б <
+map Ю >
+
+" Stop using arrow keys! STOP! Just stop, okay?
+noremap <Up> <nop>
+noremap <Down> <nop>
+noremap <Left> <nop>
+noremap <Right> <nop>
+inoremap <Up> <nop>
+inoremap <Down> <nop>
+inoremap <Left> <nop>
+inoremap <Right> <nop>

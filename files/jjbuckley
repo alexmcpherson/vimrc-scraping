@@ -1,0 +1,174 @@
+" JJ's .vimrc file
+" ================
+
+" Vundle section
+filetype off
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+
+Bundle 'vundle'
+" Ruby helpers
+Bundle 'tpope/vim-rake'
+" Rails helpers
+Bundle 'tpope/vim-rails'
+" Bundler
+Bundle 'tpope/vim-bundler'
+" RVM
+Bundle 'tpope/vim-rvm'
+" git
+Bundle 'tpope/vim-fugitive'
+" do/end matching
+Bundle 'tpope/vim-endwise'
+" bracket/tag selection
+Bundle 'tpope/vim-surround'
+" Navigation shortcuts
+Bundle 'tpope/vim-unimpaired'
+" Enhanced .
+Bundle 'tpope/vim-repeat'
+" Markdown syntax
+Bundle 'tpope/vim-markdown'
+" HAML/SASS syntax
+Bundle 'tpope/vim-haml'
+" TextMate-ey colorscheme
+Bundle 'tpope/vim-vividchalk'
+" Comment things
+Bundle 'tpope/vim-commentary'
+" Another colorscheme
+Bundle 'blackboard.vim'
+" And another.
+Bundle 'altercation/vim-colors-solarized'
+" HTML5 syntax/completion
+Bundle 'html5.vim'
+" Quotes, etc
+Bundle 'Raimondi/delimitMate'
+" More TextMate inspired goodness
+Bundle 'msanders/snipmate.vim'
+" End of vundle section
+
+filetype plugin indent on
+
+set nocompatible
+
+" Stupid DOS...
+set shellslash
+
+" Make my shell take commands (-c)  as if I'm logged in (-l)
+set shellcmdflag=-cl
+
+" Long lines are (often) hard to read
+set textwidth=80
+
+" The usual shiftwidth things
+set shiftwidth=2
+set tabstop=2
+set expandtab
+
+" Incremental search
+set incsearch
+
+" Useful grep
+set grepprg=grep\ -rinsE
+
+" Always cd to the directory of the current file - NO!
+" set noautochdir
+
+" Ignore white-space changes in diffs, and use filler lines to keep split-diffs
+" symmetrical.
+set diffopt=filler,iwhite
+
+" Shell-like completion
+set wildmenu
+set wildmode=list:longest
+
+" Set the title in shells
+set title
+
+" Show more lines around the cursor when scrolling
+set scrolloff=3
+
+" File position info
+set ruler
+
+" Disable beep (flash screen instead), to annoy fewer co-workers
+set visualbell t_vb=
+
+" Status line
+set laststatus=2
+
+" Show line numbers
+set number
+
+" Allow hiding of modified buffers
+set hidden
+
+" Sensible invisibile characters (hit \l to see)
+map <Leader>l :set list!<CR>
+set listchars=tab:→·,eol:¶,trail:·
+
+" For opening files in the same directory as the current
+map <Leader>ew :edit <C-R>=expand("%:p:h") ."/"<CR>
+map <Leader>es :split <C-R>=expand("%:p:h") ."/"<CR>
+map <Leader>ev :vsplit <C-R>=expand("%:p:h") ."/"<CR>
+
+" I like modelines
+set modeline
+
+" ,e - Edit another file in the same directory as the current file.
+map ,e :e <C-R>=expand("%:p:h") . "/"<CR>
+
+" Spell-check - Me speaky the kweenz inglish
+set spelllang=en_gb
+map <F7> :setlocal spell!<CR>
+
+" Open a file browser in the current buffer's directory
+map <F11> :browse e %:h<CR>
+
+" Hypersearch for word (prompt) - filled in with current file's dir and
+" extension, and the cursor is left on the word (prefilled to <cword>).
+" This is one I use all the time.
+map <F5> :vimgrep /\<<C-R>=expand("<cword>")<CR>\>/j **/*<C-R>=expand("%:e")<CR><C-Left><Left><Left><Left><Left><Left>
+
+if has("gui_running")
+  " No toolbar, no menu (in GUI mode)
+  set guioptions-=T " no toolbar
+  set guioptions-=m " no menu
+  set guioptions-=r " no constant right-hand scrollbar
+  try
+    if has("gui_macvim")
+      set guifont=monaco:h14 " My Mac is on a TV, so big fonts, please.
+    elseif has("gui_gtk2")
+      "set guifont=Monaco\ 10 " You need to download this, most likely.
+      set guifont=Monospace\ 11 " Sensible fallback
+    endif
+  catch /.*/
+    set guifont=Monospace\ 11 " Sensible fallback
+  endtry
+end
+
+" Quick text wrapping
+command! -nargs=* Wrap set wrap linebreak nolist
+
+" Automatically re-read modified files
+set autoread
+
+syntax on " What editor worth its salt doesn't show your syntax?
+
+" Some useful bits from http://writequit.org/blog/?p=195
+" If I forgot to sudo vim a file, do that with :w!!
+cmap w!! %!sudo tee > /dev/null %
+
+" Enable tags in the user help files
+if isdirectory('~/.vim/doc')
+  helptags ~/.vim/doc
+endif
+
+" Fugitive settings
+set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
+autocmd BufReadPost fugitive://* set bufhidden=delete
+
+" Rails tags - exclude stupid directories
+let g:rails_ctags_arguments="--exclude log --exclude tmp --exclude doc --exclude db"
+
+if ('has_gui')
+  colorscheme solarized
+endif

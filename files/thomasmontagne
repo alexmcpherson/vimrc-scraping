@@ -1,0 +1,67 @@
+" .vimrc
+
+" Must come first
+set nocompatible
+
+" Pathogen
+silent! call pathogen#runtime_append_all_bundles()
+
+"############"
+"  Behavior  "
+"############"
+
+" Leader
+let mapleader=" "
+
+" Set hidden
+set hidden
+
+" Highlight search (as I type)
+set hlsearch
+set incsearch
+
+" Case-insensitive searching, except if use uppercase
+set ignorecase
+set smartcase
+
+" Don't make a backup before overwriting a file.
+set nobackup
+set nowritebackup
+
+" Keep swap files in one location
+set directory=$HOME/.vim/tmp//,.
+
+" Keep a bit more context
+set scrolloff=3
+
+"###########"
+"  Display  "
+"###########"
+
+" Vivid Chalk colors
+colorscheme vividchalk
+
+" No intro screen
+set shortmess+=I
+
+" Syntax highlighting
+syntax enable
+
+" Wrap
+set wrap
+
+" Set the terminal title
+set title
+
+" Display the mode
+set showmode
+
+" Show line numbers
+set number
+
+" Show cursor position
+set ruler
+
+" Useful status information at bottom of screen
+set laststatus=2 
+set statusline=[%n]\ %<%.99f\ %h%w%m%r%y\ %{exists('*CapsLockStatusline')?CapsLockStatusline():''}%=%-16(\ %l,%c-%v\ %)%P

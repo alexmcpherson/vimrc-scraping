@@ -1,0 +1,80 @@
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+
+Bundle 'gmarik/vundle'
+Bundle 'tpope/vim-fugitive'
+Bundle 'tpope/vim-rails.git'
+Bundle 'mattn/gist-vim'
+Bundle 'Lokaltog/vim-powerline'
+Bundle 'scrooloose/nerdtree'
+
+" Auto Commands
+if has("autocmd")
+  " enable filetype detection
+  filetype plugin indent on
+
+  autocmd BufReadPost *
+    \ if line("'\"") > 1 && line("'\"") <= line("$") |
+    \   exe "normal! g`\"" |
+    \ endif
+
+  "automatically source config on write
+  autocmd BufWritePost .vimrc source $MYVIMRC
+endif
+
+let mapleader = "\\"
+
+" Tabbing
+set tabstop=2
+set softtabstop=2
+set shiftwidth=2
+set expandtab
+nmap <silent> <leader>t :retab<CR>
+
+" Appearance
+set ruler
+set number
+set title
+colorscheme sunburst
+set background=dark
+syntax enable
+set nocursorline
+set nocursorcolumn
+set t_Co=256
+let g:Powerline_symbols = "fancy"
+
+"Searching
+set hlsearch
+nnoremap <silent> <leader> <space> :noh<CR>
+
+" Misc
+set nocompatible
+set nobackup
+set backspace=eol,start,indent
+set ai
+set si
+set cindent
+set ofu=syntaxcomplete#Complete "Enable syntax completion
+set modelines=0 "disable the use of modelines
+set encoding=utf-8
+set ttyfast
+
+" Spell Checking
+set spelllang=en_us
+nmap <silent> <leader>s :set spell!<CR>
+
+" Show Invisibles
+set list
+set listchars=tab:▸\ ,eol:¬
+nmap <silent> <leader>l :set list!<CR>
+
+" Line Wrapping
+set wrap
+set linebreak
+
+"Save when lose focus
+au FocusLost silent! :wa
+
+"NERDTree
+map <F2> :NERDTreeToggle<CR>
+let NERDTreeIgnore=['.vim$', '\~$']

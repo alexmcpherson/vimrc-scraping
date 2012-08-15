@@ -1,0 +1,278 @@
+" Vim configuration
+" Maintained by Sebastian Menski <sebastian.menski@googlemail.com>
+" URL: https://github.com/menski/vimrc
+"
+" Dependencies:
+"
+"
+" Shortcuts:
+"
+"
+
+
+" Vundle setup {{{
+filetype off
+set rtp+=~/.vim/bundle/vundle
+call vundle#rc()
+
+    " Bundles {{{
+    Bundle 'gmarik/vundle'
+    Bundle 'tpope/vim-fugitive'
+    Bundle 'tpope/vim-surround'
+    Bundle 'tpope/vim-repeat'
+    Bundle 'tpope/vim-abolish'
+    Bundle 'tomtom/tcomment_vim'
+    Bundle 'scrooloose/nerdtree'
+    Bundle 'wincent/Command-T'
+    Bundle 'mileszs/ack.vim'
+    Bundle 'sjl/gundo.vim'
+    Bundle 'msanders/snipmate.vim'
+    Bundle 'TaskList.vim'
+    Bundle 'mattn/webapi-vim'
+    Bundle 'mattn/gist-vim'
+    Bundle 'YankRing.vim'
+    Bundle 'LustyJuggler'
+    Bundle 'vimoutliner/vimoutliner'
+    Bundle 'nvie/vim-flake8'
+    Bundle 'LaTeX-Box-Team/LaTeX-Box'
+    " }}}
+" }}}
+
+" Settings {{{
+    " Source man.vim for :Man command
+    runtime ftplugin/man.vim
+    " Write with also with W
+    command! W :w
+
+    " File type detection and syntax highlighting {{{
+    filetype plugin indent on
+    colorscheme default
+    syntax on
+    " }}}
+
+    " Basic settings {{{
+    set nocompatible
+    set termencoding=utf-8
+    set encoding=utf-8
+    set scrolloff=3
+    set relativenumber
+    set numberwidth=1
+    set hidden
+    set cindent
+    set autoindent
+    set copyindent
+    set backspace=indent,eol,start
+    set wildmenu
+    set wildmode=list:longest
+    set wildignore=*.swp,*.bak,*.pyc,*.class
+    set title
+    set novisualbell
+    set cursorline
+    set noerrorbells
+    set mouse=a
+    set nomodeline
+    set cryptmethod=blowfish
+    set foldenable
+    set foldmethod=marker
+    set foldlevelstart=0
+    set foldopen=block,hor,insert,jump,mark,percent,quickfix,search,tag,undo
+    "}}}
+
+    " Status line {{{
+    set showmode
+    set showcmd
+    set laststatus=2
+    set statusline=%<%n:%f\ %y[%{&ff}]%r%m%=%-19(%3l,%02c%03V%)%7(%P%)\ [%LL]\ %{fugitive#statusline()}\ [%<%1.20{getcwd()}]
+    " }}}
+
+    " Tab settings {{{
+    set tabstop=4
+    set shiftwidth=4
+    set softtabstop=4
+    set expandtab
+    set shiftround
+    set smarttab
+    " }}}
+
+    " Searching {{{
+    set ignorecase
+    set smartcase
+    set gdefault
+    set incsearch
+    set showmatch
+    set nohlsearch
+    " }}}
+
+    " Text wrapping {{{
+    set wrap
+    set linebreak
+    set showbreak=↳
+    set textwidth=78
+    set formatoptions=qrn1
+    " }}}
+
+    " Spell checking {{{
+    set nospell
+    set spelllang=de_de,en_us
+    " }}}
+
+    " Unprintable characters {{{
+    set nolist
+    set listchars=tab:»-,trail:▸,eol:¶,extends:>,precedes:<
+    " }}}
+
+    " Temp, Save, Undo and YankRing Files {{{
+    set history=1000
+    set undofile
+    set undolevels=1000
+    set backupdir=~/.vim/tmp,~/tmp,/tmp
+    set directory=~/.vim/tmp,~/tmp,/tmp
+    set undodir=~/.vim/tmp,~/tmp,/tmp
+    let g:yankring_history_dir='~/.vim/tmp'
+    let g:yankring_history_file='.yankring'
+    " }}}
+
+    " Bundles {{{
+        " LustyJuggler
+        let g:LustyJugglerDefaultMappings = 0
+    " }}}
+" }}}
+
+" Shortcuts {{{
+
+    " Improvements {{{
+        " Disable help {{{
+        inoremap <F1> <ESC>
+        nnoremap <F1> <ESC>
+        vnoremap <F1> <ESC>
+        " }}}
+
+        " Use normal regex during search {{{
+        nnoremap / /\v
+        vnoremap / /\v
+        " }}}
+
+        " Use tab for matching brackets {{{
+        nnoremap <tab> %
+        vnoremap <tab> %
+        " }}}
+
+        " Write file with sudo privileges
+        cnoremap w!! w !sudo tee % >/dev/null
+
+        " Toggle paste mode
+        set pastetoggle=<F5>
+    " }}}
+
+    " Movements {{{
+        " Movements based on screen lines {{{
+        nnoremap j gj
+        nnoremap k gk
+        nnoremap 0 g0
+        nnoremap $ g$
+        " }}}
+
+        " Simple window movements {{{
+        nnoremap <C-h> <C-w>h
+        nnoremap <C-j> <C-w>j
+        nnoremap <C-k> <C-w>k
+        nnoremap <C-l> <C-w>l
+        " }}}
+
+        " Map tab movement to <leader>-# and <leader>-tab {{{
+        map <leader><tab> gt
+        map <leader><S-tab> gT
+        map <leader>1 1gt
+        map <leader>2 2gt
+        map <leader>3 3gt
+        map <leader>4 4gt
+        map <leader>5 5gt
+        map <leader>6 6gt
+        map <leader>7 7gt
+        map <leader>8 8gt
+        map <leader>9 9gt
+        map <leader>0 :tablast<CR>
+        " }}}
+    " }}}
+
+    " Leader mappings {{{
+        " Change leader character from '\' to ','
+        let mapleader=','
+
+        " Toggle unprintable characters
+        nnoremap <leader>l :set list!<CR>
+
+        " Toggle search highlighting
+        nnoremap <leader>h :set hlsearch!<CR>
+
+        " Toggle spell checking {{{
+        nnoremap <leader>s :setlocal spell!<CR>
+        nnoremap <leader>n ]s
+        nnoremap <leader>N [s
+        " }}}
+
+        " Strip all trailing whitespace
+        nnoremap <leader>W :%s/\s\+$//<CR>:let @/=''<CR>
+
+        " Toggle folding {{{
+        nnoremap <space> za
+        vnoremap <space> zf
+        " }}}
+
+        " Rewrap paragraph {{{
+        nnoremap <leader>q gqip
+        vnoremap <leader>q gq
+        " }}}
+
+        " Copy until the end of the line
+        nnoremap Y y$
+
+        " Copy/Paste to clipboard {{{
+        nnoremap <leader>y "*y
+        nnoremap <leader>Y "*yy
+        nnoremap <leader>p "*p
+        " }}}
+
+        " Select pasted text
+        nnoremap <leader>v V`]
+
+        " Split window
+        nnoremap <leader>w <C-w>v<C-w>l
+
+        " Additional editing command with path expansion {{{
+        cnoremap %% <C-R>=expand('%:h').'/'<cr>
+        nnoremap <leader>ew :e %%
+        nnoremap <leader>es :sp %%
+        nnoremap <leader>ev :vsp %%
+        nnoremap <leader>et :tabe %%
+        " }}}
+
+        " Jump to last buffer
+        nnoremap <leader>, :e#<CR>
+
+        " Quickly edit/reload the vimrc file {{{
+        nnoremap <silent> <leader>v :e $MYVIMRC<CR>
+        nnoremap <silent> <leader>V :so $MYVIMRC<CR>
+        " }}}
+    " }}}
+
+    " Bundles {{{
+        " NERDTree
+        nnoremap <F2> :NERDTreeToggle<CR>
+
+        " CommandT files
+        nnoremap <leader>f :CommandT<CR>
+
+        " Faster ack command
+        nnoremap <leader>a :Ack<space>
+
+        " Toggle Gundo
+        nnoremap <F4> :GundoToggle<CR>
+
+        " Lusty Juggler
+        nnoremap <leader>j :LustyJuggler<CR>
+
+        " YankRing
+        nnoremap <F3> :YRShow<CR>
+    " }}}
+" }}}

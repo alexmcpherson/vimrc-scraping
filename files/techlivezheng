@@ -1,0 +1,263 @@
+"====== pathogin.vim ======
+" Manage vim plugins in its own private directory.
+" https://github.com/tpope/vim-pathogen/
+" http://www.vim.org/scripts/script.php?script_id=2332
+runtime bundle/plugin-pathogen/autoload/pathogen.vim
+call pathogen#infect()
+call pathogen#helptags()
+
+"====== Basic Settings ====== {{{1
+" Change Leader key into a comma instead of a backslash
+let mapleader=","
+
+" Edit and reload .vimrc file
+nmap <silent> <Leader>ev :e $MYVIMRC<CR>
+nmap <silent> <Leader>es :so $MYVIMRC<CR>
+
+"------ Common Settings ------ {{{2
+set nocompatible            "Prevent VIM from being nerfed into acting like VI
+set viminfo='1000,f1,:1000,/1000
+set history=1000            "Remember more commands and search history
+set undolevels=1000         "Use many muchos levels of undo
+
+"------ Visual Settings ------ {{{2
+syntax on                   "Enable syntax highlighting
+set title                   "Change the terminal's title
+set ruler                   "Display cursor position on the bottom right of screen
+set number                  "Show line number
+set nowrap                  "Don't not wrap lines
+set nolist                  "Don't list invisiable chars
+set showmatch               "Show matching parenthesis
+set cpoptions+=$            "Show editing range for change command
+set visualbell              "Visual bell instead of beep
+set noerrorbells            "Don't beep on error
+set colorcolumn=80
+set cursorline              "Highlight current line
+set cursorcolumn            "Highlight current column
+set listchars=tab:▸-,eol:¬,extends:>,precedes:<
+
+"------ Behavior Settings ------ {{{2
+set hidden                  "Switch between unsaved buffers no need to save, preserves history
+set wildmenu                "Show avaliable ex command
+set backspace=eol,start,indent
+                            "Allow backspacing over everything in insert mode
+
+set directory^=/tmp//       "put all swap files together in one place
+
+"------ Ignored Files ------ {{{3
+set wildignore+=*.swp,*.bak
+set wildignore+=CVS,.svn,.git
+set wildignore+=*.jpg,*.png,*.xpm,*.gif
+set wildignore+=*.o,*.a,*.mo,*.la,*.so,*.obj,*.pyc,*.class
+
+"------ Tab and Indent ------ {{{3
+set tabstop=4               "tab = 4 spaces
+set smarttab                "Insert tabs on the start of a line according to shiftwidth
+set expandtab               "Use spaces instead of tabs
+set autoindent              "Autoindenting on
+set copyindent              "Copy the previous indentation on autoindenting
+set shiftround              "Use multiple of shiftwidth when indenting with '<' and '>'
+set shiftwidth=4            "Indent to four spaces
+
+"------ Searching Settings ------ {{{3
+set incsearch               "Search while typing
+set smartcase               "Ignore case if search pattern is all lowercase, case-sensitive otherwise
+set ignorecase              "Case Insensitive Searching
+set nohlsearch              "Don't Highlight search results
+
+"------ Code Fold Settings ------ {{{3
+set foldenable
+set foldcolumn=1
+set foldmethod=marker
+
+"------ Filetype Related Settings ------ {{{3
+filetype plugin on
+filetype indent on          "Indent intelligence based on the syntax rules for the file type
+"}}}1
+
+"====== Color Settings ====== {{{1
+" Peaksea:
+" Better in diff view.
+" http://www.vim.org/scripts/script.php?script_id=760
+" Mustang:
+" Better when t_Co is 256.
+" http://hcalves.deviantart.com/art/Mustang-Vim-Colorscheme-98974484
+" Solarized:
+" A much more adaptable colorscheme, needs extra coinfigurations for terminals.
+" http://ethanschoonover.com/solarized
+if &t_Co >= 8 || has("gui_running")
+    " For a Tmux or Screen session, the inside color support depend on the
+    " outside $TERM setting. The outside color support should be equal or
+    " greater than the inside.
+    if &term =~ "linux" " A linux console
+        set t_Co=8
+    elseif &term =~ "xterm-256color" " A X terminal emulator, 256 colors
+        " This could also been configured by setting $TERM shell environmental
+        " variable to 'xterm-256color' in $HOME/.xprofile or $HOME/.xinitrc
+        " to take effect when X is loading.
+        set t_Co=256
+    elseif &term =~ "xterm" " A X terminal emulator
+        set t_Co=8
+    elseif &term =~ "screen-256color" " Tmux or Screen, 256 colors
+        " For Tmux, the defualt terminal could be set to 'screen-256color' by
+        " having `set -g default-terminal "screen-256color"` in tmux.conf file.
+        set t_Co=256
+    elseif &term =~ "screen" " Tmux or Screen
+        set t_Co=16
+    endif
+
+    set background=dark
+
+    if &diff
+        colorscheme peaksea
+    elseif has("gui_running")
+        colorscheme solarized
+    elseif &t_Co >= 256
+        " Solarized colorscheme is not designed for 256 colors, we could just
+        " use a colorscheme designed for 256 colors instead.
+        colorscheme mustang
+        " If using Solarized is required, then it should be configured to run
+        " under 256 colors compatible mode.
+        "let g:solarized_termcolors=256
+        "colorscheme solarized
+    elseif &t_Co >= 16
+        " In a X terminal emulator, the colorscheme should use 'Solarized
+        " Palette' in order to get solarized colorscheme working properly.
+        colorscheme solarized
+    else
+        " Solarized colorscheme works great under 8 colors support.
+        colorscheme solarized
+    endif
+
+    "Cursorline and cursorcolumn style
+    if &t_Co >= 256
+        highlight CursorLine term=bold cterm=bold
+        highlight CursorColumn guibg=Gray40
+    else
+        highlight CursorLine term=bold cterm=bold
+        highlight CursorColumn ctermbg=DarkMagenta
+    endif
+    highlight ColorColumn ctermbg=LightGray
+endif
+"}}}1
+
+"====== All Key Mappings ====== {{{1
+" F2 = Paste Toggle (in insert mode, pasting indented text behavior changes)
+set pastetoggle=<F2>
+
+" Life saver
+nnoremap ; :
+
+" Lone line up down problem solve
+nnoremap j gj
+nnoremap k gk
+
+" Enable hlsearch
+nnoremap / :set hlsearch<CR> /
+nnoremap ? :set hlsearch<CR> ?
+nnoremap * :set hlsearch<CR> *
+nnoremap # :set hlsearch<CR> #
+
+" Toggle hlsearch
+nnoremap <leader>hl :nohlsearch<CR>
+
+" Clean search pattern
+nnoremap <leader>cs :let @/ = ""<CR>
+
+"------ Move between buffers ------- {{{3
+nnoremap <Leader>hh :bprev<CR>
+nnoremap <Leader>ll :bnext<CR>
+"}}}3
+
+"------ Moving between Windows ------ {{{3
+nnoremap <C-h>      <C-w>h
+nnoremap <Leader>h  <C-w>h
+nnoremap <C-l>      <C-w>l
+nnoremap <Leader>l  <C-w>l
+nnoremap <C-j>      <C-w>j
+nnoremap <Leader>j  <C-w>j
+nnoremap <C-k>      <C-w>k
+nnoremap <Leader>k  <C-w>k
+"}}}3
+
+"------ Window operations ------ {{{3
+nnoremap <Leader>wo <C-w>o
+nnoremap <Leader>ws <C-w>s
+"Closes the current window
+nnoremap <Leader>wq <C-w>c
+nnoremap <Leader>ww <C-w><C-w>
+nnoremap <Leader>wv <C-w>v<C-w>l
+"}}}3
+
+" Stop using arrow keys to navigate, they are evil
+map <up>    <nop>
+map <down>  <nop>
+map <left>  <nop>
+map <right> <nop>
+
+" ,c = Copy
+map <Leader>c "+y
+" ,v = Paste
+map <Leader>v "+gP
+" ,U = Delete unwanted empty lines
+map <Leader>U :g/^$/d<CR>
+" ,T = Delete all the trailing space
+map <Leader>T :%s/\s\+$//<CR>
+" ,L = Toggle line numbers
+map <Leader>L :set invnumber<CR>
+" ,R = Convert tabs to spaces
+map <Leader>r :set expandtab<CR> :retab!<CR>
+" ,r = Convert spaces to tabs
+map <Leader>R :set noexpandtab<CR> :retab!<CR>
+" ,ct = Builds ctags
+map <Leader>ct :! /usr/bin/ctags -R *<CR>
+" ,cd = Switch to the directory of the open buffer
+map <Leader>cd :cd %:p:h<CR>
+" Opens a file with the path of the currently edited file prefixed
+" in a buffer in Normal mode
+map <Leader>ee :e <C-R>=expand("%:p:h") . "/" <CR>
+" Opens a file with the path of the currently edited file prefixed
+" in a new tab in Normal mode
+map <Leader>et :tabe <C-R>=expand("%:p:h") . "/" <CR>
+
+" Using sudo to save a already opened privileged file
+cmap w!! w !sudo tee % >/dev/null
+
+" Use Q for formatting the current paragraph (or selection)
+vmap Q gq
+nmap Q gqap
+"}}}1
+
+"====== Thirdparty Plugin Settings ====== {{{1
+"------  Tagbar Plugin ------ {{{2
+" http://www.vim.org/scripts/script.php?script_id=3465
+" https://github.com/majutsushi/tagbar
+let g:tagbar_sort=0
+let g:tagbar_width=36
+
+noremap <silent> <Leader>py :TagbarToggle<CR>
+
+"------  NERDTree Plugin ------ {{{2
+" http://www.vim.org/scripts/script.php?script_id=1658
+" https://github.com/scrooloose/nerdtree/
+let NERDTreeIgnore=['CVS']
+let NERDTreeChDirMode=2     "setting root dir in NT also sets VIM's cd
+
+noremap <silent> <Leader>pn :NERDTreeToggle<CR>
+
+" Toggle NerdTree at vim starting
+"autocmd VimEnter * NERDTree     "run nerdtree
+
+" These prevent accidentally loading files while in the NERDTree panel
+autocmd FileType nerdtree noremap <buffer> <c-left>  <nop>
+autocmd FileType nerdtree noremap <buffer> <c-h>     <nop>
+autocmd FileType nerdtree noremap <buffer> <c-right> <nop>
+autocmd FileType nerdtree noremap <buffer> <c-l>     <nop>
+"}}}1
+
+"====== Local Overwrite Settings ======
+if filereadable($HOME.'/.vimrc_local')
+    source $HOME/.vimrc_local
+endif
+
+" vim: foldenable foldmethod=marker foldcolumn=1

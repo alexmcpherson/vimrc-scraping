@@ -1,0 +1,136 @@
+"" Use pathogen to load plugins
+call pathogen#runtime_append_all_bundles()
+
+"" Get all of VIM's features
+set nocompatible
+
+"" Change the leader to the easier to type ','
+let mapleader=","
+
+"" Make backspace work like I think it should
+set backspace=start,indent,eol
+
+"" Bracket/parenthesis matching on
+set showmatch
+
+"" Show position in file in the statusline
+set ruler
+
+"" Remove the bell
+set vb "t_vb=
+
+"" Always include a status line
+set laststatus=2
+
+"" Hide buffers when abandoned (no warning on buffer switch when buffer is
+"" modified
+set hidden
+
+"" GUIish for terminal vim
+set t_Co=256
+syntax on
+colo zenburn
+
+"" Enable mouse
+set mouse=a
+
+"" Correct tabbing
+set autoindent
+set tabstop=2
+set shiftwidth=2
+set expandtab
+
+"" Searching
+set incsearch
+set hls
+
+"" Line numbers
+set number
+
+"" Folding
+set foldcolumn=0
+set foldmethod=syntax
+set foldlevelstart=99
+
+"" Don't create backups
+set nobackup
+set nowritebackup
+set noswapfile
+
+"" Use ack instead of grep
+set grepprg=ack
+
+"" Status line
+set statusline=%<\ %f\ %{fugitive#statusline()}\ %{exists('g:loaded_rvm')?rvm#statusline():''}\ %h%m%r%=%-14.(%l,%c%V%)\ %P\ 
+
+"" Turn on plugin and indent for filetypes
+filetype plugin indent on
+
+"" Map Ctrl+c to Esc to allow Ctrl+c escape from everything
+map <C-c> <ESC>
+
+"" Command line completion
+set wildmode=longest,list,full
+set wildmenu
+
+"" Disable arrow keys
+map <up> <nop>
+map <down> <nop>
+map <left> <nop>
+map <right> <nop>
+imap <up> <nop>
+imap <down> <nop>
+imap <left> <nop>
+imap <right> <nop>
+
+"" Remove line numbers
+map <silent><F2> :set nonumber!<CR>
+
+"" Get a diff of the changes in a buffer to the original
+command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
+
+"" NERD Tree shortcuts
+map <silent><Leader>d :execute 'NERDTreeToggle "' . getcwd() . '"'<CR>
+
+"" Toggle scratch.vim
+function! ToggleScratch()
+  if expand('%') == g:ScratchBufferName
+    quit
+  else
+    Sscratch
+  endif
+endfunction
+
+map <silent><Leader>s :call ToggleScratch()<CR>
+
+"" Bind CTRL-n CTRL-p to cycle through grep
+map <silent><Leader>n :cn<CR>
+map <silent><Leader>p :cp<CR>
+
+"" Rails.vim bindings
+map <silent><Leader>r :Rake<CR>
+
+"" Git bindings
+map <silent><Leader>gs :Gstatus<CR>
+map <silent><Leader>gc :Gcommit<CR>
+
+" Show syntax highlighting groups for word under cursor
+nmap <C-S-P> :call <SID>SynStack()<CR>
+function! <SID>SynStack()
+  if !exists("*synstack")
+    return
+  endif
+  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+endfunc
+
+"" TMarks bindings
+map <silent><Leader>m<Space> :TMarks<CR>
+map <silent><Leader>ma :TMarkstoggle<CR>
+map <silent><Leader>md :TMarksdeleteall<CR>
+map <silent><Leader>mn :TMarksnext<CR>
+
+"" Display incomplete commands
+set showcmd
+
+"" Always load file
+set autoread

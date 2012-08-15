@@ -1,0 +1,97 @@
+let mapleader = ";"
+
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+call pathogen#infect()
+
+" Enable filetype plugins and indentation
+filetype on
+filetype plugin indent on
+
+" Lines above/below cursor
+set scrolloff=4
+set showmode
+set showcmd
+set title
+set ruler
+
+" Default tab/indent
+set smartindent
+set tabstop=4
+set shiftwidth=4
+set expandtab
+
+" Command and status line mods
+set cmdheight=2
+set laststatus=2
+set showcmd
+set showmode
+set number
+
+" Code Folding
+set foldmethod=indent
+set foldlevel=99
+set foldenable
+nnoremap <space> za
+vnoremap <space> zf
+
+" Command-T
+noremap <leader>m <Esc>:CommandT<CR>
+noremap <leader>O <Esc>:CommandTFlush<CR>
+
+" NERDTree
+nnoremap <leader>t :NERDTreeToggle<CR>
+let NERDTreeIgnore=['\~$', '\.pyc$', '\.pyo$', '\.class$', 'pip-log\.txt$', '\.o$']
+
+" CloseTag - only open for tagged file types
+autocmd FileType html,htmldjango,jinjahtml,eruby,mako let b:closetag_html_style=1
+autocmd FileType html,xhtml,xml,htmldjango,jinjahtml,eruby,mako source ~/.vim/bundle/closetag/plugin/closetag.vim
+
+" SuperTab-continued.
+let g:SuperTabDefaultCompletionType = "context"
+
+" Tagbar
+let g:tagbar_userarrows = 1
+nnoremap <leader>l :TagbarToggle<CR>
+
+" Solarized
+set background=dark
+let g:solarized_termtrans=1
+let g:solarized_termcolors=256
+let g:solarized_contrast="high"
+let g:solarized_visibility="high"
+colo solarized
+
+" Python stuff
+autocmd FileType python setlocal expandtab shiftwidth=4 tabstop=8 colorcolumn=79
+\ formatoptions+=croq softtabstop=4 smartindent
+\ cinwords=if,elif,else,for,while,try,except,finally,def,class,with
+let python_highlight_all=1
+let python_highlight_exceptions=0
+let python_highlight_builtins=0
+autocmd FileType pyrex setlocal expandtab shiftwidth=4 tabstop=8 softtabstop=4 smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class,with
+
+" Javascript specific
+autocmd FileType javascript setlocal expandtab shiftwidth=2 tabstop=2
+
+" Hack to get JSLint to work
+"let $JS_CMD='node'
+
+" Feather specific
+au! BufNewFile,BufRead *.feather.html set filetype=html.feather
+autocmd FileType html.feather setlocal expandtab shiftwidth=2 tabstop=2
+
+" Friggin json files
+autocmd BufNewFile,BufRead *.json,.jshintrc set ft=javascript
+
+" Code completion for virtualenv
+py << EOF
+import os.path
+import sys
+import vim
+if 'VIRTUAL_ENV' in os.environ:
+    project_base_dir = os.environ['VIRTUAL_ENV']
+    sys.path.insert(0, project_base_dir)
+    activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
+    execfile(activate_this, dict(__file__=activate_this))
+EOF

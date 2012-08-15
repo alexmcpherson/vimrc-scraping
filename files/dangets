@@ -1,0 +1,197 @@
+
+set nocompatible
+syntax on
+
+
+" Better command-line completion
+set wildmenu
+
+
+"colorscheme torte   " sets the color scheme
+colorscheme zenburn " low contrast scheme
+
+fixdel
+
+" default all fortran code to be free form
+let fortran_free_source=1
+
+set ruler           " displays the 'ruler' at the bottom-right of the screen
+set number          " precede each line with its line number.
+set nowrap          " no line wrapping
+
+"set guioptions+=b   " add a horizontal scrollbar to the bottom
+set guioptions-=T   " remove the button toolbar from GVim
+"set guioptions-=m   " remove the "File Edit ..." menubar from GVim
+
+set guifont=Monospace\ 9
+
+"--- search options ------------
+set incsearch       " show 'best match so far' as you type
+set hlsearch        " highlight the items found by the search
+set ignorecase      " ignores case of letters on searches
+set smartcase       " Override the 'ignorecase' option if the search pattern contains upper case characters
+:highlight search guifg=yellow guibg=darkred
+"visual search: highlight pattern then press /
+vmap / y/<C-R>"<CR>
+
+
+"--- Keystrokes ----------------
+" h and l wrap between lines, cursor keys wrap in insertion mode
+set whichwrap=h,l,~,[,]
+
+" pagedown with <SPACE>, pageup with - or <BkSpc>
+noremap <Space> <PageDown>
+noremap <BS> <PageUp>
+
+" allow <BkSpc> to delete line breaks, start of insertion, and indents
+set backspace=eol,start,indent
+
+
+"--- Windowing -----------------
+" be able to scroll through opened files easily with ctrl+j/k
+map <C-j> <C-w>j<C-w>_
+map <C-k> <C-w>k<C-w>_
+
+map <A-j> <C-w>j
+map <A-k> <C-w>k
+map <A-l> <C-w>l
+map <A-h> <C-w>h
+
+" window minimum height (other opened files just show filename)
+set wmh=0
+
+
+" have command-line completion <Tab> (for filenames, help topics, option names)
+" first list the available options and complete the longest common part, then
+" have further <Tab>s cycle through the possibilities:
+set wildmode=list:longest,full
+
+" display the current mode and partially-typed commands in the status line:
+set showmode
+set showcmd
+
+
+"--- indentation ---------------
+set expandtab
+set smarttab
+"set smartindent    " smart indent of code  e.g. indent after opening '{'
+filetype indent plugin on
+"set autoindent     " Copy indent from current line when starting a new line
+set shiftwidth=4   " Number of spaces to use for each step of (auto)indent (used for the >>, << commands)
+set tabstop=4      " Number of spaces that a <Tab> in the file counts for.
+set softtabstop=4  " Backspace the proper number of spaces
+set shiftround     " Round indent to multiple of 'shiftwidth'
+
+"set textwidth=79   " Autowrap lines longer than 79 characters
+
+" trick to place hash comments in current column and not the first column
+inoremap # X#
+
+"--- braces/paren autoclose ----
+"inoremap {} {}
+"inoremap {<Esc> {<Esc>
+"inoremap { {<CR><BS>}<Esc>ko
+"
+"inoremap ( ()<Esc>i
+"inoremap (<Esc> ()<Esc>x
+"inoremap () ()
+"
+"inoremap [ []<Esc>i
+"inoremap [] []
+"inoremap [<Esc> [<Esc>
+"
+" inoremap < <><Esc>i
+" inoremap << <<
+" inoremap <= <=
+" inoremap <<Space> <<Space>
+
+"--- OmniCompletion ------------
+" remap Ctrl-Space to perform OmniCompletion
+inoremap <C-Space> <C-x><C-o>
+
+"--- QuickFix ------------------
+nnoremap <F6> :cp<CR>
+nnoremap <F7> :cn<CR>
+
+"-- always set cwd to current buffer ---
+autocmd BufEnter * lcd %:p:h
+
+"--------- FILETYPE SPECIFICS ---------------
+
+" set *.cuh files to be CUDA files
+autocmd BufRead,BufNewFile *.cuh set filetype=cuda
+autocmd BufRead,BufNewFile *.cuf set filetype=fortran
+autocmd BufRead,BufNewFile *.CUF set filetype=fortran
+autocmd BufRead,BufNewFile SConstruct set filetype=python
+
+"------- C, CPP ----------------
+function! LANG_C()
+    setlocal expandtab 
+    setlocal shiftwidth=4
+    setlocal tabstop=4
+    setlocal softtabstop=4
+    setlocal formatoptions=tcroq
+    " remove the // style comment from formatoptions (prevent continuation on return)
+    setlocal comments-=://
+    noremap <buffer> <C-F12> :!ctags -R --c-kinds=+p --fields=+S .<CR>
+endfunction
+autocmd FileType c call LANG_C()
+
+function! LANG_CPP()
+    call LANG_C()
+    setlocal expandtab 
+    setlocal shiftwidth=4
+    setlocal tabstop=4
+    setlocal softtabstop=4
+    noremap <buffer> <C-F12> :!ctags -R --c++-kinds=+pl --fields=+iaS --extra=+q .<CR>
+endfunction
+autocmd FileType cpp call LANG_CPP()
+autocmd FileType cuda call LANG_CPP()
+
+"------- Python ----------------
+"function! LANG_PYTHON()
+"    setlocal shiftwidth=4
+"    setlocal tabstop=4
+"    setlocal softtabstop=4
+"    setlocal expandtab
+"    "--- python indent keywords --------
+"    setlocal cinwords=if,elif,else,for,while,try,except,finally,def,class,with
+"endfunction
+"autocmd FileType python call LANG_PYTHON()
+"autocmd FileType python compiler pylint
+
+"------- Makefile --------------
+function! LANG_MAKEFILE()
+    setlocal noexpandtab     " makefiles only work with tab-indents
+    setlocal shiftwidth=8
+    setlocal tabstop=8
+    setlocal softtabstop=8
+endfunction
+autocmd FileType make call LANG_MAKEFILE()
+
+"------- Vala ------------------
+function! LANG_VALA()
+    setlocal efm=%f:%l.%c-%[%^:]%#:\ %t%[%^:]%#:\ %m
+    setfiletype vala
+endfunction
+autocmd BufEnter *.vala call LANG_VALA()
+autocmd BufEnter *.vapi call LANG_VALA()
+
+"------- HTML ------------------
+function! LANG_HTML()
+    setlocal textwidth=0     " don't auto wrap
+    inoremap <buffer> < <><Esc>i
+endfunction
+autocmd FileType html call LANG_HTML()
+autocmd FileType xml  call LANG_HTML()
+
+"------- txt ------------------
+function! LANG_TXT()
+    setlocal textwidth=0     " don't auto wrap
+    setlocal noexpandtab
+    setlocal shiftwidth=4
+    setlocal tabstop=4
+    setlocal softtabstop=4
+endfunction
+autocmd BufNewFile,BufRead *.txt call LANG_TXT()
+

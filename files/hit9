@@ -1,0 +1,135 @@
+syntax enable
+syntax on 
+set t_Co=256
+colorscheme solarized
+set background=dark
+hi Normal ctermbg=NONE
+set guifont=Inconsolata-g:h12
+set showcmd
+set encoding=utf-8
+set fencs=utf-8,ucs-bom,shift-jis,gb18030,gbkgb2312,cp936
+set termencoding=utf-8
+set fileencodings=ucs-bom,utf-8,cp936
+set fileencoding=utf-8
+set noeb
+set autoindent
+set cindent
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set number 
+set mouse=a
+set selection=exclusive
+set selectmode=mouse,key
+set foldenable
+set foldmethod=manual
+set foldlevel=3
+set foldenable
+set showmatch
+set matchtime=1
+set completeopt=preview,menu
+set autoread
+set cpt=.,w,b
+let g:neocomplcache_enable_at_startup = 1
+
+filetype indent on           " 针对不同的文件类型采用不同的缩进格式
+filetype plugin on           " 针对不同的文件类型加载对应的插件
+filetype plugin indent on    " 启用自动补全
+"autocmd Syntax html,vim inoremap < <lt>><Esc>i| inoremap > <c-r>=ClosePair('>')<CR>
+":inoremap { {<CR>}<Esc>O
+"autocmd Syntax ruby  inoremap { {}<ESC>i
+":inoremap } <c-r>=ClosePair('}')<CR>
+":inoremap ( ()<ESC>i
+":inoremap ) <c-r>=ClosePair(')')<CR>
+":inoremap [ []<ESC>i
+":inoremap ] <c-r>=ClosePair(']')<CR>
+":inoremap " ""<ESC>i
+":inoremap ' ''<ESC>i
+function! ClosePair(char)
+	if getline('.')[col('.') - 1] == a:char
+		return "\<Right>"
+	else
+		return a:char
+	endif
+endfunc
+"for C
+set smartindent
+set completeopt=longest,menu
+"for GCC
+"map <C-G> :call Runit()<CR>
+:command -range=% R :call Runit()
+:command -range=% RP : call RunProject()
+func! RunProject()
+	exec "w"
+	if &filetype == 'c'
+		exec "!gcc *.c -o %<"
+		exec "! ./%<"
+	endif
+endfunc
+func! Runit()
+	 exec "w"
+	 if &filetype == 'c'
+		exec "!gcc  % -o %<"
+		exec "! ./%<"
+	elseif &filetype == 'cpp'
+		exec "!g++ % -o %<"
+	    exec "! ./%<"
+    elseif &filetype == 'java' 
+	    exec "!javac %" 
+	    exec "!java %<"
+    elseif &filetype == 'sh'
+        :!./%
+	elseif &filetype == 'sql'
+		exec "w !mysql -uroot -p830045 wc_test -t"
+		:%s/^/--
+	elseif &filetype == 'php'
+		exec "!php %"
+	elseif &filetype =='python'
+		exec "!python2 %"
+	elseif &filetype=='ruby'
+		exec "!ruby %"
+	elseif &filetype=='javascript'
+		exec "!js %"
+	elseif &filetype=='vimwiki'
+		exec "Vimwiki2HTML"
+	endif
+endfunc
+map <C-c> "+y
+map <C-v> "+p
+let Tlist_Use_Right_Window=1
+let Tlist_File_Fold_Auto_Close=1
+let Tlist_Auto_Open = 0
+:command -range=% TT :TlistToggle
+"set ai!
+"set list"显示缩进
+"set listchars=tab:\|\-"缩进符
+:command -range=% C : call Tinyc()
+func! Tinyc()
+	exec "w"
+	if &filetype == 'c'
+		exec "!tcc -run %"
+	endif
+endfunc
+set nocompatible 
+set shortmess=atI
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+Bundle 'gmarik/vundle'
+Bundle 'snipMate'
+Bundle 'xptemplate'
+Bundle 'nerdtree'
+Bundle 'vimwiki'
+Bundle 'jQuery'
+Bundle 'jsbeautify'
+Bundle 'ScrollColors'
+let g:nerdtree_tabs_open_on_gui_startup=1
+let g:nerdtree_tabs_open_on_console_startup=1
+:command -range=% T :NERDTreeFocus
+let g:vimwiki_list=[{
+			\'path':'~/vimwiki/core/',
+			\'path_html':'~/vimwiki_html/core/',
+			\'template_ext':'.html',
+			\}]
+let g:vimwiki_valid_html_tags='b,i,s,u,sub,sup,kbd,br,hr,div,del,code,red,cente,pre'
+let g:vimwiki_camel_case = 0
+au BufRead,BufNewFile *.js set syntax=jquery

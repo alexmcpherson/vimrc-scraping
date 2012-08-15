@@ -1,0 +1,42 @@
+".vimrc file - Save this file as .vimrc in your home directory. (e.g. /home/user/.vimrc)
+" Load pathogen
+runtime bundle/vim-pathogen/autoload/pathogen.vim
+
+call pathogen#infect()
+syntax on
+filetype plugin indent on
+
+set background=dark
+colorscheme solarized
+"-- General --
+set ruler		"Show the line and column number of the cursor position
+
+"-- Programming --
+set autoindent		"Copy indent from current line when starting a new line
+
+"-- Spaces/Tabs --
+set expandtab		"Use spaces instead of tabs
+set shiftwidth=2
+set tabstop=2
+set mouse=a
+"-- Searching --
+set hlsearch		"Highlight search results
+"Clear the search highlight by pressing ENTER when in Normal mode (Typing commands)
+:nnoremap <CR> :nohlsearch<CR>/<BS><CR>
+
+set showmatch "Show matching brackets
+set statusline=%F%m%r%h%w\ %{fugitive#statusline()}\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [POS=%04l,%04v][%p%%]\ [LEN=%L]
+"-- Tabbed Editing --
+"Open a new (empty) tab by pressing CTRL-T. Prompts for name of file to edit
+map <C-T> :tabnew<CR>:edit 
+"Open a file in a new tab by pressing CTRL-O. Prompts for name of file to edit
+map <C-O> :tabfind 
+"Switch between tabs by pressing Shift-Tab
+map <S-Tab> gt
+"NERDTree Shortcut
+map <F4> :NERDTreeToggle<CR>
+
+"-- Tweaks --
+"Add tweak for better backspace support
+set backspace=indent,eol,start
+

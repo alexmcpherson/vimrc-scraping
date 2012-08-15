@@ -1,0 +1,28 @@
+" create symbolic links
+" ln -s ~/.vim/vimrc ~/.vimrc
+
+set nocompatible
+set number
+set autoindent
+set history=50
+
+set showcmd
+set incsearch
+set hlsearch
+
+set tabstop=4 
+set shiftwidth=4
+set cindent shiftwidth=4
+
+"set encodings
+set fileencodings=ucs-bom,utf8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
+set fileencoding=utf8
+set encoding=utf8
+
+syntax on 
+filetype plugin indent on
+
+if has("gui_running")
+	colorscheme darkblue
+endif
+

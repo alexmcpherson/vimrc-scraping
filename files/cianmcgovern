@@ -1,0 +1,61 @@
+" Tab stuff
+set expandtab
+set smarttab
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+
+" Store backup files elsewhere
+set backup
+set backupdir=~/.vim/backup
+set directory=~/.vim/tmp
+
+set nocompatible
+set ls=2
+set showcmd
+set hlsearch
+set ruler
+set number
+set ignorecase
+set smartcase
+set title
+set ttyfast
+set spell
+set wildmenu
+set wildmode=list:longest,full
+
+" Disable error bells
+set noerrorbells
+set visualbell
+set t_vb=
+
+" Indentation and file detection
+set autoindent
+set smartindent
+filetype on
+filetype plugin on
+
+" Disable indentation when pasting
+nnoremap <F2> :set invpaste paste?<CR>
+set pastetoggle=<F2>
+set showmode
+
+" Start NERDTree and put cursor in file window
+autocmd VimEnter * NERDTree
+autocmd VimEnter * wincmd p
+
+" Key fixes
+cmap W w                        
+cmap WQ wq
+cmap wQ wq
+cmap Q q
+nnoremap ; :
+nnoremap : ;
+
+" Status line
+set laststatus=2
+set statusline=%F%m%r%h%w\ (%{&ff}){%Y}\ [%l,%v][%p%%]
+
+syntax on
+inoremap jj <Esc>
+highlight MatchParen ctermbg=4

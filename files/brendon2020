@@ -1,0 +1,49 @@
+set nocompatible               " be iMproved
+filetype off                   " required!
+
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+
+ " let Vundle manage Vundle
+ " required! 
+Bundle 'gmarik/vundle'
+Bundle 'https://github.com/AndrewRadev/linediff.vim.git'
+Bundle 'L9'
+Bundle 'NERD_tree-Project'
+Bundle 'PHPcollection'
+Bundle 'fugitive.vim'
+Bundle 'FuzzyFinder'
+Bundle 'The-NERD-tree'
+Bundle 'The-NERD-Commenter'
+Bundle 'FindInNERDTree'
+"Bundle 'snipMate'
+Bundle 'https://github.com/ervandew/supertab.git'
+Bundle 'Gundo'
+"Bundle 'taglist.vim'
+Bundle 'Align'
+"Bundle 'CTAGS-Highlighting'
+Bundle 'https://github.com/Raimondi/delimitMate.git'
+Bundle 'surround.vim'
+Bundle 'PDV--phpDocumentor-for-Vim'
+Bundle 'Syntastic'
+Bundle 'https://github.com/guyht/vim-task.git'
+"Bundle 'https://github.com/vimoutliner/vimoutliner.git'
+Bundle 'https://github.com/vim-scripts/Tail-Bundle.git'
+Bundle 'https://github.com/majutsushi/tagbar.git'
+Bundle 'extradite.vim'
+Bundle 'https://github.com/altercation/vim-colors-solarized.git'
+Bundle 'https://github.com/abudden/TagHighlight.git'
+"Bundle 'https://github.com/xolox/vim-easytags.git'
+Bundle 'https://github.com/tetsuo13/Vim-PHP-Doc.git'
+"Bundle 'https://github.com/spf13/PIV.git'
+Bundle 'https://github.com/mattsacks/vim-fuzzee.git'
+Bundle 'https://github.com/LStinson/TagmaTasks.git'
+Bundle 'https://github.com/kien/tabman.vim.git'
+"Bundle 'Vim-JDE'
+
+
+filetype plugin indent on
+set hlsearch
+set ignorecase
+syntax on
+set number

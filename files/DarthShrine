@@ -1,0 +1,66 @@
+" Use Vim settings rather than Vi
+set nocompatible
+
+" Initialise Pathogen
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+
+" Load ftdetect files
+filetype plugin indent on
+
+" Allow for backgrounding buffers without writing
+set hidden
+
+" Consider whether a buffer is already open in a window
+" before opening it.
+set switchbuf=usetab,newtab
+
+" Provide a wildcard menu
+set wildmenu
+
+" Searches are only case-sensitive if they contain upper-case
+set ignorecase
+set smartcase
+
+" Leave 3 lines of context
+set scrolloff=3
+
+" General editing settings
+syntax on
+set hlsearch
+set expandtab
+set tabstop=2
+set shiftwidth=2
+set background=dark
+
+set autoindent
+set smartindent
+
+" GUI settings
+if has("gui_running")
+  "set gfn=Menlo\ Regular:h16.00
+  set gfn=Anonymous\ Pro:h18.00
+  colorscheme slatenew
+  set go=egrLt
+  set fuopt=maxvert,maxhorz
+endif
+
+au BufEnter *.{c,cpp} set makeprg=make\ %:r
+au BufEnter *.pl set filetype=prolog
+au BufEnter *.txt set wrap lbr nolist sbr=…
+au BufEnter Makefile set noet ts=4 sw=4
+"au FileType python set foldmethod=indent
+
+" visual indent without losing selection
+vnoremap < <gv
+vnoremap > >gv
+
+" Edit in same directory
+let mapleader=","
+map <leader>ew :e <C-R>=expand("%:p:h") . "/" <CR>
+
+" Source vimrc upon writing it
+au BufWritePost *vimrc source $MYVIMRC
+
+" NERD Commenter settings
+let NERDSpaceDelims=1 " Put a space after comment symbols 

@@ -1,0 +1,197 @@
+" --------------------------------------------------------------------
+" @author Leechael Yim <yanleech@gmail.com>
+" --------------------------------------------------------------------
+
+" --------------------------------------------------------------------
+" Functions
+" --------------------------------------------------------------------
+function SetTabWidthEqTwo()
+    set tabstop=2
+    set softtabstop=2
+    set shiftwidth=2
+endfunction
+
+function SetTabWidthEqFour()
+    set tabstop=4
+    set softtabstop=4
+    set shiftwidth=4
+endfunction
+
+function CompileJS()
+    if &modified
+        write
+        let filepath = shellescape(expand('%:p'))
+        let filename = shellescape(expand('%:r'))
+        let file_ext = expand('%:e')
+        let gcc_path = '/usr/local/lib/closure_compiler/compiler.jar'
+        execute "! java -jar " . gcc_path . " --js=" . filepath . " --js_output_file=" . filename . ".min." . file_ext
+    endif
+endfunction
+
+function CompileCSS()
+    if &modified
+        write
+        let filepath = shellescape(expand('%:p'))
+        let filename = shellescape(expand('%:r'))
+        let file_ext = expand('%:e')
+        execute "! csstidy " . filepath . " --compress_colors=true --compress_font-weight=true --lowercase_s=true --remove_bslash=true --remove_last_\\;=true --sort_properties=true --merge_selectors=2 --case_properties=1 --optimise_shorthands=2 --silent=true | yui-compressor --type css -o " . filename . ".min." . file_ext
+    endif
+endfunction
+
+
+" --------------------------------------------------------------------
+" Editor behaviors
+" --------------------------------------------------------------------
+filetype off
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+filetype plugin indent on
+set nocompatible
+set novisualbell
+set noerrorbells
+set ruler
+set magic
+set incsearch
+set hlsearch
+set ignorecase
+set history=200
+set display=lastline
+if has('gui_running')
+    set showcmd
+endif
+set wildmenu
+set wildmode=list:longest
+set modelines=0
+set autoindent
+set expandtab
+set ttyfast
+
+" Save on losing focus
+au FocusLost * :wa
+
+
+" --------------------------------------------------------------------
+" Moving
+" --------------------------------------------------------------------
+" Prefer <leader> key `,` insteads of `\`
+let mapleader=","
+" Shortcut clean out search highline
+nnoremap <leader><space> :noh<cr>
+nnoremap <tab> %
+vnoremap <tab> %
+
+" For new vimer....like me XDDD
+nnoremap <up> <nop>
+nnoremap <down> <nop>
+nnoremap <left> <nop>
+nnoremap <right> <nop>
+inoremap <up> <nop>
+inoremap <down> <nop>
+inoremap <left> <nop>
+inoremap <right> <nop>
+
+
+" --------------------------------------------------------------------
+" Language 
+" --------------------------------------------------------------------
+if has('win32')
+    lang en
+endif
+set encoding=UTF-8
+set langmenu=en_US.UTF-8
+set fileencodings=ucs-bom,utf-8,cp936,big5
+
+
+" --------------------------------------------------------------------
+" Display
+" --------------------------------------------------------------------
+if has('gui_running') && has('gui')
+    color desert
+    set cursorline
+    set backspace=indent,eol,start
+    set wrap
+    set linebreak
+endif
+autocmd GUIEnter * winsize 100 56
+autocmd GUIEnter * set go-=T go-=m
+autocmd GUIEnter * set columns=100
+autocmd GUIEnter * set lines=36
+set ambiwidth=double
+" Install YaHei_Mono in Windows!
+if has('win32')
+    set gfw=YaHei_Mono:h10
+endif
+syntax on
+set relativenumber
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set guitablabel=^N:%t
+
+
+" --------------------------------------------------------------------
+"  HTML
+" --------------------------------------------------------------------
+au FileType html call SetTabWidthEqTwo()
+" surround.vim customize shortcut: %
+au FileType html let g:surround_37 = "{% \r %}"
+" surround.vim customize shortcut: =
+au FileType html let g:surround_61 = "{{ \r }}"
+
+
+" --------------------------------------------------------------------
+"  CSS
+" --------------------------------------------------------------------
+au FileType css call SetTabWidthEqTwo()
+au BufRead,BufNewFile *.css set filetype=css
+autocmd BufWriteCmd *.css :call CompileCSS()
+
+
+" --------------------------------------------------------------------
+"  Python
+" --------------------------------------------------------------------
+au BufRead,BufNewFile *.py set filetype=python
+au FileType python call SetTabWidthEqTwo()
+au FileType python let g:surround_99 = "\"\"\"\r\"\"\""
+
+
+" --------------------------------------------------------------------
+"  PHP
+" --------------------------------------------------------------------
+au FileType php call SetTabWidthEqFour()
+au FileType php set makeprg=php\ -l\ %
+au FileType php set errorformat=%m\ in\ %f\ on\ line\ %l
+" surround.vim customize shortcut: -
+au FileType php let g:surround_45 = "<?php \r ?>"
+" surround.vim customize shortcut: =
+au FileType php let g:surround_61 = "<?=\r?>"
+
+au BufWritePre *.php setlocal binary
+au BufWritePre *.php setlocal noeol
+au BufWritePost *.php setlocal nobinary
+
+
+" --------------------------------------------------------------------
+"  JavaScript
+" --------------------------------------------------------------------
+au FileType javascript call SetTabWidthEqFour()
+autocmd BufWriteCmd *.js :call CompileJS()
+
+
+" --------------------------------------------------------------------
+"  NERDTree
+" --------------------------------------------------------------------
+map <C-d> :NERDTreeToggle<CR>
+let NERDTreeWinSize=26
+let NERDTreeShowBookmarks=1
+
+
+" --------------------------------------------------------------------
+"  TagList
+" --------------------------------------------------------------------
+map <A-t> :TlistToggle<CR>
+let Tlist_Use_Right_Window=1
+
+
+" --------------------------------------------------------------------
+" --------------------------------------------------------------------

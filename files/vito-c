@@ -1,0 +1,106 @@
+" Add pathogen calls first
+" call pathogen#runtime_append_all_bundles()
+call pathogen#infect()
+silent! call pathogen#helptags()
+
+" Syntax Folding For the F-ing win!
+let g:sh_fold_enabled=1
+
+" Who doesn't like autoindent?
+set autoindent
+
+" Line Numbers PWN!
+set number
+
+" Ignoring case is a fun trick
+set ignorecase
+
+" Allow cursor to move in null space
+set virtualedit=block
+
+" Set up ctags
+" set tags+=$FLEX_HOME/frameworks/projects/framework/src/tags
+" set tags+=~/tags/flexTags
+" TODO: make this better
+" set tags+=~/workrepos/farmvile2-main/tags/game.tags
+" set tags+=~/tags/aswingTags.tags
+" set tags+=~/tags/commonTags.tags
+" set tags+=~/tags/gameTags.tags
+" set tags+=~/tags/questForkTags.tags
+" set tags+=~/tags/serverTags.tags
+" set tags+=~/tags/sharedTags.tags
+" set tags+=~/tags/zCoreTags.tags
+" set tags+=~/tags/zExternalTags.tags
+" set tags+=~/tags/zIsoTags.tags
+" set tags+=~/tags/zLocalTasg.tags
+
+" experimental oooh
+" also dont forget = to clean up tabs
+set so=999
+
+set ts=4
+"set sts=4
+set sw=4
+"set clipboard=autoselect,exclude:cons\|linux
+set clipboard=unnamed
+set hls
+set nowrap
+
+syntax enable
+filetype plugin indent on
+
+" Omni Complete
+set ofu=syntaxcomplete#Complete
+"inoremap . .<c-x><c-o>
+
+
+" Dvorak special mapping is stored in a different file
+source ~/.vim/keymaps.vim
+
+" Visual mode Key binding
+" This is awesome allows you to move blocks of text with >> and << 
+vnoremap > >gv
+vnoremap < <gv
+
+" Plugin Key Binding
+map <F2> :NERDTreeToggle<CR>
+map <F1> :TagbarToggle<CR>
+
+let g:tagbar_type_actionscript = {
+            \ 'ctagstype' : 'flex',
+            \ 'kinds' : [
+            \ 'f:functions',
+            \ 'c:classes',
+            \ 'm:methods',
+            \ 'p:properties',
+            \ 'v:global variables',
+            \ 'x:mxtags'
+            \ ]
+            \ }
+let g:tagbar_type_mxml = {
+            \ 'ctagstype' : 'flex',
+            \ 'kinds' : [
+            \ 'f:functions',
+            \ 'c:classes',
+            \ 'm:methods',
+            \ 'p:properties',
+            \ 'v:global variables',
+            \ 'x:mxtags'
+            \ ]
+            \ }
+
+" Search for selected text, forwards or backwards.
+vnoremap <silent> * :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy/<C-R><C-R>=substitute(
+  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
+vnoremap <silent> # :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy?<C-R><C-R>=substitute(
+  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
+
+" ctrlp junk
+set wildignore+=*/.git/*,*/.hg/*,*/.svn/*  " Linux/MacOSX
+set wildignore+=*/assets/*,*/docs/*,*/bin/*,*/report*/*

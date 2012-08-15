@@ -1,0 +1,468 @@
+" Example Vim configuration.
+" Copy or symlink to ~/.vimrc or ~/_vimrc.
+
+set nocompatible                  " Must come first because it changes other options.
+
+"Write the old file out when switching between files.
+set autowrite
+
+set more                      " use more prompt
+set autoread                  " watch for file changes
+
+
+"set guioptions=em
+"set showtabline=2
+
+
+"Want a different map leader than \
+"set mapleader = ",";
+
+"Ever notice a slight lag after typing the leader key + command? This lowers
+"the timeout.
+set timeoutlen=500
+
+silent! call pathogen#runtime_append_all_bundles()
+
+syntax enable                     " Turn on syntax highlighting.
+filetype plugin indent on         " Turn on file type detection.
+
+"session management
+mksession  sessionoptions= buffers, folds, resize, winpos 
+let g:session_autoload = 'no'
+
+"Indent stuff
+set smartindent
+set autoindent
+
+"Always show the status line
+set laststatus=2
+
+"Prefer a slightly higher line height
+set linespace=3
+set cmdheight=2                   "command line 2 lines high
+
+set nolist
+
+"Better line wrapping 
+"set wrap
+set lbr!
+set textwidth=79
+set formatoptions=qrn1
+" set colorcolumn=85 
+set showbreak=/////////
+
+runtime macros/matchit.vim        " Load the matchit plugin.
+
+set showcmd                       " Display incomplete commands.
+set showmode                      " Display the mode you're in.
+
+" Shortcut to rapidly toggle `set list`
+nmap <leader>l :set list!<CR>
+set backspace=indent,eol,start    " Intuitive backspacing.
+
+set hidden                        " Handle multiple buffers better.
+
+set wildmenu                      " Enhanced command line completion.
+set wildmode=list:longest         " Complete files like a shell.
+
+
+"set number                        " Show line numbers.
+set rnu!			" Show relative line numbers	
+set ruler                         " Show cursor position.
+set cul                                           " highlight current line
+hi CursorLine term=none cterm=none ctermbg=none      " adjust color
+
+
+
+set ignorecase                    " Case-insensitive searching.
+set smartcase                     " But case-sensitive if expression contains a capital letter.
+set hlsearch                      " Highlight matches.
+set incsearch
+nnoremap <F3> :set hlsearch!<CR>
+set diffopt=filler,iwhite         " ignore all whitespace and sync
+"map <f4> to seach and replace pattern => %s/old/new/gc
+:map <F4> :%s//gc<Left><Left><Left>
+"map S F4 to search current word
+:map <S-F4> :%s/<C-r><C-w>//gc<Left><Left><Left> 
+
+set wrap                          " Turn on line wrapping.
+set scrolloff=3                   " Show 3 lines of context around the cursor.
+
+set title                         " Set the terminal's title
+
+set visualbell                    " No beeping.
+
+" set nobackup                      " Don't make a backup before overwriting a file.
+" set nowritebackup                 " And again.
+set backup
+set backupdir=~/.vim/backup
+set directory=~/.vim/tmp
+set backupcopy
+
+" set directory=$HOME/.vim/tmp//,.  " Keep swap files in one location
+
+" UNCOMMENT TO USE
+set tabstop=2                    " Global tab width.
+set shiftwidth=2                 " And again, related.
+set softtabstop=2
+set expandtab                    " Use spaces instead of tabs
+
+set laststatus=2                  " Show the status line all the time
+" Useful status information at bottom of screen
+set statusline=[%n]\ %<%.99f\ %h%w%m%r%y\ %{fugitive#statusline()}%{exists('*CapsLockStatusline')?CapsLockStatusline():''}%=%-16(\ %l,%c-%v\ %)%P
+
+
+
+" Tab mappings.
+map <leader>tt :tabnew<cr>
+map <leader>te :tabedit
+map <leader>tc :tabclose<cr>
+map <leader>to :tabonly<cr>
+map <leader>tn :tabnext<cr>
+map <leader>tp :tabprevious<cr>
+map <leader>tf :tabfirst<cr>
+map <leader>tl :tablast<cr>
+map <leader>tm :tabmove
+
+" Uncomment to use Jamis Buck's file opening plugin
+" map <Leader>t :FuzzyFinderTextMate<Enter>
+
+" Controversial...swap colon and semicolon for easier commands
+"nnoremap ; :
+"nnoremap : ;
+
+"vnoremap ; :
+"vnoremap : ;
+
+" Automatic fold settings for specific files. Uncomment to use.
+" autocmd FileType ruby setlocal foldmethod=syntax
+ autocmd FileType css  setlocal foldmethod=manual shiftwidth=2 tabstop=2
+ autocmd FileType html  setlocal foldmethod=manual shiftwidth=2 tabstop=2
+ 
+" Enable omni completion. 
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS 
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags 
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS 
+autocmd FileType python setlocal omnifunc=pythoncomplete#Complete 
+autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags 
+
+"convert markdown to html
+" nmap <leader>ht :%!/usr/local/Cellar/markdown/1.0.1/bin/markdown --html4tags <cr>
+"multimarkdown
+" nmap <leader>mm :%!/usr/local/Cellar/multimarkdown/3.5/bin/multimarkdown --smart --nolabels --process-html <cr> 
+" markdown with kramdown gem
+nmap <leader>mm :%! kramdown --no-auto-ids --parse-block-html --parse-span-html  <cr> 
+nmap <leader>mn :%! kramdown --html-to-native <cr> 
+" textile with RedColth gem 
+nmap <leader>tt :%! RedCloth <cr> 
+
+"call wrap with tag script
+"au Filetype html,xml source ~/.vim/scripts/wrapwithtag.vim
+"Enable code folding
+set foldenable
+set foldcolumn=2
+ 
+"Hide mouse when typing
+set mousehide
+
+"Shortcut to fold tags with leader (usually \) + ft
+nnoremap <leader>ft Vatzf
+
+"open linked file in a new buffer
+map gf :edit <cfile><CR>
+
+"Opens a vertical split and switches over (\v)
+nnoremap <leader>v <C-w>v<C-w>l
+
+"Split windows below the current window.
+set splitbelow
+
+"Set up an HTML5 template for all new .html files
+autocmd BufNewFile * silent! 0r $VIMHOME/templates/%:e.tpl
+
+
+
+"Change zen coding plugin expansion key to <f1>
+let g:user_zen_expandabbr_key = '<F1>'
+let g:use_zen_complete_tag = 1
+
+"Faster shortcut for commenting. Requires T-Comment plugin
+"map ,c <c-_><c-_>
+
+"remap up and down arrow to navigate in wrapped line
+map <Up> gk
+map <Down> gj
+map <S-Left> g^
+map <S-Right> g$
+map <C-S-Left> 0
+map <C-S-Right> $
+map gm :call cursor(0, virtcol('$')/2)<CR>
+
+" mapping to bypass vim left arrow in insert mode. MacVim fine with arrow keys.
+inoremap  lll <C-o>l<space>
+" inoremap hhh <C-o>h
+
+"Saves time; maps the spacebar to colon
+nmap <space> :
+
+"Map escape key to jj -- much faster
+imap ;; <esc>
+map ;; <esc>
+nmap ;; <esc>
+
+"autocorrect insert mode edit to normal mode
+inoremap <F2> <ESC>u@.
+
+"Automatically change current directory to that of the file in the buffer
+autocmd BufEnter * cd %:p:h
+
+
+"Map code completion to , + tab
+"imap <tab> <C-X><C-O>
+
+
+" For the MakeGreen plugin and Ruby RSpec. Uncomment to use.
+autocmd BufNewFile,BufRead *_spec.rb compiler rspec
+
+" easier window navigation
+nmap <C-h> <C-w>h
+nmap <C-j> <C-w>j
+nmap <C-k> <C-w>k
+nmap <C-l> <C-w>l
+
+" easier visual indenting
+map > >gv
+map < <gv
+
+
+
+"Helpeful abbreviations
+iab lorem Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+iab llorem Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+iab br/ <br /<esc>o<esc>hx
+iab bbr <br<esc>o<esc>hx
+
+"insert line break html4
+" imap <C-Return> <br>
+"insert line break xhtml
+imap <C-S-Return> <br />
+"wrap in strong
+vmap <C-b> S<strong>
+" bold mardown
+vmap <C-_> xi__<esc>pa__
+"wrap in em
+vmap <c-e> S<em>
+"em markdown
+vmap <C-~> xi*<esc>pa*
+"wrap in link
+vmap <c-l> S<a href="">
+"wrap in link + target
+vmap <c-S-l> S<a href="" target="_blank">
+
+"Spelling corrects. Just for example. Add yours below.
+iab teh the
+iab Teh The
+iab sapn span
+iab widht width
+iab heigth height
+iab aling align
+iab valing valign bd
+iab wrappeer wrapper
+
+"load autocorrect plugin
+source ~/Dropbox/backup/vim-config/bundle/vim-autocorrect/autocorrect.vim
+
+"Partygaming folders path completion 
+nmap <leader>cp <esc>:s/ONLINE_WORK/\/Volumes\/creative3$\/ONLINE_WORK/<esc>:g/\/Volumes\/creative3$\/ONLINE_WORK/s/\\/\//g<CR>vg_"*x
+
+"html tag completion 
+:inoremap <lt>/ </<C-X><C-O>
+:inoremap <C-Space> <C-X><C-O>
+
+" Change selected text from name_like_this to NameLikeThis.
+vnoremap ,c :s/_\([a-z]\)/\u\1/g<CR>gUl
+
+" Change selected text from NameLikeThis to name_like_this.
+vnoremap ,u :s/\<\@!\([A-Z]\)/\_\l\1/g<CR>gul
+
+" sort on the same line
+vnoremap <F2> d:execute 'normal i' . join(sort(split(getreg('"'))), ' ')<CR>
+
+"reselect visualy last pasted text (to indent)
+nnoremap <expr> gp '`[' . strpart(getregtype(), 0, 1) . '`]'
+
+
+" set utf8 encoding
+set encoding=utf-8 fileencoding=utf-8
+
+set list
+set listchars=tab:▸\ ,eol:¬
+
+"save whne loose focus
+au FocusLost * :wa
+
+"strip trailing white spaces
+nnoremap <leader>? :%s/\s\+$//<cr>:let @/=''<CR>
+
+" fold tag
+nnoremap <leader>ft Vatzf
+
+"sort css properties
+nnoremap <leader>S ?{<CR>jV/^\s*\}?$<CR>k:sort<CR>:noh<CR>
+
+"hard wrap paragraphs
+nnoremap <leader>q gqip
+
+"open .virmc in vertical split
+nnoremap <leader>ev <C-w><C-v><C-l>:e $MYVIMRC<cr>
+
+
+"search within visual selection
+"vmap <M-/> <Esc>/\%V
+
+"Gundo Settings
+nnoremap <F5> :GundoToggle<CR>
+
+"bufer nav mapping
+map <C-S-right> <ESC>:bn<CR> 
+map <C-S-left> <ESC>:bp<CR>
+
+" remap buffer listing (:ls) to buffer explorer
+"nmap \be <C-e>
+
+" lustyExplorer keyboard shortcuts
+nmap  <C-tab>  \lb
+nmap  <M-tab>  \lr
+nmap  <S-tab>  \lf
+nmap  <C-S-tab>  \lg
+
+"ctrlp plugin https://github.com/kien/ctrlp.vim
+let g:ctrlp_map = '<c-t>'
+set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.sass-cache/*   " for Linux/MacOSX
+
+
+" Automatically cd into the directory that the file is in
+set autochdir
+
+"open file in current browser
+nnoremap <leader>bb <S-o><esc>! open % <cr>
+
+"reveal file in Finder
+nnoremap <leader>ff <S-o><esc>! open -R % <cr>¬
+
+"enable word wrap linebreak
+command! -nargs=* Wrap set wrap linebreak nolist
+
+"enable Html syntax
+command! -nargs=* Html set ft=html 
+"enable Css syntax
+command! -nargs=* Css set ft=css 
+" reload my vimrc
+command! -nargs=* Vimrc source $MYVIMRC
+
+" Search for selected text, forwards or backwards.
+vnoremap <silent> * :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy/<C-R><C-R>=substitute(
+  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
+vnoremap <silent> # :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy?<C-R><C-R>=substitute(
+  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
+
+imap <A-Return> <esc>o
+imap <A-S-Return> <esc>O
+
+"HTML SPECIFICS
+"convert to html entities
+nnoremap <silent> & :%!perl -p -i -e 'BEGIN { use HTML::Entities; use Encode; } $_=Encode::decode_utf8($_) unless Encode::is_utf8($_); $_=Encode::encode("ascii", $_, sub{HTML::Entities::encode_entities(chr shift)});'<CR> 
+"convert to xml entities
+"nnoremap <silent> $ :%!perl -p -i -e 'BEGIN { use Encode; } $_=Encode::decode_utf8($_) unless Encode::is_utf8($_); $_=Encode::encode("ascii", $_, Encode::FB_HTMLCREF);
+
+"FUNCTIONS
+"
+" TOGGLE RELATIVE / ABSOLUTE LINE NUMBERS
+" http://jeffkreeftmeijer.com/2012/relative-line-numbers-in-vim-for-super-fast-movement/
+
+function! NumberToggle()
+  if(&relativenumber == 1)
+    set number
+  else
+    set relativenumber
+  endif
+endfunc
+
+nnoremap <C-m> :call NumberToggle()<cr>
+:au FocusLost * :set number
+:au FocusGained * :set relativenumber
+autocmd InsertEnter * :set number
+autocmd InsertLeave * :set relativenumber
+
+"WRAP WITH TAGS
+"
+" These mappings and TagSelection function will allow you to place
+" an XML tag around either the current word, or the current selected
+" text.
+" If the visual select is on a single line, the tag is wrapped
+" around the text <this>way</this>. If the visual select
+" extends over multiple lines, the tag is wrapped around the text
+" <this>
+" way
+" </this>
+"
+" When you are prompted for the tag name, you can enter:
+" Tag name? p class="classname" attri="bute"
+" The select is wrapped with:
+" <p class="classname" attri="bute">
+" Your selection
+" </p>
+" Notice the attributes have been stripped from the closing tag.
+"
+" Use nmap, not nnoremap, since we do want to use an existing mapping.
+nmap <leader>wt viw<leader>wt
+vnoremap <leader>wt <Esc>:call TagSelection()<CR>
+
+function! TagSelection()
+  let tag = input("Tag name (include attributes)? ")
+  if strlen(tag) == 0
+    return
+  endif
+
+  " Save
+  let saveB = @b
+  " <C-R> seems to automatically reindent the line for some filetypes
+  " this will disable it until we have applied our changes
+  let saveIndent = &indentexpr
+  let curl = line(".")
+  let curc = col(".")
+  let &indentexpr = ''
+
+  " If the visual selection is over multiple lines, then place the
+  " data between the tags on newlines:
+  "   <tag>
+  "   data
+  "   </tag>
+  let newline = ''
+  if getline("'>") != getline("'<")
+    let newline = "\n"
+    let curl = line("'>")
+  endif
+
+  " Strip off all but the first word in the tag for the end tag
+  let @b = newline . substitute(tag, '^[ \t"]*\(\<\S*\>\).*', '<\/\1>\e', "")
+  let curc = curc + strlen(@b)
+  exec "normal `>a\<C-R>b"
+  let @b = substitute(tag, '^[ \t"]*\(\<.*\)', '<\1>\e', "") . newline
+  let curc = curc + strlen(@b)
+  exec "normal `<i\<C-R>b"
+
+  " Now format the area
+  exec "normal `<V'>j="
+
+  " Restore
+  let @b = saveB
+  let &indentexpr = saveIndent
+  call cursor(curl, curc)
+endfunction

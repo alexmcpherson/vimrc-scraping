@@ -1,0 +1,76 @@
+set nocompatible
+
+" Visual
+colorscheme molokai
+" colorscheme twilight " Second choice theme
+syntax on
+filetype plugin on
+set number
+set showmatch
+set wildmenu
+set nofoldenable
+set foldmethod=indent
+set foldnestmax=10
+set foldlevel=1
+if has('gui_running')
+	" I only highlight in GUI
+	set cursorcolumn
+	set cursorline
+endif
+
+" Indent
+if has('gui_running')
+	" I only like autoindent in GUI
+	set autoindent
+	set smartindent
+	filetype indent on
+endif
+
+" File Management and Backup
+set backup
+if has("win32")
+	set backupdir=~/vimfiles/backup
+	set directory=~/vimfiles/tmp
+	set autochdir
+else
+	if has("unix")
+		let s:uname = system("echo -n \"$(uname)\"")
+		if s:uname != "Darwin"
+			set autochdir
+		endif
+		set backupdir=~/.vim/backup
+		set directory=~/.vim/tmp
+	endif
+endif
+
+" Spelling
+set spell
+set spelllang=en
+set spellsuggest=9
+
+" Misc
+set shellslash
+set noerrorbells
+set novisualbell
+set ignorecase
+set backspace=indent,eol,start
+set history=50
+set nomodeline
+
+
+" Plugins
+if has('gui_running')
+	" Specific GUI Plugins
+else
+	" Only use tabs when GUI isn't running
+endif
+
+let g:miniBufExplMapWindowNavVim = 1 
+let g:miniBufExplMapWindowNavArrows = 1 
+let g:miniBufExplMapCTabSwitchBufs = 1 
+let g:miniBufExplModSelTarget = 1 
+
+nmap <F8> :TagbarToggle<CR>
+
+" Custom menus
+" !! NOT YET IMPLEMENTED !!

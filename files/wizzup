@@ -1,0 +1,183 @@
+" .vimrc by Wisut Hantanong 
+ 
+" Automatic loading of .vimrc when editing in vim
+autocmd! bufwritepost .vimrc source %
+
+set nocompatible   " Disable vi-compatibility
+
+" " Color scheme
+colorscheme blue
+" set background=dark
+
+" make commmand completiton like in shell
+set wildmode=list:longest 
+
+" see more context around cursor
+set scrolloff=4
+
+" Line number and formatting
+set number " show line number
+set nowrap " no auto wrap text
+set fo-=t " don't autowrap while typing
+
+" show matching brackets
+set showmatch
+
+" keys mappings
+let mapleader=","
+
+" use jj instead of esc for insert mode exiting (experimental)
+inoremap jj <ESC>
+
+" easy quit window
+nnoremap <Leader>q :q<cr>
+
+" moving around multiple windows more easyly
+map <C-h> <C-w>h
+map <C-j> <C-w>j
+map <C-k> <C-w>k
+map <C-l> <C-l><C-w>l
+
+" visual mode shift improvement
+vmap < <gv
+vmap > >gv
+
+" Syntax highlight (these setting need restarting vim)
+filetype off " this required by some plugins, i.e. pathogen
+filetype plugin on
+filetype indent on
+syntax on
+
+" Tabs and r/l shift
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set shiftround
+set expandtab 
+set autoindent
+set smartindent
+set foldenable
+
+" Searching
+set hlsearch " highlight current search keyword
+set incsearch " use incremental search
+set ignorecase
+set smartcase
+
+" I don't want to clean backup file
+set nobackup
+set nowritebackup
+set noswapfile
+
+" plugins management is done via vundle
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+
+" let Vundle manage Vundle
+" required! 
+Bundle 'gmarik/vundle'
+
+" My Bundles here:
+" original repos on github
+Bundle 'Lokaltog/vim-easymotion'
+Bundle 'tpope/vim-fugitive'
+Bundle 'tpope/vim-surround.git'
+Bundle 'msanders/snipmate.vim.git'
+Bundle 'tomtom/tcomment_vim.git'
+"Bundle 'Rykka/riv.vim'
+"Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
+"Bundle 'tpope/vim-rails.git'
+" vim-scripts repos
+"Bundle 'L9'
+"Bundle 'FuzzyFinder'
+" non github repos
+"Bundle 'git://git.wincent.com/command-t.git'
+" ...
+
+" markdown
+Bundle 'hallison/vim-markdown.git'
+
+" vimrepress for bloging
+"
+Bundle 'vim-scripts/VimRepress.git'
+
+" NerdTree
+Bundle 'scrooloose/nerdtree.git'
+noremap <Leader>nt :NERDTree<cr>
+
+" Gundo
+Bundle 'sjl/gundo.vim.git'
+nnoremap <Leader>u :GundoToggle<cr>
+let g:gundo_width = 60
+let g:gundo_preview_height = 40
+"let g:gundo_right = 1
+
+" vim-powerline
+Bundle 'Lokaltog/vim-powerline.git' 
+" Always show the statusline
+set laststatus=2
+" Necessary to show unicode glyphs
+set encoding=utf-8
+" Explicitly tell vim that the terminal supports 256 colors
+set t_Co=256
+" 
+" Python folding
+" mkdir -p ~/.vim/ftplugin
+" wget -O ~/.vim/ftplugin/python_editing.vim http://www.vim.org/scripts/download_script.php?src_id=5492
+"set nofoldenable
+
+" edittings for python-mode
+Bundle 'klen/python-mode'
+" cd ~/.vim/bundle
+" git clone https://github.com/klen/python-mode
+"let ropevim_enable_shortcuts = 1
+"let g:pymode_rope_goto_def_newwin = "vnew"
+"let g:pymode_rope_extended_complete = 1
+"let g:pymode_breakpoint = 0
+"let g:pymode_syntax = 1
+"let g:pymode_syntax_builtin_objs = 0
+"let g:pymode_syntax_builtin_funcs = 0
+"map <Leader>b Oimport ipdb; ipdb.set_trace() # BREAKPOINT<C-c>
+"map <Leader>g :call RopeGotoDefinition()<CR>
+
+" Better navigating through omnicomplete option list
+" See http://stackoverflow.com/questions/2170023/how-to-map-keys-for-popup-menu-in-vim
+set completeopt=longest,menuone
+function! OmniPopup(action)
+    if pumvisible()
+        if a:action == 'j'
+            return "\<C-N>"
+        elseif a:action == 'k'
+            return "\<C-P>"
+        endif
+    endif
+    return a:action
+endfunction
+
+" Compile and View for each filetype
+" reStructuredText
+autocmd FileType rst nnoremap <Leader>v :!gnome-open %<.pdf<CR><C-l>
+autocmd FileType rst nnoremap <Leader>c :w<CR> :silent !rst2pdf % <CR><C-l>
+
+" custom completion by <leader>tap (code taken form 'Hacking vim' book)
+function! SuperCleverTab()
+    "check if at beginning of line or after a space
+    if strpart( getline('.'), 0, col('.')-1 ) =~ '^\s*$'
+        return "\<Tab>"
+    else
+        " do we have omni completion available
+        if &omnifunc != ''
+            “use omni-completion 1. priority
+            return "\<C-X>\<C-O>"
+        elseif &dictionary != ''
+            " no omni completion, try dictionary completio
+            return “\<C-K>”
+        else
+            "use omni completion or dictionary completion
+            "use known-word completion
+            return "\<C-N>"
+        endif
+    endif
+endfunction
+" bind function to the tab key
+inoremap <Leader><Tab> <C-R>=SuperCleverTab()<cr>

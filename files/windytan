@@ -1,0 +1,18 @@
+set nofsync
+
+set mouse=a
+
+set titlestring=%t%(\ %M%)%(\ (%{expand(\"%:p:h\")})%)%(\ %a%)
+set title
+
+set pastetoggle=<F2>
+
+filetype plugin indent on
+
+" With this option set, if you want to enter a real tab character use Ctrl-V<Tab> key sequence. 
+set expandtab
+set tabstop=2
+set shiftwidth=2
+
+au BufRead,BufNewFile *.nesasm set filetype=nesasm
+au! Syntax nesasm source $VIM/addons/syntax/nesasm.vim

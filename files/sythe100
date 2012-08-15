@@ -1,0 +1,85 @@
+" Load all the Pathogen Addons
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+call pathogen#infect()
+
+" Syntax Highlighting and Validation
+syntax on
+filetype on
+filetype plugin indent on
+let g:pyflakes_use_quickfix = 0
+
+" Code folding
+set foldmethod=indent
+set foldlevel=99
+
+" Gundo plugin
+nmap <leader>g :GundoToggle<CR>
+
+" Task lists
+map <leader>td <Plug>TaskList
+
+" Pep8 plugin
+let g:pep8_map='<leader>8'
+
+" Show line numbers
+set number
+
+" Tab Completion and Documentation
+au FileType python set omnifunc=pythoncomplete#Complete
+let g:SuperTabDefaultCompletionType = "context"
+set completeopt=menuone,longest,preview
+
+" Generic Key Mappings
+map :Q :q!
+
+" To save, ctrl-s.
+nmap <c-s> :w<CR> 
+imap <c-s> <ESC>:w<CR>a
+
+set incsearch
+set ignorecase
+set smartcase
+
+"Spell check
+function! ToggleSpell()
+	if !exists("b:spell")
+		setlocal spell spelllang=en_us
+		let b:spell = 1
+	else
+		setlocal nospell
+		unlet b:spell
+	endif
+endfunction
+
+nmap <F4> :call ToggleSpell()<CR>
+imap <F4> <ESC>:call toggleSpell()<CR>a
+
+"Set colorscheme
+if has("gui_running")
+	colorscheme relaxedgreen
+else
+	colorscheme neverness
+endif
+
+" Use UTF-8
+set encoding=utf-8
+
+set shiftwidth=4
+set tabstop=4
+set expandtab
+set smarttab
+
+" Show editing mode
+set showmode
+
+" Paste from clipboard
+nmap <c-v> "+gp
+" Copy to clipboard
+vmap <c-c> "+y
+
+" Mapping movement keys for split windows
+map <c-j> <c-w>j
+map <c-k> <c-w>k
+map <c-l> <c-w>l
+map <c-h> <c-w>h

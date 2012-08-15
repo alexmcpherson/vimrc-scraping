@@ -1,0 +1,147 @@
+" Notes {
+"   This is the personal .vimrc file of Dusty Leary.
+"   Baseline:  Steve Francia's, http://github.com/spf13
+" }
+
+" Windows Compatible {
+" On Windows, use '.vim' instead of 'vimfiles'
+if !exists("g:fixed_win32_vimfiles") && (has('win32') || has('win64'))
+    let g:fixed_win32_vimfiles = 1
+    set runtimepath=$HOME/.vim,$VIM/vimfiles,$VIMRUNTIME,$VIM/vimfiles/after,$HOME/.vim/after
+endif
+" }
+
+" Basics {
+set nocompatible
+let mapleader = ","
+nnoremap ; :
+imap <C-Space> <C-n>
+map <Leader>ev :e ~/.vim/vimrc<CR>
+map <Leader>sv :source ~/.vim/vimrc<CR>:filetype detect<CR>:exe ":echo 'vimrc reloaded'"<CR>
+" }
+
+" imvu tags {
+if !exists("g:dusty_imvu_tags")
+    let g:dusty_imvu_tags = 1
+    set tags+=c:/imvu/website/tags;c:/imvu/stable/tags
+endif
+" }
+
+" Setup Bundle Support {
+" The next two lines ensure that the ~/.vim/bundle/ system works
+runtime! vim-pathogen/autoload/pathogen.vim
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+" }
+
+" General {
+filetype plugin indent on
+syntax on
+set hidden
+scriptencoding utf-8
+set shortmess+=filmnrxoOtT                      " abbrev. of messages (avoids 'hit enter')
+set history=1000                                " Store a ton of history (default is 20)
+set undolevels=1000
+set wildignore=*.swp,*.bak,*.pyc,*.pyo,*.class,*.obj,*.exe,*.pdb
+set nobackup
+set nowritebackup
+set noswapfile
+" }
+
+" Vim UI {
+set background=dark
+color vividchalk
+
+" unmap arrow keys
+"nmap <right> <nop>
+"nmap <left> <nop>
+"nmap <up> <nop>
+"nmap <down> <nop>
+"imap <right> <nop>
+"imap <left> <nop>
+"imap <up> <nop>
+"imap <down> <nop>
+
+set showmode                        " display the current mode
+set ttyfast
+set autoread
+autocmd FileChangedShell * echohl WarningMsg | echo "File has been changed outside of vim." | echohl None
+autocmd FileChangedShellPost * echohl WarningMsg | echo "File has been changed outside of vim." | echohl None
+
+set cursorline                      " highlight current line
+hi cursorline guibg=#333333         " highlight bg color of current line
+hi CursorColumn guibg=#333333       " highlight cursor
+
+set laststatus=2
+set statusline=%<%f\ %=\:\b%n%y%m%r%w\ %l,%c%V\ %P
+set backspace=indent,eol,start      " backspace for dummies
+set linespace=0                     " No extra spaces between rows
+set number                          " Line numbers on
+set winminheight=0                  " windows can be 0 line high 
+set wildmode=longest:full
+set wildmenu
+set whichwrap=b,s,h,l,<,>,[,]       " backspace and cursor keys wrap to
+
+" Searching {
+set ignorecase                      " case insensitive search
+set smartcase                       " case sensitive when uc present
+set showmatch                       " show matching brackets/parenthesis
+set incsearch                       " find as you type search
+set hlsearch                        " highlight search terms
+nnoremap <leader><space> :noh<cr>
+" }
+
+if has("gui_running")
+    set guioptions-=T
+    set guioptions-=m
+    set guioptions-=r
+    set guioptions-=l
+    set guioptions-=L
+    set lines=153
+    set columns=138
+    set number
+    if has("x11")
+        set guifont=Consolas:h13
+    else
+        set guifont=Consolas:h13:cDEFAULT
+    endif
+endif
+
+set list
+set listchars=tab:>.,trail:.,extends:#,nbsp:.
+
+" }
+
+" Formatting {
+set autoindent
+set smartindent
+set expandtab
+set smarttab
+set tabstop=2
+set softtabstop=2
+set shiftwidth=2
+set nowrap
+"set matchpairs+=<:> " match, to be used with %
+set pastetoggle=<F12> " pastetoggle (sane indentation on pastes)
+"set comments=sl:/*,mb:*,elx:*/ " auto format comment blocks
+" }
+
+map <Leader>w :b#<CR>
+map <silent> <Leader>cd :cd %:p:h<CR>
+
+let MRU_Max_Entries = 1000
+let MRU_Window_Height = 15
+let MRU_Exclude_Files = '.*\\Local Settings\\Temp.*'
+map <Leader>m :MRU<CR>
+
+"nerdtree
+let NERDTreeShowBookmarks = 1
+map <Leader>n :NERDTreeToggle<CR>
+if has("gui_running")
+    if has('win32') || has('win64')
+        cd c:/dev
+    else
+        cd ~/dev
+    endif
+endif
+

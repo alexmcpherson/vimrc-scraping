@@ -1,0 +1,199 @@
+call pathogen#infect()
+set hidden                              "manage buffers better
+"swap these keys
+nnoremap ' `
+nnoremap ` '
+let mapleader = ","                      "set my leader key to ,
+set history=1000                        "set the command buffer to something better
+runtime macros/matchit.vim              "load the matchit plugin
+set wildmenu                            "when matching commands, show a menu
+set wildmode=list:longest                "make this matching similar to terminal's
+set ignorecase                          "when searching for text, default to case-insensitive
+set smartcase                            "let's be smart about it
+set title                                "set the title of the window
+set scrolloff=3                          "set the scroll offset to 3 lines, not 1
+set backupdir=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp    "keep temp and swap files in one place
+set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
+set ruler                                "show the cursor position in the bottom of the pane
+set number                              "show line numbers
+set backspace=indent,eol,start          "smart backspacing
+syntax on                                "syntax hightlighting on
+filetype on                              "based on filetype
+filetype plugin on                      "something...
+filetype indent on                      "indent based on filetype
+set hlsearch                            "highlight search terms
+set incsearch                            "search dynamically, as you type
+set t_Co=256
+:color solarized
+set background=dark                      "set the background dark
+colorscheme solarized                    "set the colours
+set guifont=Monaco:h13                  "set the font:font size
+set smarttab                            "set smart tabs
+set shiftwidth=2                        "when selecting text, understand indenting
+set softtabstop=2                        "set soft tabs to 2
+set tabstop=2                            "set tabs at 2 (so they line up)
+set expandtab                            "use spaces instead of tabs
+set nowrap                              "turn off word wrap
+set linebreak                            "break at spaces, not the middle of words
+set cursorline                          "highlight the line the cursor is on
+set autoread                            "reload open files automatically if they have been changed outside of vim
+if has('gui_running')
+  set columns=140 lines=75              "set the window size
+endif
+"set the NERDTreeToggle to ,,
+"map <Leader>, :NERDTreeToggle<cr>
+"set the :CommandTFlush to ,f
+"map <Leader>, :CommandTFlush<cr>
+"set guioptions-=T                       "turn off the GUI
+:command Text set spell | set linebreak | set wrap "quick settings for text editing
+let g:CommandTMaxFiles=15000
+set wildignore=public/images/**,public/javascripts/ckeditor,tmp/**,public/system/**
+"these next two line will highlight characters past the 80th column, if that's
+"what you want
+"highlight OverLength ctermbg=red ctermfg=white guibg=#000000
+"highlight the 80th column
+set colorcolumn=80
+"match OverLength /\%81v.\+/
+"when type matching characters, put the cursor in the middle
+inoremap  ()      ()<Left>
+inoremap  []      []<Left>
+inoremap  {}      {}<Left>
+inoremap  ""      ""<Left>
+inoremap  ''      ''<Left>
+inoremap  \|\|      \|\|<Left>
+"turn off arrow keys (to learn movement better)
+"inoremap  <Up>     <NOP>
+"inoremap  <Down>   <NOP>
+"inoremap  <Left>   <NOP>
+"inoremap  <Right>  <NOP>
+"noremap   <Up>     <NOP>
+"noremap   <Down>   <NOP>
+"noremap   <Left>   <NOP>
+"noremap   <Right>  <NOP>
+" Can't be bothered to understand ESC vs <c-c> in insert mode
+imap <c-c> <esc>
+"remove trailing whitespace on save
+"autocmd BufWritePre * :%s/\s\+$//e
+"convert tabs to spaces on save
+autocmd BufWritePre * :%s/\t/  /ge
+"remember cursor position on save and exit
+autocmd BufReadPost *
+  \ if line("'\"") > 0 && line("'\"") <= line("$") |
+  \   exe "normal g`\"" |
+  \ endif
+" turn off markdown syntax highlighting
+autocmd! FileType mkd setlocal syn=off
+" turn off search highlighting with a carriage-return
+:nnoremap <CR> :nohlsearch<cr>
+
+" set status line
+:set ls=2
+:set statusline=%<%f\ (%{&ft})\ %-4(%m%)%=%-19(%3l,%02c%03V%)
+
+"""""""""""""""""""""""""""""""""""""""
+" MULTIPURPOSE TAB KEY
+" " Indent if we're at the beginning of a line. Else, do completion.
+" """""""""""""""""""""""""""""""""""""""
+function! InsertTabWrapper()
+  let col = col('.') - 1
+  if !col || getline('.')[col - 1] !~ '\k'
+    return "\<tab>"
+  else
+    return "\<c-p>"
+  endif
+endfunction
+inoremap <tab> <c-r>=InsertTabWrapper()<cr>
+inoremap <s-tab> <c-n>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" RENAME CURRENT FILE
+"""""""""""""""""""""""""""""""""""""""
+function! RenameFile()
+  let old_name = expand('%')
+  let new_name = input('New file name: ', expand('%'), 'file')
+  if new_name != '' && new_name != old_name
+    exec ':saveas ' . new_name
+    exec ':silent !rm ' . old_name
+    redraw!
+  endif
+endfunction
+map <leader>n :call RenameFile()<cr>
+
+"""""""""""""""""""""""""""""""""""""""
+" PROMOTE VARIABLE TO RSPEC LET
+" """""""""""""""""""""""""""""""""""""""
+function! PromoteToLet()
+  :normal! dd
+  " :exec '?^\s*it\>'
+  :normal! P
+  :.s/\(\w\+\) = \(.*\)$/let(:\1) { \2 }/
+  :normal ==
+endfunction
+:command! PromoteToLet :call PromoteToLet()
+:map <leader>p :PromoteToLet<cr>
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"""""""""""""""""""""""""""""""""""""""
+" MAPS TO JUMP TO SPECIFIC COMMAND-T TARGETS AND FILES
+""""""""""""""""""""""""""""""""""""""""
+map <leader>gr :topleft :split config/routes.rb<cr>
+function! ShowRoutes()
+  " Requires 'scratch' plugin
+  :topleft 100 :split __Routes__
+  " Make sure Vim doesn't write __Routes__ as a file
+  set buftype=nofile
+  " Delete everything
+  :normal 1GdG
+  " Put routes output in buffer
+  :0r! rake -s routes
+  " Size window to number of lines (1 plus rake output length)
+  :exec ":normal " . line("$") . "_ "
+  " Move cursor to bottom
+  normal 1GG
+  " Delete empty trailing line
+  :normal dd
+endfunction
+map <leader>gR :call ShowRoutes(<cr>
+map <leader>ga :CommandTFlush<cr>\|:CommandT app/assets<cr>
+map <leader>gv :CommandTFlush<cr>\|:CommandT app/views<cr>
+map <leader>gc :CommandTFlush<cr>\|:CommandT app/controllers<cr>
+map <leader>gm :CommandTFlush<cr>\|:CommandT app/models<cr>
+map <leader>gh :CommandTFlush<cr>\|:CommandT app/helpers<cr>
+map <leader>gf :CommandTFlush<cr>\|:CommandT features<cr>
+map <leader>gl :CommandTFlush<cr>\|:CommandT lib<cr>
+map <leader>gp :CommandTFlush<cr>\|:CommandT public<cr>
+map <leader>gs :CommandTFlush<cr>\|:CommandT spec<cr>
+map <leader>gg :topleft 100 :split Gemfile<cr>
+map <leader>gt :CommandTFlush<cr>\|:CommandTTag<cr>
+map <leader>f :CommandTFlush<cr>\|:CommandT<cr>
+map <leader>F :CommandTFlush<cr>\|:CommandT %%<cr>
+
+"""""""""""""""""""""""""""""""""""""""
+" SWITCH BETWEEN TEST AND PRODUCTION CODE
+"""""""""""""""""""""""""""""""""""""""
+function! OpenTestAlternate()
+  let new_file = AlternateForCurrentFile()
+  exec ':e ' . new_file
+endfunction
+function! AlternateForCurrentFile()
+  let current_file = expand("%")
+  let new_file = current_file
+  let in_spec = match(current_file, '^spec/') != -1
+  let going_to_spec = !in_spec
+  let in_app = match(current_file, '\<controllers\>') != -1 || match(current_file, '\<models\>') != -1 || match(current_file, '\<views\>') != -1
+  if going_to_spec
+    if in_app
+      let new_file = substitute(new_file, '^app/', '', '')
+    end
+    let new_file = substitute(new_file, '\.rb$', '_spec.rb', '')
+    let new_file = 'spec/' . new_file
+  else
+    let new_file = substitute(new_file, '_spec\.rb$', '.rb', '')
+    let new_file = substitute(new_file, '^spec/', '', '')
+    if in_app
+      let new_file = 'app/' . new_file
+    end
+  endif
+  return new_file
+endfunction
+nnoremap <leader>. :call OpenTestAlternate()<cr>

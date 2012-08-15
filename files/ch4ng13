@@ -1,0 +1,150 @@
+" ----------------------------------------
+" since: 2010-07-18
+" by ch4ng13 (ch4ng13@gmail.com)
+"
+" [+] new feature
+" [*] improvement
+" [!] change
+" [x] bugfix
+"
+" ----------------------------------------
+" [+] 2010-07-18  first version
+" [+] 2010-07-27  Add the GUI part
+" [*] 2010-07-31  Modify
+" [!] 2011-04-18  font, color, etc
+" [+] 2011-05-06  autochdir
+" [*] 2011-06-07  key mapping
+" [+] 2011-08-20  pathogen.vim, nerdtree
+" [*] 2011-09-06  replace <TAB> with spaces by FileType
+" [+] 2011-09-07  Autosave when it lost focus
+" ----------------------------------------
+
+" For pathogen.vim 2.0: autoload plugins in .vim/bundle
+call pathogen#infect()
+
+" ------------------------------
+"  General settings
+" ------------------------------
+set nocompatible        " not compatible with vi mode, just for vim
+set history=300
+set ruler               " Always show current position
+set nu
+set autoread            " auto read when file is changed
+set autochdir           " auto change working directory
+
+filetype on             " enable filetype detection
+filetype indent on      " enable filetype-specific indenting
+filetype plugin on      " enable filetype-specific plugins
+
+syntax on               " syntax highlight
+set hlsearch            " search highlighting
+
+set autoindent          " auto indentation
+set ignorecase          " ignore cae when searching
+set incsearch           " do incremental searching
+
+" auto reload vimrc when editing it
+autocmd! bufwritepost .vimrc source ~/.vimrc
+
+
+" Menu and message
+set langmenu=en_US
+let $LANG='en_US'
+set wildmenu            " wild char completion menu
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
+
+
+" Status bar
+set showmode            " show current mode
+set showcmd             " display incomplete commands
+
+
+" disable sound on errors
+set noerrorbells
+set novisualbell
+set t_vb=               " ?
+set tm=500              " ?
+
+
+" File and backup
+set nobackup
+set noswapfile
+
+
+" TAB setting
+" set expandtab           " replace <TAB> with spaces
+" set softtabstop=4
+" set shiftwidth=4
+" au FileType Makefile set noexpandtab
+
+if has("autocmd")
+    autocmd FileType c,cpp,java,python,php,javascript,css setlocal ts=4 sts=4 sw=4 expandtab
+    autocmd FileType html setlocal ts=2 sts=2 sw=2 expandtab
+endif
+
+" autocmd
+au FocusLost * :up      " Autosave when it lost focus
+
+au bufwritepost *.py !chmod +x %
+au bufwritepost *.sh !chmod +x %
+au bufwritepost *.pl !chmod +x %
+
+
+" ------------------------------
+"  UTF-8
+"  ------------------------------
+
+if has("multi_byte")
+    set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
+    if v:lang=~"^utf8$" || v:lang=~"^UTF-8$"
+        set encoding=utf-8
+    endif
+
+    set termencoding=utf-8
+    set formatoptions+=mM
+    set fencs=utf-8,gbk
+
+    set nobomb
+else
+    echoerr "Sorry, this version of (g)Vim was not compiled with +multi_byte"
+endif
+
+" ------------------------------
+"  GUI
+" ------------------------------
+
+if has('gui_running')
+    set t_Co=256        " 256 color mode
+    set cursorline      " highlight current line
+    colorscheme desert  " color theme
+    set lines=21 columns=80       " gvim initial window size
+
+    if has('mouse')
+        set mouse=a
+    endif
+	
+    if has('win32')
+        source $VIMRUNTIME/mswin.vim
+        behave mswin
+
+        set guifont=Consolas:h11
+    endif
+
+    if has('unix') && !has('mac')
+        set guifont=Consolas\ 12
+        set guifontwide=Microsoft\ YaHei\ 12
+    endif
+
+    if has('mac')
+        set anti        "Anti-aliasing
+        set guifont=Osaka-Mono:h16
+    endif
+endif
+
+
+" ------------------------------
+" Key mapping
+" ------------------------------
+nmap <F2> :nohlsearch<CR>
+nmap <F3> :NERDTreeToggle<CR>

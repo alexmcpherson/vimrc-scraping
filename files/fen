@@ -1,0 +1,329 @@
+" Use Vim settings, rather then Vi settings (much better!).
+" This must be first, because it changes other options as a side effect.
+filetype off
+call pathogen#infect('~/vim_local/bundle/')
+filetype plugin indent on
+set nocompatible
+set clipboard=unnamed
+set encoding=utf-8
+
+"""""""""""""""""""""""""""""""""""""""
+" GUI {{{1
+"""""""""""""""""""""""""""""""""""""""
+
+
+if has("gui_running")
+    "Toggle the menu and toolbar on and off 
+    let g:toggleMenu = 0 
+    let g:toggleToolbar = 0
+    set guioptions-=m
+    set guioptions-=T
+    set go-=l
+    set go-=L
+    set go-=r
+    set go-=R
+
+    map <silent> <F1> :if g:toggleMenu == 1<CR>:set guioptions-=m<CR>:let g:toggleMenu = 0<CR>:else<CR>:set guioptions+=m<CR>:let g:toggleMenu = 1<CR>:endif<CR> 
+    map <silent> <F2> :if g:toggleToolbar == 1<CR>:set guioptions-=T<CR>:let g:toggleToolbar = 0<CR>:else<CR>:set guioptions+=T<CR>:let g:toggleToolbar = 1<CR>:endif<CR> 
+endif
+"}}}1
+
+
+" Return To Same Line {{{1
+augroup line_return
+    au!
+    au BufReadPost *
+        \ if line("'\"") > 0 && line("'\"") <= line("$") |
+        \     execute 'normal! g`"zvzz' |
+        \ endif
+augroup END
+"}}}
+
+
+" Vim will save my view for a file this include the state of my fold and every
+" thing else.
+"au BufWinLeave * mkview
+"au BufWinEnter * silent loadview
+
+
+" Only do this part when compiled with support for autocommands.
+if has("autocmd")
+  " Enable file type detection.
+  " Use the default filetype settings, so that mail gets 'tw' set to 72,
+  " 'cindent' is on in C files, etc.
+  " Also load indent files, to automatically do language-dependent indenting.
+  filetype plugin indent on
+
+  " For all text files set 'textwidth' to 78 characters.
+  autocmd FileType text setlocal textwidth=78
+
+  " When editing a file, always jump to the last known cursor position.
+  " Don't do it when the position is invalid or when inside an event handler
+  " (happens when dropping a file on gvim).
+  autocmd BufReadPost *
+    \ if line("'\"") > 0 && line("'\"") <= line("$") |
+    \   exe "normal g`\"" |
+    \ endif
+
+endif " has("autocmd")
+
+"""""""""""""""""""""""""""""""""""""""
+" Settings {{{1
+"""""""""""""""""""""""""""""""""""""""
+set autoindent
+set bg=light
+set backspace=indent,eol,start
+set nobackup
+set cmdheight=2
+set expandtab
+set foldcolumn=1
+set foldenable
+set foldlevelstart=99
+set foldmethod=syntax
+set foldminlines=1
+
+if has("gui_running")
+        highlight SpellBad term=underline gui=undercurl guisp=Orange
+        " Different cursors for different modes.
+        set guicursor=n-c:block-Cursor-blinkon0
+        set guicursor+=v:block-vCursor-blinkon0
+        set guicursor+=i-ci:ver20-iCursor
+    if OS() == "windows"
+        "set guifont=Courier_New:h9:cANSI
+        set guifont=Anonymous\ Pro\ for\ Powerline:h13
+
+    elseif OS() == "linux"
+        "set guifont=ProFont\ 11
+        set guifont=Triskweline\ 10\ 10
+        "set guifont=Courier\ 9
+    elseif OS() == "mac"
+        "set guifont=Inconsolata:h14.0
+        "set guifont=PragmataPRO:h14
+        "set noantialias
+        set guifont=Menlo\ Regular\ for\ Powerline:h12
+    endif
+endif
+
+set guitablabel=%N/\ %t\ %M
+set helplang=en
+set history=500
+set incsearch
+set keymodel=startsel,stopsel
+set linebreak
+set modeline
+set modelines&
+set pastetoggle=<F10>
+set ruler
+set scrolloff=2
+set shiftround
+set shiftwidth=4
+set showbreak=\
+set showcmd
+set showmatch
+set sidescrolloff=4
+set smartcase
+set smarttab
+set spelllang=en_us
+set statusline=%<%f\ %h%m%r%=%k[%{(&fenc==\"\")?&enc:&fenc}%{(&bomb?\",BOM\":\"\")}]\ %-14.(%l,%c%V%)\ %P
+if has('gui_running') && has('statusline')
+  let &statusline=substitute
+                 \(&statusline, '%=', '%=%{winwidth(0)}x%{winheight(0)}  ', '')
+  set laststatus=2
+endif
+set switchbuf=useopen
+set tabstop=4
+set wildmenu
+set wildmode=list:longest
+set writebackup
+"}}}1
+
+" Switch syntax highlighting on, when the terminal has colors
+" Also switch on highlighting the last used search pattern.
+if &t_Co > 2 || has("gui_running")
+  syntax on
+  set hlsearch
+endif
+set background=dark
+colorscheme badwolf 
+
+"""""""""""""""""""""""""""""""""""""""
+" Map {{{1 
+"""""""""""""""""""""""""""""""""""""""
+" Redraw the screen
+nnoremap <leader>u :syntax sync fromstart<cr>:redraw!<cr>
+" Remove indenting on empty lines.
+map <F9> :%s/\s*$//g<cr>:noh<cr>''
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+" Move a line
+nmap <M-j> mz:m+<cr>`z
+nmap <M-k> mz:m-2<cr>`z
+vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
+vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
+
+" Skip to next buffer
+nmap <C-left> :bp<cr>
+nmap <C-right> :bn<cr>
+
+nmap <M-right> :tabnext<cr>
+nmap <M-left> :tabprevious<cr>
+" TagList
+map <silent> <F3> :TlistToggle<CR>
+
+" Don't use Ex mode, use Q for formatting
+map Q gq
+
+" Make p in Visual mode replace the selected text with the "" register.
+vnoremap p <Esc>:let current_reg = @"<CR>gvs<C-R>=current_reg<CR><Esc>
+
+" When pressing F12 open a explorer window.
+if OS() == "windows"
+    nmap <F12> :!start explorer %:p:h<CR> 
+elseif OS() == "linux"
+    nmap <F12> :!nautilus %:p:h<CR> 
+endif
+
+map <C-F12> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q --languages=c++ .<CR>
+map <leader>tn :tabnew<cr>
+map <leader>tc :tabclose<cr>
+map <leader>tm :tabmove<cr>
+map <leader>t> :tabnext<cr>
+map <leader>t< :tabprevious<cr>
+
+" Open a Quickfix window for the last search.
+nnoremap <silent> <leader>? :execute 'vimgrep /'.@/.'/g %'<CR>:copen<CR>
+
+"inoremap <expr> <cr> pumvisible() ?"\<c-y>" : "\<c-g>u\<cr>"
+"inoremap <expr> <c-n> pumvisible() ? "\<lt>c-n>" : "\<lt>c-n>\<lt>c-r>=pumvisible() ? \"\\<lt>down>\" : \"\"\<lt>cr>"
+"inoremap <expr> <m-;> pumvisible() ? "\<lt>c-n>" : "\<lt>c-x>\<lt>c-o>\<lt>c-n>\<lt>c-p>\<lt>c-r>=pumvisible() ? \"\\<lt>down>\" : \"\"\<lt>cr>"
+"}}}1
+
+"""""""""""""""""""""""""""""""""""""""
+" Compiler {{{1
+"""""""""""""""""""""""""""""""""""""""
+" Set the default compiler    
+compiler bjam
+
+"}}}1
+
+"""""""""""""""""""""""""""""""""""""
+" Plugins {{{1
+"""""""""""""""""""""""""""""""""""""
+" Doxygen plugin...
+let g:DoxygenToolkit_authorName="Fredrik Eriksson"
+let g:DoxygenToolkit_licenseTag="....\<enter>"
+let g:DoxygenToolkit_undocTag="DOXIGEN_SKIP_BLOCK"
+let g:DoxygenToolkit_commentType="C++"
+let g:DoxygenToolkit_briefTag_funcName = "no"  " to include function name between briefTag_pre and briefTag_post
+
+" Valgrind
+let g:valgrind_arguments='--leak-check=yes --num-callers=5000'
+
+"Vim project
+if has ("python")
+    if filereadable ("/home/cyberops/vimproject.py")
+        amenu Project.Dummy dummy
+        pyfile /home/cyberops/vimproject.py
+    endif
+endif
+
+" NERD Tree {{{
+
+noremap  <F2> :NERDTreeToggle<cr>
+inoremap <F2> <esc>:NERDTreeToggle<cr>
+
+augroup ps_nerdtree
+    au!
+
+    au Filetype nerdtree setlocal nolist
+    au Filetype nerdtree nnoremap <buffer> K :q<cr>
+augroup END
+
+let NERDTreeHighlightCursorline = 1
+let NERDTreeIgnore = ['.vim$', '\~$', '.*\.pyc$', 'pip-log\.txt$', 'whoosh_index',
+                    \ 'xapian_index', '.*.pid', 'monitor.py', '.*-fixtures-.*.json',
+                    \ '.*\.o$', 'db.db', 'tags.bak']
+
+let NERDTreeMinimalUI = 1
+let NERDTreeDirArrows = 1
+
+" }}}
+" Powerline {{{
+
+let g:Powerline_symbols = 'fancy'
+let g:Powerline_cache_enabled = 1
+" let g:Powerline_colorscheme = 'badwolf'
+
+" }}}
+
+
+" RCSVERS aka SaveHistory
+let g:rvSaveDirectoryType=1
+let g:rvSaveDirectoryName="~/RCSFiles/"
+amenu &File.Save\ &History.&Log \rlog
+amenu &File.Save\ &History.&Older \older
+amenu &File.Save\ &History.&Newer \newer
+amenu icon=~/vim_local/icons/history.bmp 1.32 ToolBar.Save\ History \rlog
+
+" SnippetEMU
+let g:snip_set_textmate_cp=1
+
+"}}}1
+
+"""""""""""""""""""""""""""""""""""""""
+" Filetypes {{{1
+"""""""""""""""""""""""""""""""""""""""
+au BufNewFile,BufRead *.coffee      setf coffee
+
+au BufNewFile,BufRead *.eve			setf eve
+au BufNewFile,BufRead *.adm			setf adm
+
+" C++ special file extensions 
+au BufNewFile,BufRead *.ipp			setf cpp
+
+" I get python highlight in scons SConstruct & SConscript files. 
+au BufRead SConstruct set filetype=python
+au BufRead SConscript set filetype=python
+
+" I want jam highlight for this additional files. 
+au BufRead Jamfile set filetype=jam
+au BufRead Jamfile.v2 set filetype=jam
+
+" Open pdf files.
+au BufReadPre *.pdf set ro
+au BufReadPost *.pdf %!pdftotext -nopgbrk "%" - |fmt -cw78
+
+" Snippet
+augroup filetypedetect
+  au! BufRead,BufNewFile *.spt setfiletype snippet
+  au BufNewFile,BufRead *.moin setf moin
+  au BufNewFile,BufRead *.wiki setf moin
+augroup END 
+
+au BufRead,BufNewFile *.cmake,CMakeLists.txt,*.cmake.in runtime! indent/cmake.vim 
+au BufRead,BufNewFile *.cmake,CMakeLists.txt,*.cmake.in setf cmake
+au BufRead,BufNewFile *.ctest,*.ctest.in setf cmake
+"}}}1
+
+"""""""""""""""""""""""""""""""""""""""
+" Misc {{{1
+"""""""""""""""""""""""""""""""""""""""
+" With these tree lines I get xhtml code that passes w3 test (nice for posting
+" code on my blog...).
+let use_xhtml = 1
+let html_no_pre = 1
+let html_number_lines = 0
+"}}}1
+
+"""""""""""""""""""""""""""""""""""""""
+" Omni {{{1
+"""""""""""""""""""""""""""""""""""""""
+hi Pmenu guibg=azure3
+hi PmenuSel guibg=azure2 guifg=black
+set tags+=~/tags/stl.tags
+
+"}}}1
+
+" vim: fdm=marker:

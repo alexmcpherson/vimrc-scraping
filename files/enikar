@@ -1,0 +1,338 @@
+" Two parts : 1) global vimrc 2) local ~/.vimrc
+" global vimrc
+set nocompatible	" Use Vim defaults (much better!)
+set t_vb= visualbell    " don't beep
+set shortmess=aoOstTWI  " Be less verbose
+" set shortmess+=Ir       " don't show the start up message
+set backspace=indent,eol,start " A true backspace
+set autoindent		" always set autoindenting on
+set textwidth=0		" Don't wrap words by default
+set backup		" keep a backup file
+set viminfo='20,\"50,%,h,r/ex-fd,r/floppy,r/cdrom,r/carlota
+set history=100          " keep 100 lines of command line history
+set sessionoptions-=help
+set ruler		" show the cursor position all the time
+set sbr=\\              " show continuation line with \
+
+" Suffixes that get lower priority when doing tab completion for filenames.
+" These are files we are not likely to want to edit or read.
+set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
+
+" set helpfile=$VIMRUNTIME/doc/help.txt.bz2 " help files are compressed
+" But not the help.txt file due to a limitation when building
+" the local addition section. The other solution is to hardcode
+" the name help.txt.bz2 in the source of the function fix_help_buffer
+" Problem is fixed.
+
+"set runtimepath=~/.vim,/opt/share/vim,/opt/share/vim/vimfiles,/opt/share/vim/addons,/opt/share/vim/vim72,~/.vim/after
+
+set runtimepath=~/.vim,/var/lib/vim/addons,/opt/share/vim/vimfiles,/usr/share/vim/addons,/usr/local/packages/vim/share/vim/vim73,/var/lib/vim/addons/after,~/.vim/after
+" horizontal scrolling
+set sidescroll=1 sidescrolloff=1 listchars+=precedes:<,extends:>
+command Hscroll setlocal nowrap
+" Windows management
+set splitbelow switchbuf=useopen
+
+set showcmd showmatch ignorecase smartcase
+set tildeop tabstop=8 softtabstop=4 shiftwidth=4 expandtab
+" ne pas colorier les correspondances lors des recherches (merci)
+" ne pas wrapper les recherches ...
+set nohlsearch nowrapscan
+"set incsearch		" Incremental search
+set autowrite	" Automatically save before commands like :next and :make
+set virtualedit=block " allow free cursor position in visual block mode
+set wildmenu wildignore+=*~
+
+map <C-j> <C-]>| " Le jump to tag de l'aide ...
+" imap ² <C-P>| " Plus pratique pour la complétion
+" imap <M-x> <C-O>:| " M-x style emacs. Ne marche pas en mode console
+map Q gq| " Don't use Ex mode, use Q for formatting
+nmap <C-W>e <C-W>s:e |
+nmap <C-W>b <C-W>s:b |
+nmap <F2> :update<CR>
+map gG G|
+
+" Make p in Visual mode replace the selected text with the "" register.
+vnoremap p <Esc>:let current_reg = @"<CR>gvdi<C-R>=current_reg<CR><Esc>
+
+" Pour effacer les espaces et tabulations en fin de ligne :Trim
+command Trim call TrimBuffer()
+fun TrimBuffer()
+    let col_save = col(".")
+    let line_save = line(".")
+    let v:errmsg = ''
+    execute ":silent! 1,$s/[[:blank:]]\\+$//"
+    if (v:errmsg ==# '')
+        echo "buffer modified"
+    endif
+    call cursor(line_save, col_save)
+endfun
+
+" Efface les lignes ne contenant que des blancs en fin de buffer
+" et ajoute une ligne vide si nécessaire.
+command AddFinalNewline call AddFinalNewline()
+fun AddFinalNewline()
+    let col_save = col(".")
+    let line_save = line(".")
+    let max = line("$")
+    let pos = max
+    let l = getline(pos)
+    if l !~ "^$" || getline(pos-1) =~ "^[[:blank:]]*$"
+        while (l =~ "^[[:blank:]]*$" && pos > 0)
+            let pos = pos - 1
+            let l = getline(pos)
+        endwhile
+        if (pos != max)
+            execute (pos+1) . ",$delete"
+        endif
+        call append("$", "")
+    endif
+    call cursor(line_save, col_save)
+endfun
+
+
+" pour voir les man pages depuis vim (command :Man)
+command LoadManMode source $VIMRUNTIME/ftplugin/man.vim
+nmap K :Man <cWORD><CR>|
+
+" Aller à la derniére position connue lorsque cela est possible.
+autocmd BufReadPost *
+    \ if line("'\"") > 0 && line("'\"") <= line("$") |
+    \   exe "normal g`\"" |
+    \ endif
+
+
+" Pour annuler le mode diff
+command Nodiff set nodiff foldcolumn=0
+
+" ne pas mettre :syntax on dans ce fichier global le mettre dans ~/.vimrc
+set secure
+
+" local ~/.vimrc
+"
+
+"set guioptions=agicMl
+set guioptions=agimcl
+"set guifont=Fixed\ Semi-Condensed\ 16
+set guifont=Monospace\ Regular\ 14
+" let mapleader="\\" | " this is the default
+set autochdir
+
+au BufRead ~/Mail/draft/mutt* set nobackup filetype=mail
+au BufRead .irbrc set filetype=ruby
+au BufRead *.r set filetype=rebol
+au BufNewFile *.r set filetype=rebol |call RebolHeader()
+au BufRead mbox_* set filetype=mail
+au BufRead *.pro set filetype=make
+au BufNewFile *.rb call RubyHeader()
+
+au BufRead,BufNewFile *.rhtml set filetype=html
+au BufRead,BufNewFile *.shtml set filetype=html
+
+au BufRead /usr/include/c++/*/* set filetype=cpp
+
+au bufRead,BufNewFile *.fs set filetype=gforth
+au bufRead,BufNewFile *.4th set filetype=gforth
+au BufRead *.asd set filetype=lisp
+au BufRead *.cls set filetype=tex
+au BufRead,BufNewFile .stinit set filetype=st
+au VimLeavePre * call CleanMan()
+
+runtime ftdetect/parrot.vim
+
+" au FileType ada exe "set makeprg=gnatmake\\ " . expand("<afile>")
+" La commande make peut prendre des arguments (optionnels) :
+" ainsi pour compiler le fichier corespondant au buffer courant :
+" :make %
+" fera l'affaire pourvu que 'makeprg' soit correctement fixé
+" NB: vim ne change pas de répertoire : les fichiers résultant de la
+" compilation se trouveront dans le répertoire courant (commande :pwd)
+" Il en est de même pour le nom du fichier à compiler.
+" Sauf que j'utilise une extension qui change le répertoire courant :
+" le fichier édité est toujours dans le répertoire courant.
+au FileType ada set makeprg=gnatmake
+au FileType c set makeprg=gcc
+au FileType html set sts=2 sw=2 ts=2
+au FileType cpp set makeprg=g++
+au FileType make set makeprg=make
+"au FileType java compiler jikes-sablevm
+au FileType php set sts=2 sw=2 ts=2
+
+set path=.,/usr/include,/usr/include/*,/usr/pkg/include,/usr/pkg/include/*
+set path+=/usr/X11R6/include,/usr/X11R6/include/*,/usr/local/include
+set path+=/usr/local/include/*
+" Note:  voir ce que je peux faire pour la coloration de gap sous X11
+augroup gap
+  " Remove all gap autocommands
+  au!
+  autocmd BufRead,BufNewFile .gaprc,*.g,*.gi,*.gd runtime syntax/gap.vim
+  autocmd BufRead,BufNewFile .gaprc,*.g,*.gi,*.gd set filetype=gap comments=s:##\ \ ,m:##\ \ ,e:##\ \ b:#
+" I'm using the external program `par' for formating comment lines starting
+" with `##  '. Include these lines only when you have par installed.
+  autocmd BufRead,BufNewFile *.g,*.gi,*.gd set formatprg="par w76p4s0j"
+  autocmd BufWritePost,FileWritePost *.g,*.gi,*.gd set formatprg="par w76p0s0j"
+augroup END
+
+if v:progname =~ '^vim' || v:progname == 'vi'
+    if &term =~ '^screen'
+        colorscheme ron
+        " let colors_name="ron"
+    elseif &term =~ '^xterm'
+       set t_Co=16
+       colorscheme gil
+    endif
+endif
+
+" meilleur initialisation des variables locale à un
+" buffer lors de la détection des type de fichier.
+filetype plugin indent on
+syntax on
+set wildignore+=*.beam
+" set shortmess=aoOstTWI
+set diffopt+=iwhite
+set timeoutlen=900
+
+if $DISPLAY == ''
+    map <Esc>e $|
+    map <Esc>a 0|
+    imap <Esc>e <Esc>A|
+    imap <Esc>a <Esc>I|
+else
+    if v:progname =~ '^gvim'
+        set cmdheight=2 laststatus=2
+    endif
+    map <M-e> $|
+    map <M-a> 0|
+    imap <M-e> <Esc>A|
+    imap <M-a> <Esc>I|
+    map <M-left> <C-PageDown>
+    map <M-right> <C-PageUp>
+    imap <M-left> <C-PageDown>
+    imap <M-right> <C-PageUp>
+" don't touch the next line !
+    imap   <space>|
+endif
+
+" Smart write and edit command
+nmap <F2> :up<CR>|
+" nmap <F3> :up<CR>:e |
+imap <F2> <C-O>:up<CR>|
+" imap <F3> <ESC>:up<CR>:e |
+" Ask for execution from cursor position to the end of line as ex command
+nmap <F4> y$:<C-R>"|
+map <F7> :cprevious<CR>
+map <F8> :cnext<CR>
+map <F9> :clist<CR>
+inoremap <S-Space> <Esc>
+
+" map for tags command
+map <S-F5> :tfirst<CR>
+map <S-F6> :tlast<CR>
+map <S-F7> :tprevious<CR>
+map <S-F8> :tnext<CR>
+map <S-F9> :tselect
+
+" List directories and files
+command! -nargs=* -complete=file LS :!ls -FB <args>
+command! -nargs=* -complete=file LL :!ls -lFB <args>
+" let MRU_Max_Entries=50
+
+" insert current date at cursor position :
+command! InsertDate execute ':r !date "+Le \%d-\%m-\%Y"' |normal-J|
+command! InsertRebolDate execute ':r !date "+\%d-\%b-\%Y/\%R"' |normal-J|
+command! InsertSysDate execute ':r !date' |normal-J|
+
+set grepprg=egrep\ -n\ $*\ /dev/null
+
+" To use the gid of ID database utilities like grep with vim quickfix mode
+" We have to make the database with :! mkid to use this command (in the
+" current working directory like :make ...)
+function! Gid(regex)
+    let grepprg_save = &grepprg
+    let cpo_save = &cpo
+    let &cpo = ""
+    let &grepprg = "gid $* /dev/null"
+    execute "grep " . a:regex 
+    let &grepprg = l:grepprg_save
+    let &cpo = l:cpo_save
+endfunction
+
+command! -complete=tag -nargs=+ Gid call Gid("<args>")
+
+" Pour utiliser cscope avec la quickfix window ... mais ne marche pas
+" l'option refuse d'être positionée
+set cscopequickfix="s-,c-,d-,i-,t-,e-"
+
+" Taglist à droite
+let Tlist_Use_Right_Window = 1
+let Tlist_Ctags_Cmd='ctags'
+set splitright
+
+
+" A function to insert REBOL header at the beginning of the current buffer
+function! RebolHeader()
+    let i = 0
+    let tab = "" 
+    while i < &shiftwidth
+        let tab = tab . ' '
+        let i = i + 1
+    endwhile
+    call append(0, "REBOL [")
+    call append(1, tab . "Title:")
+    let now = strftime('%d-%b-%Y/%R')
+    call append(2, tab . "Date: " . now )
+    call append(3, "]")
+    call cursor(2, 0)
+    call cursor(0, col("$"))
+endfun
+
+function! RubyHeader()
+    call append(0, '#! /usr/bin/ruby')
+endfun
+
+function SynFold()
+    syntax region myFold start="{" end="}" transparent fold
+    syntax sync fromstart
+    set foldmethod=syntax
+endfun
+
+command! SynFold call SynFold()
+
+" Set this global variable when ruby mode speed is breaked down
+" let g:ruby_no_expensive=1
+
+map <F10> :SBufExplorer<CR>
+nmap <C-I> :tabnew<CR>
+
+set suffixes+=.fas,.class,.cmo,.cmi,.cmx
+" La liste de mot utilisé pour la complétion avec CTRL-X CTRL-K
+set dictionary=/usr/share/dict/french
+
+" Latex-suite
+" Par défaut je préfére être en mode 'tex' (qui corresponds à latex) 
+" plutot que 'plaintex'(qui corresponds à tex...).
+let g:tex_flavor='tex'
+" Établir un faux racourci pour éviter que latex-suite ne le modifie
+" En effet Alt-B sous vim génére le caratére â.
+au BufNewFile,BufRead *.tex imap <buffer> <silent> <M-b> <M-b>
+
+" pour voir les man pages depuis vim (command :Man)
+source $VIMRUNTIME/ftplugin/man.vim
+
+" s'arranger pour que vim ne conserve pas les buffer de la commande Man
+" car j'ai changé l'option nobuflisted en buflisted
+fun! CleanMan()
+ruby <<EOF
+    include VIM
+    n = Buffer.count
+    (0...n).each {|x|
+        f = File.basename(Buffer[x].name.to_s)
+        if f =~ %r'\.\d*~\Z'
+            s = evaluate "getbufvar(\"#{f}\", \"isman\")"
+            evaluate("setbufvar(\"#{f}\", \"&buflisted\", 0)") unless s.empty?
+        end
+    }
+EOF
+endfunc
+
+set cscopequickfix=c+,d+,i+,e+,t+

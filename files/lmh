@@ -1,0 +1,42 @@
+colors zenburn
+set showtabline=2   
+source $VIMRUNTIME/mswin.vim
+behave mswin
+command W w !sudo tee % > /dev/null
+set smartindent
+set tabstop=4
+set number
+execute "set listchars=trail:" . nr2char(183)
+execute "set listchars+=precedes:" . nr2char(183)
+execute "set listchars+=tab:>-"
+execute "set list"
+function! List_onoff()
+	if !exists("g:LIST")
+		let g:LIST = 0
+	endif
+	if g:LIST == 1
+		set list
+		let g:LIST = 0
+	else
+		set nolist
+		let g:LIST = 1
+	endif
+endfunction
+function! Numb_onoff()
+	if !exists("g:NUMB")
+		let g:NUMB = 0
+	endif
+	if g:NUMB == 1
+		set number
+		let g:NUMB = 0
+	else
+		set nonumber
+		let g:NUMB = 1
+	endif
+endfunction
+imap <silent> <F4> <C-o>:call List_onoff()<CR>
+vmap <silent> <F4> :<C-u>call List_onoff()<CR>
+nmap <silent> <F4>      :call List_onoff()<CR>
+imap <silent> <F3> <C-o>:call Numb_onoff()<CR>
+vmap <silent> <F3> :<C-u>call Numb_onoff()<CR>
+nmap <silent> <F3>      :call Numb_onoff()<CR>

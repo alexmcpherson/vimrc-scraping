@@ -1,0 +1,92 @@
+" My vimrc file
+"
+" Verson: 0.101
+" Last edit: 2012-4-17
+"
+" Copy and rename:
+"   Windows: $VIM\_vimrc
+"   Linux: ~/.vimrc
+"
+" 说明：大部分资料来自网络，Google 'vimrc'
+
+
+" Vim 比起 Vi 更好用，用不兼容模式，一定要放在第一行
+set nocompatible
+
+" 不备份
+set nobackup
+
+" 历史
+set history=200
+
+" 使用鼠标
+set mouse=a
+
+
+" -----编码处理，以utf-8为主-----
+
+" encoding 是Vim内部的字符编码方式
+set encoding=utf-8
+" termencoding 是Vim用于屏幕显示的编码
+set termencoding=utf-8
+" fileencoding 文件编码
+set fileencoding=utf-8
+" fileencodings 编码识别的尝试列表，有顺序，严格->宽松
+set fileencodings=ucs-bom,utf-8,cp936,big5,euc-jp,latin1
+" 禁用bom
+set nobomb
+
+" 中文菜单
+set langmenu=zh_CN.utf-8
+
+" 中文信息
+language message zh_CN.utf-8
+
+" 防止菜单乱码
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
+
+" 标尺
+set ruler
+
+" 关键字着色
+syntax on
+
+" 增强Backspace的删除功能
+set backspace=indent,eol,start
+
+" 光标移动时可换行
+set whichwrap=b,s,<,>,[,]
+
+" 文件类型检测
+filetype on
+" 允许使用插件
+filetype plugin on
+
+
+" 显示行号
+set number
+
+" 不在单词中间断行
+set linebreak
+
+" 不折行
+set nowrap
+
+" 水平滚动条
+set guioptions+=b
+
+
+" -----缩进设置-----
+
+" Tab缩进替换成空格
+set expandtab
+
+" 一次Tab宽度
+set tabstop=4
+
+" 自动缩进宽度
+set shiftwidth=4
+
+" 配色，需要下载
+colorscheme molokai

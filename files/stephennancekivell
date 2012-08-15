@@ -1,0 +1,7 @@
+" au BufNewFile,BufRead *.py set ai
+filetype plugin on
+filetype on
+
+set tabstop=4
+set shiftwidth=4
+" au VimEnter *  NERDTree

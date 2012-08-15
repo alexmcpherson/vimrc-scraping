@@ -1,0 +1,345 @@
+" -----------------------------------------------------------------------------
+" | VIM Settings |
+" -----------------------------------------------------------------------------
+
+set nocompatible
+
+" Vim bundle plugin:
+call pathogen#infect() 
+map <S-F1> call pathogen#helptags()<cr>
+
+let mapleader=","
+
+" File Navigation *************************************************************
+" Open files with <leader>f
+map <leader>f :CommandTFlush<cr>\|:CommandT<cr>
+" Open files, limited to the directory of the current file, with <leader>gf
+" This requires the %% mapping in .vimrc
+map <leader>gf :CommandTFlush<cr>\|:CommandT %%<cr>
+
+" Rails specific
+map <leader>gv :CommandTFlush<cr>\|:CommandT app/views<cr>
+map <leader>gc :CommandTFlush<cr>\|:CommandT app/controllers<cr>
+map <leader>gm :CommandTFlush<cr>\|:CommandT app/models<cr>
+map <leader>gh :CommandTFlush<cr>\|:CommandT app/helpers<cr>
+map <leader>gl :CommandTFlush<cr>\|:CommandT lib<cr>
+map <leader>gp :CommandTFlush<cr>\|:CommandT public<cr>
+map <leader>gs :CommandTFlush<cr>\|:CommandT public/stylesheets<cr>
+map <leader>ga :CommandTFlush<cr>\|:CommandT app/assets<cr>
+
+map <leader>gr :edit config/routes.rb<cr>
+map <leader>gg :edit Gemfile<cr>
+
+" Open in new tabs/splits/etc
+let g:CommandTAcceptSelectionMap = '<CR>'
+let g:CommandTAcceptSelectionTabMap = '<C-t>'
+let g:CommandTAcceptSelectionSplitMap = '<C-s>'
+let g:CommandTAcceptSelectionVSplitMap = '<C-v>'
+
+let g:CommandTMaxHeight=20
+
+" Edit or view files in same directory as current file
+cnoremap %% <C-R>=expand('%:h').'/'<cr>
+map <leader>e :edit %%
+" map <leader>v :view %%
+map <leader>te :tabe %%
+
+map U :redo<CR>
+nnoremap <F5> :GundoToggle<CR>
+" Add undo to ctrl-u / ctrl-w
+inoremap <c-u> <c-g>u<c-u>
+inoremap <c-w> <c-g>u<c-w>
+
+" Next/previous tab support in the console
+map <leader>[ :tabp<cr>
+map <leader>] :tabn<cr>
+
+" NerdTree stuff
+map <F2> :NERDTreeToggle<CR>
+map <M-F2> :NERDTreeFind<cr>
+
+" Allow backgrounding buffers without writing them, and remember marks/undo
+" for backgrounded buffers
+set hidden
+
+" Delete buffer
+map <leader>q :bw<cr> 
+
+" Remember more commands and search history
+set history=1000
+
+" Make tab completion for files/buffers act like bash
+set wildmenu
+
+" use emacs-style tab completion when selecting files, etc
+set wildmode=longest,list
+set wildignore=*.gif,*.jpg,*.png,*.o,*.obj,.git,.svn,tmp
+
+" Unfold by default
+set foldlevel=10
+
+" Tabs ************************************************************************
+set softtabstop=2
+set shiftwidth=2
+set shiftround
+set tabstop=2
+set expandtab
+set sta " a <Tab> in an indent inserts 'shiftwidth' spaces
+map <tab> i<tab>
+
+
+" Indenting ********************************************************************
+set ai " Automatically set the indent of a new line (local to buffer)
+set si " smartindent  (local to buffer)
+set pastetoggle=<F3>
+
+
+" Scrollbars ******************************************************************
+set sidescrolloff=2
+set numberwidth=4
+" Keep more context when scrolling off the end of a buffer
+set scrolloff=3
+set guioptions-=r
+set guioptions-=L
+
+" Windows *********************************************************************
+set equalalways " Multiple windows, when created, are equal in size
+set splitbelow splitright
+
+nnoremap <c-j> <c-w>j
+nnoremap <c-k> <c-w>k
+nnoremap <c-h> <c-w>h
+nnoremap <c-l> <c-w>l
+
+"Vertical split then hop to new buffer
+noremap ,v :vsp<cr>
+noremap ,h :split<cr>
+
+" Adjust viewports to the same size
+map <Leader>= <C-w>=
+" Maximize viewport
+map <leader>\ <C-w><bar>
+
+" Cursor highlights ***********************************************************
+"set cursorline
+"set cursorcolumn
+nnoremap <leader>c :set cursorline!<CR>
+nnoremap <leader>C :set cursorcolumn!<CR>
+
+" Searching *******************************************************************
+set hlsearch " highlight search
+set incsearch " incremental search, search as you type
+set ignorecase " Ignore case when searching
+set smartcase " Ignore case when searching lowercase
+nmap <leader>/ /\v
+
+
+" Colors **********************************************************************
+set t_Co=256 " 256 colors
+set background=dark
+syntax on " syntax highlighting
+colorscheme tir_black_infinity
+
+" if using vimdiff:
+if &diff
+  colorscheme inkpot
+endif
+
+" Status Line *****************************************************************
+set showcmd
+set ruler " Show ruler
+set ch=2 " Make command line two lines high
+set laststatus=2
+set statusline=%<%f\ (%{&ft})\ %{fugitive#statusline()}\ %-4(%m%)%=%-19(%3l,%02c%03V%)
+
+
+" Line Wrapping ***************************************************************
+set nowrap
+set linebreak " Wrap at word
+
+
+" Mappings ********************************************************************
+" Don't use Ex mode, use Q for formatting
+map Q gq
+command! W :w
+
+" remap Y to yank to end of line
+map Y y$
+
+" replace word with clipboard contents 
+nmap <leader>w "_cw0<ESC>
+
+" select between quotes, etc
+imap <D-"> <esc>vi"
+imap <D-'> <esc>vi'
+
+nmap <D-"> vi"
+nmap <D-'> vi'
+
+" Directories *****************************************************************
+" Setup backup location and enable
+set backup		" keep a backup file
+set backupdir=~/tmp/vim
+
+" Set Swap directory
+set directory=~/tmp/vim/swap
+set noswapfile
+
+" Sets path to directory buffer was loaded from
+"autocmd BufEnter * lcd %:p:h
+
+
+" File Stuff ******************************************************************
+filetype plugin indent on
+" To show current filetype use: set filetype
+
+autocmd FileType html :set filetype=xhtml " we couldn't care less about html
+" autocmd FileType ruby setlocal foldmethod=syntax " syntax folding is slow!
+autocmd FileType sass setlocal foldmethod=indent
+
+
+" Insert New Line *************************************************************
+map <S-Enter> O<ESC> " awesome, inserts new line without going into insert mode
+map <Enter> o<ESC>
+
+
+" Sessions ********************************************************************
+" Sets what is saved when you save a session
+set sessionoptions=blank,buffers,curdir,folds,help,resize,tabpages,winsize
+
+
+" Misc ************************************************************************
+set backspace=indent,eol,start
+set number " Show line numbers
+set matchpairs+=<:>
+set vb t_vb= " Turn off the bell, this could be more annoying, but I'm not sure how
+
+" Set list Chars - for showing characters that are not
+" normally displayed i.e. whitespace, tabs, EOL
+set listchars=trail:·,tab:‣\ 
+set nolist
+nmap <silent> <leader>s :set nolist!<CR>
+
+
+" Mouse ***********************************************************************
+set mouse=a " Enable the mouse
+"behave xterm
+set selectmode=mouse
+set clipboard=unnamed 
+ 
+" Cursor Movement *************************************************************
+" Make cursor move by visual lines instead of file lines (when wrapping)
+map <up> gk
+map k gk
+imap <up> <C-o>gk
+map <down> gj
+map j gj
+imap <down> <C-o>gj
+map E ge
+ 
+ 
+" Ruby stuff ******************************************************************
+"compiler ruby " Enable compiler support for ruby
+map ® :!ruby %<CR>
+
+" use the rspec compiler for all *_spec.rb files
+autocmd BufNewFile,BufRead *_spec.rb compiler rspec
+autocmd BufNewFile,BufRead *.prawn setf ruby
+
+
+" Switch between the last two files	
+nnoremap <leader><leader> <c-^>
+ 
+" Omni Completion *************************************************************
+filetype plugin on
+set ofu=syntaxcomplete#Complete
+
+" autocmd FileType html :set omnifunc=htmlcomplete#CompleteTags
+" autocmd FileType python set omnifunc=pythoncomplete#Complete
+" autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
+" autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+" autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
+" autocmd FileType php set omnifunc=phpcomplete#CompletePHP
+" autocmd FileType c set omnifunc=ccomplete#Complete
+" autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete " may require ruby compiled in
+ 
+ 
+ 
+" -----------------------------------------------------------------------------
+" | Plugins |
+" -----------------------------------------------------------------------------
+ 
+" SnippetsEmu *****************************************************************
+"imap <unique> <C-j> <Plug>Jumper
+"let g:snip_start_tag = "_\."
+"let g:snip_end_tag = "\._"
+"let g:snip_elem_delim = ":"
+"let g:snip_set_textmate_cp = '1' " Tab to expand snippets, not automatically.
+ 
+ 
+" autocomplpop ***************************************************************
+" complete option
+"set complete=.,w,b,u,t,k
+"let g:AutoComplPop_CompleteOption = '.,w,b,u,t,k'
+"set complete=.
+let g:AutoComplPop_IgnoreCaseOption = 0
+let g:AutoComplPop_BehaviorKeywordLength = 2
+ 
+ 
+" -----------------------------------------------------------------------------
+" | Test Stuff |
+" -----------------------------------------------------------------------------
+
+" RSpec
+map <leader>r :SweetVimRspecRunFile<CR>
+map <leader>R :SweetVimRspecRunFocused<CR>
+map <leader>® :SweetVimRspecRunPrevious<CR>
+
+" Show passing specs
+let $SWEET_VIM_RSPEC_SHOW_PASSING="true"
+
+let g:LargeFile = 64
+
+function! RenameFile()
+  let old_name = expand('%')
+  let new_name = input('New file name: ', expand('%'))
+  if new_name != '' && new_name != old_name
+    exec ':saveas ' . new_name
+    exec ':silent !rm ' . old_name
+    redraw!
+  endif
+endfunction
+map <leader>n :call RenameFile()<cr>
+
+" Show syntax highlighting groups for word under cursor
+nmap <C-S-P> :call <SID>SynStack()<CR>
+function! <SID>SynStack()
+  if !exists("*synstack")
+    return
+  endif
+  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+endfunc
+
+" Turn off search highlighting
+map <leader><esc> :noh<return>
+
+" CoffeeScript
+let coffee_compile_vert = 1
+au BufNewFile,BufReadPost *.coffee setl foldmethod=indent nofoldenable
+
+command! KillWhitespace :normal :%s/ *$//g<cr><c-o><cr>
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" OpenChangedFiles COMMAND
+" Open a split for each dirty file in git
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function! OpenChangedFiles()
+  only " Close all windows, unless they're modified
+  let status = system('git status -s | grep "^ \?\(M\|A\)" | cut -d " " -f 3')
+  let filenames = split(status, "\n")
+  exec "edit " . filenames[0]
+  for filename in filenames[1:]
+    exec "sp " . filename
+  endfor
+endfunction
+command! OpenChangedFiles :call OpenChangedFiles()

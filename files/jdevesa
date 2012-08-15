@@ -1,0 +1,132 @@
+
+" -----------------------------------------------
+" CUSTOMIZE BEHAVIOUR
+" -----------------------------------------------
+
+" Tabs to spaces.
+set expandtab 
+set shiftwidth=4 
+set softtabstop=4 
+set smarttab 
+set smartindent 
+set tabstop=4
+" set textwidth=79
+
+" Encoding options.
+set encoding=utf-8 fileencoding=utf-8
+
+" Search options.
+set incsearch ignorecase smartcase hlsearch
+
+" Mouse support
+set mouse=a
+
+" Manage multiple buffers effectively
+set hidden
+
+" Map leader to ,
+let mapleader = ","
+
+" Let see all the options when press <TAB> in command line
+set wildmenu
+set wildmode=list:longest
+
+" Don't update the display while executing macros
+set lazyredraw
+
+" At lease show in which mode we are working
+set showmode
+set cursorline
+
+" Enable omnicompletion and set some options
+set ofu=syntaxcomplete#Complete
+set completeopt=longest,menuone 
+" Change the behaviour of the <Enter> key in popmenu
+inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+" Add the C-Space mapping to enable omnicompletion
+inoremap <expr> <C-Space> pumvisible() \|\| &omnifunc == '' ?
+\ "\<lt>C-n>" :
+\ "\<lt>C-x>\<lt>C-o><c-r>=pumvisible() ?" .
+\ "\"\\<lt>c-n>\\<lt>c-p>\\<lt>c-n>\" :" .
+\ "\" \\<lt>bs>\\<lt>C-n>\"\<CR>"
+imap <C-@> <C-Space>
+
+" Autoload changes in .vimrc
+autocmd BufWritePost .vimrc source $MYVIMRC 
+
+" Move around the windows
+noremap <silent> ,j :wincmd j<CR>
+noremap <silent> ,h :wincmd h<CR>
+noremap <silent> ,k :wincmd k<CR>
+noremap <silent> ,l :wincmd l<CR>
+
+noremap <silent> ,w <ESC>:w<CR>
+noremap <silent> ,wa <ESC>:wa<CR>
+noremap <silent> ,q <ESC>:q<CR>
+noremap <silent> ,qa <ESC>:qa<CR>
+noremap <silent> ,wq <ESC>:wq<CR>
+
+set ttyfast
+
+" Set 'tags' files
+set tags=~/.tags/vimtags
+
+" ----------------------------------------------
+"  CUSTOMIZE VIEW
+" ----------------------------------------------
+
+" Set theme.
+sy on
+set t_Co=256
+if has('gui_running')
+    " colorscheme wombat
+    colorscheme compot
+else
+    " colorscheme wombat256mod
+    colorscheme molokai
+endif
+
+
+" Show number lines the title of the window and the ruler
+set number 
+set title 
+set ruler
+
+" ---------------------------------------------
+"  FILETYPE specials
+"  -------------------------------------------
+
+" Activate pathogen (always before enable filetype plugin indent on!)
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+
+" Enable filetype support
+filetype plugin indent on
+
+" set tags=~/.tags/pythontags,~/.tags/vimtags
+
+" PYTHON
+autocmd BufWritePost *.py call Flake8()
+
+" Google Protocol Buffers filetype
+augroup filetype
+    au! BufRead,BufNewFile *.proto setfiletype proto
+augroup end
+
+" ----------------------------------------------
+"  PLUGINS
+"  ---------------------------------------------
+
+" NERDTree 
+nnoremap <silent><F2> :NERDTreeToggle<CR>
+let NERDTreeAutoCenter = 1
+let NERDTreeCaseSensitiveSort = 1
+let NERDTreeHighlightCursorline = 1
+let NERDTreeMouseMode = 2
+let NERDTreeShowBookmarks = 1
+let NERDTreeIgnore = ['\~$','\.pyc$','\py.class$']
+
+" Tagbar
+nnoremap <silent><F3> :TagbarToggle<CR>
+let g:tagbar_width = 30
+let g:tagbar_autoclose = 0

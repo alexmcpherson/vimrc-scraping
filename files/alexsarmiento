@@ -1,0 +1,25 @@
+"For the tag explorer plugin
+filetype on 
+nmap <F8> :TagbarToggle<CR>
+set foldmethod=syntax
+set foldlevelstart=1
+let g:syntastic_cpp_check_header = 1
+let g:syntastic_cpp_cflags = ' -I/opt/local/include/ -I/opt/local/include/QtCore/ -I/opt/local/include/QtGui -I/opt/local/include/KDE/'
+call pathogen#infect()
+call pathogen#helptags()
+syntax on
+filetype plugin indent on
+let b:vimroom_background = 'white' 
+
+set wrap
+set linebreak
+set nolist  " list disables linebreak
+
+set grepprg=grep\ -nH\ $*
+
+"vim-latex stuff
+let g:tex_flavor='latex'
+let g:Tex_Menus=0
+let g:acp_behaviorSnipmateLength=1
+let g:Tex_DefaultTargetFormat= 'pdf'
+let g:Tex_ViewRule_pdf = 'open '

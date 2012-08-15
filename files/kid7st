@@ -1,0 +1,88 @@
+" Don't be compatible with vi
+set nocompatible 
+set number
+set ruler
+set wrap
+
+set fileencodings=utf8,cp936,gb18030,big5
+filetype on  
+filetype plugin on
+filetype plugin indent on
+
+set cursorline cursorcolumn
+
+"pythondict
+let g:pydiction_location='~/.vim/bundle/pydiction/complete-dict'
+
+" Load pathogen to manage plugins
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+call pathogen#infect()
+
+" More powerful backspacing
+set backspace=indent,eol,start
+
+" Larger history storage
+set history=1000
+
+" Enalbe syntax highlighting
+syntax on
+
+" If using a dark background within the editing area and syntax highlighting
+" turn on this option as well
+"set background=dark
+
+" Color settings
+set t_Co=256
+color inkpot 
+
+" Indentation
+set autoindent
+set expandtab
+set tabstop=4
+set shiftwidth=4 
+set linespace=4
+
+if has("autocmd")
+    autocmd FileType html setlocal ts=2 sts=2 sw=2
+endif
+
+" NeoComplCache
+let g:neocomplcache_enable_at_startup=1
+let g:neocomplcache_enable_smart_case=1
+let g:neocomplcache_min_syntax_length = 3
+let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+autocmd Syntax html let g:neocomplcache_disable_auto_complete=1
+
+"omnicppcomplete
+autocmd BufEnter * lcd %:p:h
+"STL tags
+set tags+=$HOME/.vim/stl_tags
+
+" SuperTab
+let g:SuperTabDefaultCompletionType="<c-n>"
+
+" Zen-coding 
+let g:user_zen_expandabbr_key='<c-j>'
+let g:user_zen_settings={
+\    'indentation': '  ',
+\}
+
+
+" Nerd Tree 
+let NERDChristmasTree=1
+let NERDTreeWinSize=25
+
+" Tagbar
+let g:tagbar_ctags_bin = 'ctags'
+let g:tagbar_left=0
+let g:tagbar_width=30
+
+" Key mappings
+nmap <F3> :NERDTreeToggle<cr>
+nmap <F4> :TagbarToggle<cr>
+
+
+"单个文件编译
+set makeprg=g++\ -Wall\ -o\ %<\ %
+map <F7> :make<CR>

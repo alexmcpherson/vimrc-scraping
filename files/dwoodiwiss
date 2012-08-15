@@ -1,0 +1,331 @@
+"Darren's modified .vimrc File 2012
+call pathogen#infect()
+"call pathogen#runtime_append_all_bundles()
+
+"Set vim to not format pasted text
+set paste
+set bs=indent,eol,start
+
+"Shell syntax mode
+let g:is_bash	   = 1
+
+"Align Plugin
+set nocp 
+nnoremap <unique>al :Align = + - \* /<CR>
+
+"JSHint
+nmap <leader>j :JSHint<CR>
+
+"Set current file location as working directory
+"set autochdir
+
+"ConqueTerm
+nmap <Leader>S :ConqueTerm bash<CR>
+
+"PDV PHPdocumenter
+inoremap <C-P> <ESC>:call PhpDocSingle()<CR>i
+nnoremap <C-P> :call PhpDocSingle()<CR>
+vnoremap <C-P> :call PhpDocRange()<CR> 
+
+"Set SnipMate to auto include HTML to PHP files
+au BufRead *.php set ft=php.html
+au BufNewFile *.php set ft=php.html
+
+"Forget compatibility with Vi. Who cares.
+set nocompatible
+
+let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+
+"Enable filetypes
+filetype on
+filetype plugin on
+filetype indent on
+syntax on
+
+"remove scroll bars
+set guioptions-=L
+set guioptions-=r
+set guioptions-=T
+
+"Write the old file out when switching between files.
+set autowrite
+
+"Display current cursor position in lower right corner.
+set ruler
+
+"Want a different map leader than \
+let mapleader = ","
+
+"Ever notice a slight lag after typing the leader key + command? This lowers
+"the timeout.
+set timeoutlen=800
+
+"Switch between buffers without saving
+"set hidden
+
+"switch between light and dark theme
+"set background=dark
+"set background=light
+
+"Force terminal to 256 colours
+"let &t_Co=256
+
+"Set the color scheme. Change this to your preference.
+"Here's 100 to choose from: http://www.vim.org/scripts/script.php?script_id=625
+"colorscheme mayansmoke
+"colorscheme navajo-night
+"colorscheme wombat
+"colorscheme settlemyer
+"colorscheme desert
+"colorscheme tango2
+"colorscheme mustang
+"colorscheme neon
+"colorscheme Tomorrow-Night-Eighties
+"colorscheme molokai
+"colorscheme Tomorrow 
+"colorscheme Tomorrow-night
+"colorscheme Tomorrow-night-eighties
+"colorscheme Tomorrow-night-bright
+"colorscheme Tomorrow-night-blue
+
+
+"Solarized Options
+"option name default optional 
+"g:solarized_termcolors= 16 | 256
+"g:solarized_termtrans = 0 | 1
+"g:solarized_degrade = 0 | 1
+"g:solarized_bold = 1 | 0
+"g:solarized_underline = 1 | 0
+"g:solarized_italic = 1 | 0
+"g:solarized_contrast = “normal”| “high” or “low”
+"g:solarized_visibility= “normal”| “high” or “low”
+
+syntax enable
+set background=dark
+"let g:solarized_termcolors=256
+colorscheme solarized
+
+"if has('gui_running')
+  "set background=light
+"else
+  "set background=dark
+"endif
+"End of Solarized Options
+
+"Set font type and size. Depends on the resolution. Larger screens, prefer h20
+"set guifont=Inconsolata:h16
+"set guifont=AnonymousPro:h14
+"set guifont=Cousine:h15
+set guifont=Menlo:h13
+
+"Tab stuff
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
+set expandtab
+
+"Show command in bottom right portion of the screen
+set showcmd
+
+"Show lines numbers
+set number
+
+"Prefer relative line numbering?
+"set relativenumber"
+
+"Indent stuff
+set smartindent
+set autoindent
+
+"Always show the status line
+set laststatus=2
+
+"Prefer a slightly higher line height
+set linespace=3
+
+"Better line wrapping
+set wrap
+set textwidth=79
+set formatoptions=qrn1
+
+"Set incremental searching"
+set incsearch
+
+"Highlight searching
+set hlsearch
+
+"clear pattern matching
+"nmap <S-SPACE> <S-SPACE>:noh<CR>
+nnoremap <CR> :noh<CR><CR>
+
+" case insensitive search
+set ignorecase
+set smartcase
+
+"Hide MacVim toolbar by default
+set go-=T
+
+"Hard-wrap paragraphs of text
+nnoremap <leader>q gqip
+
+"Enable code folding
+set foldenable
+
+"Hide mouse when typing
+set mousehide
+
+"Shortcut to fold tags with leader (usually \) + ft
+"nnoremap <leader>ft Vatzf
+
+"Opens a vertical split and switches over (\v)
+nnoremap <leader>v <C-w>v<C-w>l
+
+"Split windows below the current window.
+set splitbelow              
+
+"Session settings
+set sessionoptions=resize,winpos,winsize,buffers,tabpages,folds,curdir,help
+
+"Set up an HTML5 template for all new .html files
+autocmd BufNewFile * silent! 0r $VIMHOME/templates/%:e.tpl
+
+"Load the current buffer in Firefox - Mac specific.
+abbrev ff :! open -a firefox.app %:p<cr>
+abbrev chrome :! open -a Google Chrome.app %:p<cr>
+abbrev safari :! open -a safari.app %:p<cr>
+abbrev ftpw e ftp://sltest@woodiwiss.me//
+
+"Map a change directory to the desktop - Mac specific
+nmap <leader>d :cd ~/Desktop<cr>:e.<cr>
+
+"Shortcut for editing  vimrc file in a new tab
+"nmap <leader>ev :tabedit $MYVIMRC<cr>
+
+"Change zen coding plugin expansion key to shift + e
+let g:user_zen_expandabbr_key = '<C-e>'
+
+"Faster shortcut for commenting. Requires T-Comment plugin
+"map <leader>c <c-_><c-_>
+
+"Saves time; maps the spacebar to colon
+nmap <space> :
+
+"Automatically change current directory to that of the file in the buffer
+"autocmd BufEnter * cd %:p:h
+
+"Map code completion to , + tab
+imap <leader><tab> <C-x><C-o>
+
+" More useful command-line completion
+set wildmenu
+
+"Auto-completion menu
+set wildmode=list:longest
+
+"http://vim.wikia.com/wiki/Make_Vim_completion_popup_menu_work_just_like_in_an_IDE
+set completeopt=longest,menuone
+inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+inoremap <expr> <C-n> pumvisible() ? '<C-n>' :
+            \ '<C-n><C-r>=pumvisible() ? "\<lt>Down>" : ""<CR>'
+inoremap <expr> <M-,> pumvisible() ? '<C-n>' :
+            \ '<C-x><C-o><C-n><C-p><C-r>=pumvisible() ? "\<lt>Down>" : ""<CR>'
+
+"Map escape key to hh -- much faster
+imap ii <esc>
+
+"Delete all buffers (via Derek Wyatt)
+nmap <silent> ,da :exec "1," . bufnr('$') . "bd"<cr>
+
+"Bubble single lines (kicks butt)
+"http://vimcasts.org/episodes/bubbling-text/
+nmap <C-Up> ddkP
+nmap <C-Down> ddp
+
+"Bubble multiple lines
+vmap <C-Up> xkP`[V`]
+vmap <C-Down> xp`[V`]
+
+"Source the vimrc file after saving it. This way, you don't have to reload Vim to see the changes.
+if has("autocmd")
+    augroup myvimrchooks
+        au!
+        autocmd bufwritepost .vimrc source ~/.vimrc
+    augroup END
+endif
+
+" easier window navigation
+nmap <C-h> <C-w>h
+nmap <C-j> <C-w>j
+nmap <C-k> <C-w>k
+nmap <C-l> <C-w>l
+
+"------------------------"
+"NERDTREE PLUGIN SETTINGS
+"------------------------"
+"enable line numbers
+"let NERDTreeShowLineNumbers=1
+
+let g:NERDTreeWinSize = 30 
+
+"Shortcut for NERDTreeToggle
+nmap <leader>nt :NERDTreeToggle <cr>
+
+"Show hidden files in NerdTree
+let NERDTreeShowHidden=1
+
+"autopen NERDTree and focus cursor in new document
+"autocmd VimEnter * NERDTree
+"autocmd VimEnter * wincmd p
+
+"Helpeful abbreviations
+"iab lorem Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+"iab llorem Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+
+"Spelling corrects. Just for example. Add yours below.
+"iab teh the
+"iab Teh The
+
+" Get to home dir easier
+" <leader>hm is easier to type than :cd ~
+"nmap <leader>hm :cd ~/ <CR>
+
+" Alphabetically sort CSS properties in file with :SortCSS
+":command! SortCSS :g#\({\n\)\@<=#.,/}/sort
+
+" Shortcut to opening a virtual split to right of current pane
+" Makes more sense than opening to the left
+"nmap <leader>bv :bel vsp
+
+" Saves file when Vim window loses focus
+"au FocusLost * :wa
+
+" Backups
+"set backupdir=~/.vim/tmp/backup// " backups
+"set directory=~/.vim/tmp/swap// " swap files
+"set backup " enable backup
+
+" No more stretching for navigating files
+"noremap h ;
+"noremap j h
+"noremap k gj
+"noremap l gk
+"noremap ; l
+
+"show matching brackets
+set showmatch
+
+" print empty <a> tag
+"map! ;h <a href=""></a><ESC>5hi
+
+"Reselect visual block after indent/outdent
+vnoremap < <gv
+vnoremap > >gv
+
+"set visualbell
+
+"Rails Plugin
+"Run all tests
+nmap <Leader>e :Rake<CR>
+"Run single test
+nmap <Leader>E :.Rake<CR>

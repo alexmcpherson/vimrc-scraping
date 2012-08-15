@@ -1,0 +1,64 @@
+set nocompatible
+set backspace=indent,eol,start
+set ruler
+set notitle
+
+set tabstop=2
+set shiftwidth=2
+set expandtab
+
+" if you do the following, you have to create a directory called
+" .vim/after/ftplugin and put files like 'html.vim' and 'ruby.vim'
+" in there... and include the appropriate tabstop and shiftwidth 
+" there....
+  " filetype plugin indent on
+
+" or else....
+autocmd FileType html setlocal shiftwidth=2 tabstop=2
+autocmd FileType ruby setlocal shiftwidth=2 tabstop=2 expandtab
+autocmd FileType c setlocal shiftwidth=4 tabstop=4 expandtab
+
+"incrementally search file"
+set incsearch
+
+"put filename in title bar"
+set title
+
+"allow backspacing over everything in INSERT mode
+set bs=2
+
+" autosave if I switch to another buffer
+set autowrite
+
+"move swp files into .vim-tmp/"
+set backupdir=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
+set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
+
+" set question mark to be part of a VIM word. in Ruby it is!
+set isk=@,48-57,_,?,!,192-255
+
+" Switch syntax highlighting on, when the terminal has colors
+" Also switch on highlighting the last used search pattern.
+if &t_Co > 2 || has("gui_running")
+  syntax on
+  set hlsearch
+endif
+
+if &term=="xterm"
+     set t_Co=8
+     set t_Sb=^[[4%dm
+     set t_Sf=^[[3%dm
+endif
+
+" Run Ruby unit tests with gT (for all) or gt (only test under
+" cursor) in command mode
+augroup RubyTests
+  au!
+  autocmd BufRead,BufNewFile *_test.rb,test_*.rb
+    \ :nmap gt V:<C-U>!$HOME/.vim/bin/ruby-run-focused-unit-test 
+    \ % <C-R>=line("'<")<CR>p <CR>|
+    \ :nmap gT :<C-U>!ruby %<CR>
+augroup END
+
+
+

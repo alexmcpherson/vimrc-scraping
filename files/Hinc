@@ -1,0 +1,66 @@
+syntax enable
+colorscheme desert
+set autoindent
+set autoread
+set background=dark
+set backspace=indent,eol,start
+set cin
+"set cursorline
+hi CursorLine cterm=NONE ctermbg=darkgray guibg=darkgray
+set enc=utf8 fencs=utf8,cp936
+set expandtab
+set ff=unix
+set history=50
+set hlsearch
+set incsearch
+set lbr
+set lz
+set ignorecase
+set incsearch
+set laststatus=2
+set listchars+=precedes:<,extends:>
+set nobackup
+set nobomb
+set nocompatible
+set noic
+set noswapfile
+set nowrap
+set nowrapscan
+set nu
+set paste
+set ruler
+set shiftwidth=4
+set showcmd
+set showmatch
+set sidescroll=5
+set smartindent
+set smarttab
+set softtabstop=4
+set statusline="empty first
+set statusline+=%F[%{strlen(&ft)?&ft:'none'}]%1*%m%r%w%*%=
+set statusline+=[0x%04B][%v\ %l/%L(%p%%)][%{&fileencoding}\ %{&fileformat}]
+set t_Co=256
+set tabstop=4
+
+" MiniBufExpl
+let g:miniBufExplSplitBelow=0
+let g:miniBufExplMapWindowNavVim=1
+let g:miniBufExplModSelTarget=1
+let g:miniBufExplForceSyntaxEnable=1
+
+" NERDTree
+map <F2> :NERDTreeToggle<CR>
+let NERDTreeIgnore=['\.exe$', '\.dll$', '\.pyc$']
+
+" TagList
+map <F3> :TlistToggle<CR>
+map <F5> :! ctags -R .<CR>
+let Tlist_Auto_Open=0
+let Tlist_Exit_OnlyWindow=1
+let Tlist_GainFocus_On_ToggleOpen=1
+let Tlist_Show_One_File=1
+let Tlist_Use_Right_Window=1
+let Tlist_Use_SingleClick=1
+let Tlist_WinWidth=30
+
+map <F4> :wall<CR>

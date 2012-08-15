@@ -1,0 +1,18 @@
+Users Index:
+
+<table>
+
+  <% @users.each do |user| %>
+    <tr>
+      <td>
+        Handle: <%= user.handle %>
+      </td>
+      <td>
+        Lines Count: <%= user.lines.length %>
+        <%= link_to 'test', '/users/'+user.id.to_s%>
+      </td>
+
+    </tr>
+  <% end %>
+
+</table>

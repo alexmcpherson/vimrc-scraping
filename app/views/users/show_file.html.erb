@@ -1,0 +1,5 @@
+<% @lines.each do |line| %>
+  <% unless line.contents == "\n" %>
+    <%= line.contents %><br />
+  <% end %>
+<% end %>

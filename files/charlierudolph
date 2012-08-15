@@ -1,0 +1,153 @@
+"Load Bunldes with Pathogen
+call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
+
+" Auto Commands
+if has("autocmd")
+  " enable filetype detection
+  filetype plugin indent on
+
+  autocmd BufReadPost *
+    \ if line("'\"") > 1 && line("'\"") <= line("$") |
+    \   exe "normal! g`\"" |
+    \ endif
+
+  "automatically source config on write
+  autocmd BufWritePost .vimrc source $MYVIMRC
+endif
+
+let mapleader = ","
+
+" Tabbing
+set tabstop=2
+set softtabstop=2
+set shiftwidth=2
+set expandtab
+"nmap <silent> <leader>t :retab<CR>
+
+" Tabs
+set showtabline=2
+nmap <silent> <leader>, :tabprevious<CR>
+nmap <silent> <leader>. :tabnext<CR>
+nmap <silent> <leader>n :tabnew<CR>
+nmap <silent> <leader>< :exec 'silent! tabm ' . (tabpagenr()-2)<CR>
+nmap <silent> <leader>> :exec 'silent! tabm ' . tabpagenr()<CR>
+
+" Split panes
+noremap <leader>w <C-W>
+noremap <leader>h <C-W>h
+noremap <leader>j <C-W>j
+noremap <leader>k <C-W>k
+noremap <leader>l <C-W>l
+" Move split panes
+noremap <leader>H <C-W>H
+noremap <leader>J <C-W>J
+noremap <leader>K <C-W>K
+noremap <leader>L <C-W>L
+
+" Quick jump shortcuts
+noremap <C-H> 15h
+noremap <C-J> 10j
+noremap <C-K> 10k
+noremap <C-L> 15l
+
+" Appearance
+set ruler " Display ruler
+set number " Show line numbers
+set title " Display filename in title bar
+colorscheme hybrid
+set background=dark " Adapt color scheme for dark backgrounds
+syntax enable " Enable syntax highlighting
+set cursorline "Adds highlighted line on current line
+
+"Searching
+set hlsearch "Highlight found searches
+set incsearch
+nnoremap <silent> <leader><space> :noh<CR>
+
+command! -nargs=+ G call GlobalSearch(<f-args>)
+function! GlobalSearch(regex, ...)
+	exec "echo 'Searching:" a:regex."'"
+	if exists('a:1')
+		exe "lvim" a:regex "./**/".a:1
+	else
+		exe "lvim" a:regex "./**/*"
+	endif
+	lw
+endfunction
+
+
+" Misc
+set nocompatible " Disable vi compatibility mode
+set nobackup "don't create backup files
+set ignorecase "ignore case in searched
+set backspace=eol,start,indent "setup backspace
+set ai "autoindent
+set si "smart indent
+set cindent "cindent
+set ofu=syntaxcomplete#Complete "Enable syntax completion
+set modelines=0 "disable the use of modelines
+set laststatus=2   " Always show the statusline
+set encoding=utf-8
+set ttyfast
+set spelllang=en_us " Set spell check language
+
+
+" Vim diff
+augroup AutoDiffUpdate
+  autocmd InsertLeave * if &diff | diffupdate
+augroup END
+noremap <leader>g :diffget<CR>
+noremap <leader>p :diffput<CR>
+
+
+" Toggle Spell Checking
+nmap <silent> <leader>s :set spell!<CR>
+
+" Show Invisibles
+set list
+set listchars=tab:▸\ ,eol:¬
+nmap <silent> <leader>i :set list!<CR>
+
+
+" Indentaion guides
+let g:indent_guides_auto_colors = 0
+let g:indent_guides_guide_size = 1
+let g:indent_guides_start_level = 2
+let g:indent_guides_enable_on_vim_startup = 1
+autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  guibg=#222222 ctermbg=8
+autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg=#292929 ctermbg=0
+
+" Line Wrapping
+set nowrap "disable line wrapping
+
+" Map keys for Text Mate indentation
+nmap <d-[> <<
+nmap <D-]> >>
+vmap <D-[> <gv
+vmap <D-]> >gv
+
+"Save when lose focus
+au FocusLost silent! :wa
+
+"NERDTree
+map <silent> <leader>t :NERDTreeTabsToggle<CR>
+let NERDTreeIgnore=['\~$']
+let NERDTreeChDirMode=2
+let g:nerdtree_tabs_open_on_gui_startup=0
+
+
+" open file using fuzzyfinder
+nmap <silent> <leader>o :FufFile<CR>
+nmap <silent> <leader>f :FufFile**/<CR>
+
+" colorscheme fixes
+highlight Pmenu ctermfg=1 ctermbg=4 guibg=black
+
+
+"Gui options
+if has("gui_running")
+  let g:Powerline_symbols = 'fancy'
+  set guioptions=egmrt "Disable menu bar for gvim/macvim
+  set guifont=Menlo:h12
+endif
